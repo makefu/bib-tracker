@@ -8,13 +8,20 @@
 </head>
 <body>
 <div id="wrapper">
+<div id="loggedinuser-menu" class="dropdown">
+  <span class="loggedinusername">Max Mustermann</span>
+  <ul class="dropdown-menu">
+    <li><a id="logout" href="/cgi-bin/koha/opac-main.pl?logout.x=1">Abmelden</a></li>
+  </ul>
+</div>
+
   <div id="i18nMenu">
     <ul id="members">
       <li><a href="/cgi-bin/koha/opac-user.pl">Ihr Benutzerkonto</a></li>
     </ul>
   </div>
   <div id="opac-user" class="container-fluid">
-    <div id="useraccount" class="row">
+    <div class="row">
       <div class="col">
         <h2>Willkommen in Ihrem Benutzerkonto, Max Mustermann</h2>
 
