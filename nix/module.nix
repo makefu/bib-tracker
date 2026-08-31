@@ -1,0 +1,375 @@
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+
+let
+  cfg = config.services.bib-tracker;
+
+  enabledAccounts = lib.filterAttrs (_: a: a.enable) cfg.accounts;
+
+  credentialName = name: "account-${name}-password";
+
+  # Secrets stay out of this file: an account names a systemd credential, and
+  # the unit exposes it under $CREDENTIALS_DIRECTORY at runtime.
+  accountsJson = pkgs.writeText "bib-tracker-accounts.json" (
+    builtins.toJSON (
+      lib.mapAttrsToList (name: a: {
+        inherit name;
+        library_type = a.libraryType;
+        username = a.username;
+        base_url = a.baseUrl;
+        display_name = a.displayName;
+        colour = a.colour;
+        enabled = true;
+        password_credential = credentialName name;
+        loan_period_days = a.loanPeriodDays;
+      }) enabledAccounts
+    )
+  );
+in
+{
+  options.services.bib-tracker = {
+    enable = lib.mkEnableOption "bib-tracker, a library lending history tracker";
+
+    package = lib.mkOption {
+      type = lib.types.package;
+      default = pkgs.callPackage ./package.nix { };
+      defaultText = lib.literalExpression "pkgs.bib-tracker";
+      description = "The bib-tracker package to run.";
+    };
+
+    listenAddress = lib.mkOption {
+      type = lib.types.str;
+      default = "127.0.0.1";
+      description = "Address to bind to. There is no authentication, so put a reverse proxy in front before widening this.";
+    };
+
+    port = lib.mkOption {
+      type = lib.types.port;
+      default = 8099;
+      description = "TCP port to listen on.";
+    };
+
+    openFirewall = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = "Open {option}`services.bib-tracker.port` in the firewall.";
+    };
+
+    stateDir = lib.mkOption {
+      type = lib.types.str;
+      default = "bib-tracker";
+      description = "Name below /var/lib holding the database.";
+    };
+
+    dbPath = lib.mkOption {
+      type = lib.types.path;
+      default = "/var/lib/${cfg.stateDir}/bib-tracker.db";
+      defaultText = lib.literalExpression ''"/var/lib/''${stateDir}/bib-tracker.db"'';
+      description = "Path to the SQLite database. Holds all history, metadata and cover images.";
+    };
+
+    user = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      description = "User to run as. Null uses a systemd DynamicUser.";
+    };
+
+    group = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      description = "Group to run as. Null uses a systemd DynamicUser.";
+    };
+
+    logLevel = lib.mkOption {
+      type = lib.types.enum [
+        "debug"
+        "info"
+        "warning"
+        "error"
+      ];
+      default = "info";
+      description = "Log verbosity.";
+    };
+
+    poll = {
+      intervalMinutes = lib.mkOption {
+        type = lib.types.ints.positive;
+        default = 360;
+        description = "Minutes between polls of each account. Lend and return dates are day-granular, so polling more often than a few times a day buys no accuracy and only loads the library servers.";
+      };
+
+      jitterSeconds = lib.mkOption {
+        type = lib.types.ints.unsigned;
+        default = 300;
+        description = "Random spread applied to each poll, so accounts do not all fire at once.";
+      };
+
+      maxConcurrent = lib.mkOption {
+        type = lib.types.ints.positive;
+        default = 2;
+        description = "How many accounts may be polled at the same time.";
+      };
+
+      onStartup = lib.mkOption {
+        type = lib.types.bool;
+        default = true;
+        description = "Poll once when the service starts.";
+      };
+
+      zeroResultConfirmations = lib.mkOption {
+        type = lib.types.ints.positive;
+        default = 2;
+        description = "How many consecutive empty results are required before believing an account really was emptied. Guards the history against a silent scraper breakage, at the cost of one poll interval of latency when everything genuinely was returned.";
+      };
+    };
+
+    renewThresholdDays = lib.mkOption {
+      type = lib.types.ints.unsigned;
+      default = 3;
+      description = "\"Renew all due\" acts on loans due within this many days.";
+    };
+
+    accounts = lib.mkOption {
+      default = { };
+      description = "Library accounts to track, keyed by a short name.";
+      example = lib.literalExpression ''
+        {
+          stuttgart = {
+            libraryType = "stuttgart";
+            username = "123456";
+            passwordFile = "/run/secrets/bib-stuttgart";
+          };
+        }
+      '';
+      type = lib.types.attrsOf (
+        lib.types.submodule {
+          options = {
+            enable = lib.mkOption {
+              type = lib.types.bool;
+              default = true;
+              description = "Whether to poll this account.";
+            };
+
+            libraryType = lib.mkOption {
+              type = lib.types.enum [
+                "remseck"
+                "stuttgart"
+              ];
+              description = "Which library backend to use.";
+            };
+
+            username = lib.mkOption {
+              type = lib.types.str;
+              description = "Library card number.";
+            };
+
+            passwordFile = lib.mkOption {
+              type = lib.types.path;
+              description = "File holding the account password. Read at start-up through systemd's credential store, so it never enters the Nix store.";
+            };
+
+            baseUrl = lib.mkOption {
+              type = lib.types.nullOr lib.types.str;
+              default = null;
+              description = "Override the OPAC base URL. Only needed for another installation of the same software, or for testing.";
+            };
+
+            displayName = lib.mkOption {
+              type = lib.types.nullOr lib.types.str;
+              default = null;
+              description = "Name shown in the interface.";
+            };
+
+            colour = lib.mkOption {
+              type = lib.types.nullOr lib.types.str;
+              default = null;
+              description = "CSS colour used to tag this account's rows.";
+            };
+
+            loanPeriodDays = lib.mkOption {
+              type = lib.types.attrsOf lib.types.ints.positive;
+              default = { };
+              example = {
+                book = 28;
+                game = 14;
+              };
+              description = "Standard loan period per media class. Used to estimate a lend date from a due date when the OPAC does not report one.";
+            };
+          };
+        }
+      );
+    };
+
+    metadata = {
+      enable = lib.mkOption {
+        type = lib.types.bool;
+        default = true;
+        description = "Look up covers, descriptions, ratings and list prices from external APIs.";
+      };
+
+      providers = lib.mkOption {
+        type = lib.types.listOf (
+          lib.types.enum [
+            "openlibrary"
+            "googlebooks"
+            "dnb"
+            "bgg"
+          ]
+        );
+        default = [
+          "openlibrary"
+          "googlebooks"
+          "dnb"
+          "bgg"
+        ];
+        description = "Metadata providers to query.";
+      };
+
+      userAgentContact = lib.mkOption {
+        type = lib.types.str;
+        default = "https://github.com/makefu/bib-tracker";
+        description = "Contact URL sent in the User-Agent. Open Library and the DNB ask for one.";
+      };
+
+      googleBooksApiKeyFile = lib.mkOption {
+        type = lib.types.nullOr lib.types.path;
+        default = null;
+        description = "File holding a Google Books API key. Optional; the API works unauthenticated at a lower rate limit.";
+      };
+
+      baseUrls = lib.mkOption {
+        type = lib.types.attrsOf lib.types.str;
+        default = { };
+        description = "Override a provider's base URL. Used by the VM test to keep it offline.";
+      };
+    };
+
+    defaultPrices = lib.mkOption {
+      type = lib.types.attrsOf lib.types.numbers.nonnegative;
+      default = {
+        book = 15.0;
+        audiobook = 12.0;
+        music = 10.0;
+        movie = 10.0;
+        game = 35.0;
+        magazine = 5.0;
+        other = 10.0;
+      };
+      description = "Assumed purchase price in EUR per media class, used for \"money saved\" when no list price could be found. Figures derived from these are always labelled as estimates.";
+    };
+
+    settings = lib.mkOption {
+      type = lib.types.attrsOf lib.types.str;
+      default = { };
+      description = "Extra BIB_TRACKER_* environment variables, for settings without a dedicated option.";
+    };
+  };
+
+  config = lib.mkIf cfg.enable {
+    assertions = [
+      {
+        assertion = cfg.user == null -> lib.hasPrefix "/var/lib/${cfg.stateDir}/" (toString cfg.dbPath);
+        message = "services.bib-tracker.dbPath must live under /var/lib/${cfg.stateDir} when running as a DynamicUser. Set services.bib-tracker.user and .group to use another location.";
+      }
+      {
+        assertion = (cfg.user == null) == (cfg.group == null);
+        message = "services.bib-tracker: set both user and group, or neither.";
+      }
+    ];
+
+    networking.firewall.allowedTCPPorts = lib.mkIf cfg.openFirewall [ cfg.port ];
+
+    systemd.services.bib-tracker = {
+      description = "bib-tracker library lending history";
+      wantedBy = [ "multi-user.target" ];
+      after = [ "network-online.target" ];
+      wants = [ "network-online.target" ];
+
+      environment = {
+        BIB_TRACKER_DB_PATH = toString cfg.dbPath;
+        BIB_TRACKER_HOST = cfg.listenAddress;
+        BIB_TRACKER_PORT = toString cfg.port;
+        BIB_TRACKER_LOG_LEVEL = cfg.logLevel;
+        BIB_TRACKER_ACCOUNTS_FILE = toString accountsJson;
+        BIB_TRACKER_POLL_INTERVAL_MINUTES = toString cfg.poll.intervalMinutes;
+        BIB_TRACKER_POLL_JITTER_SECONDS = toString cfg.poll.jitterSeconds;
+        BIB_TRACKER_POLL_MAX_CONCURRENT = toString cfg.poll.maxConcurrent;
+        BIB_TRACKER_POLL_ON_STARTUP = lib.boolToString cfg.poll.onStartup;
+        BIB_TRACKER_ZERO_RESULT_CONFIRMATIONS = toString cfg.poll.zeroResultConfirmations;
+        BIB_TRACKER_RENEW_THRESHOLD_DAYS = toString cfg.renewThresholdDays;
+        BIB_TRACKER_METADATA_ENABLED = lib.boolToString cfg.metadata.enable;
+        BIB_TRACKER_METADATA_PROVIDERS = builtins.toJSON cfg.metadata.providers;
+        BIB_TRACKER_METADATA_BASE_URLS = builtins.toJSON cfg.metadata.baseUrls;
+        BIB_TRACKER_USER_AGENT_CONTACT = cfg.metadata.userAgentContact;
+        BIB_TRACKER_DEFAULT_PRICES = builtins.toJSON cfg.defaultPrices;
+      }
+      // lib.optionalAttrs (cfg.metadata.googleBooksApiKeyFile != null) {
+        BIB_TRACKER_GOOGLE_BOOKS_API_KEY_FILE = "%d/google-books-api-key";
+      }
+      // cfg.settings;
+
+      serviceConfig = {
+        Type = "exec";
+        ExecStartPre = "${lib.getExe' cfg.package "bib-tracker-migrate"}";
+        ExecStart = lib.getExe cfg.package;
+        Restart = "on-failure";
+        RestartSec = "10s";
+        WorkingDirectory = "/var/lib/${cfg.stateDir}";
+
+        StateDirectory = cfg.stateDir;
+        StateDirectoryMode = "0700";
+
+        # Passwords reach the process through a per-unit tmpfs that only this
+        # unit can read, so nothing is written to persistent storage and it
+        # works with DynamicUser, whose uid is not known at evaluation time.
+        LoadCredential =
+          lib.mapAttrsToList (name: a: "${credentialName name}:${toString a.passwordFile}") enabledAccounts
+          ++ lib.optional (
+            cfg.metadata.googleBooksApiKeyFile != null
+          ) "google-books-api-key:${toString cfg.metadata.googleBooksApiKeyFile}";
+      }
+      // (
+        if cfg.user == null then
+          { DynamicUser = true; }
+        else
+          {
+            User = cfg.user;
+            Group = cfg.group;
+          }
+      )
+      // {
+        NoNewPrivileges = true;
+        PrivateTmp = true;
+        PrivateDevices = true;
+        ProtectSystem = "strict";
+        ProtectHome = true;
+        ProtectProc = "invisible";
+        ProtectKernelTunables = true;
+        ProtectKernelModules = true;
+        ProtectKernelLogs = true;
+        ProtectControlGroups = true;
+        ProtectClock = true;
+        ProtectHostname = true;
+        RestrictNamespaces = true;
+        RestrictRealtime = true;
+        RestrictSUIDSGID = true;
+        RestrictAddressFamilies = [
+          "AF_INET"
+          "AF_INET6"
+          "AF_UNIX"
+        ];
+        LockPersonality = true;
+        CapabilityBoundingSet = [ "" ];
+        SystemCallArchitectures = "native";
+        SystemCallFilter = [ "@system-service" ];
+        UMask = "0077";
+        # Deliberately no MemoryDenyWriteExecute: CPython needs W^X-violating
+        # mappings and the service will not start with it enabled.
+      };
+    };
+  };
+}
