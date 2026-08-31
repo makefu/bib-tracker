@@ -5,6 +5,18 @@
     style="--account-colour: {{ loan.account_colour or 'transparent' }}"
     aria-label="{{ loan.title }}, Konto {{ loan.account }}"
   >
+    <td class="cell-cover">
+      <img
+        class="cover"
+        src="/media/{{ loan.media_id }}/cover/sm.webp{% if loan.cover_sha256 %}?v={{ loan.cover_sha256[:8] }}{% endif %}"
+        srcset="/media/{{ loan.media_id }}/cover/sm.webp 1x, /media/{{ loan.media_id }}/cover/md.webp 2x"
+        width="44"
+        height="66"
+        loading="lazy"
+        decoding="async"
+        alt=""
+      />
+    </td>
     <td>
       <div class="cell-title">
         <a class="cell-title__name" href="/media/{{ loan.media_id }}">{{ loan.title }}</a>

@@ -93,6 +93,22 @@ pkgs.testers.nixosTest {
         machine.wait_until_succeeds("curl -fsS localhost:8099/api/loans | grep -q '\"open_loans\":3'")
         machine.fail("curl -fsS localhost:8099/api/loans | grep -q 'Die unendliche Geschichte'")
 
+    with subtest("a cover placeholder is served rather than a broken image"):
+        machine.succeed(
+            "curl -fsS localhost:8099/media/1/cover/sm.webp | grep -q '<svg'"
+        )
+        machine.succeed(
+            "curl -fsS -o /dev/null -w '%{http_code}' localhost:8099/media/1/cover/sm.webp | grep -q 200"
+        )
+
+    with subtest("a price can be entered by hand and outranks any lookup"):
+        machine.succeed("curl -fsS -X POST localhost:8099/api/media/1/price -d 'price=18,99'"
+                        " | grep -q 'von dir eingetragen'")
+
+    with subtest("a rating can be given"):
+        machine.succeed("curl -fsS -X POST localhost:8099/api/media/1/rating -d 'rating=4' -o /dev/null")
+        machine.succeed("curl -fsS localhost:8099/media/1 | grep -q 'checked'")
+
     with subtest("the pages render with the scraped data"):
         for path in ["/", "/loans", "/history", "/runs"]:
             machine.succeed(f"curl -fsS localhost:8099{path} | grep -q '<!DOCTYPE html>'")

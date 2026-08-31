@@ -102,15 +102,30 @@ class Settings(BaseSettings):
     renew_threshold_days: int = 3
 
     metadata_enabled: bool = True
-    metadata_providers: list[str] = Field(default_factory=lambda: ["openlibrary", "googlebooks", "dnb", "bgg"])
+    #: Open Library and the DNB need no credentials. Google Books works
+    #: anonymously only until its per-address quota runs out, and BoardGameGeek
+    #: refuses anonymous requests outright, so both are off unless configured.
+    metadata_providers: list[str] = Field(default_factory=lambda: ["openlibrary", "dnb", "wikidata"])
     metadata_base_urls: dict[str, str] = Field(default_factory=dict)
+    #: Per-provider credential files, keyed by provider name.
+    metadata_api_key_files: dict[str, Path] = Field(default_factory=dict)
+    metadata_rate_limits: dict[str, int] = Field(default_factory=dict)
     user_agent_contact: str = "https://github.com/makefu/bib-tracker"
-    google_books_api_key_file: Path | None = None
+    #: Requests per minute for a provider that does not name its own limit.
+    default_rate_limit_per_minute: int = 30
 
     default_prices: dict[str, float] = Field(default_factory=lambda: dict(DEFAULT_PRICES_EUR))
     media_class_map: dict[str, str] = Field(default_factory=dict)
 
-    @field_validator("metadata_providers", "metadata_base_urls", "default_prices", "media_class_map", mode="before")
+    @field_validator(
+        "metadata_providers",
+        "metadata_base_urls",
+        "metadata_api_key_files",
+        "metadata_rate_limits",
+        "default_prices",
+        "media_class_map",
+        mode="before",
+    )
     @classmethod
     def _parse_json(cls, value: object) -> object:
         """Env vars carry these as JSON; a bare comma list is accepted too."""
@@ -126,6 +141,28 @@ class Settings(BaseSettings):
             return []
         raw = json.loads(self.accounts_file.read_text(encoding="utf-8"))
         return [AccountConfig.model_validate(item) for item in raw]
+
+    def provider_api_key(self, provider: str) -> str | None:
+        """Read a provider credential from wherever systemd or the user put it.
+
+        Missing is not an error: a provider that needs one reports itself as
+        unavailable, which the interface can explain, rather than failing.
+        """
+        path = self.metadata_api_key_files.get(provider)
+        if path is None:
+            return None
+        candidate = Path(path)
+        if not candidate.is_absolute():
+            base = _credentials_directory()
+            if base is not None:
+                candidate = base / candidate
+        try:
+            return candidate.read_text(encoding="utf-8").strip() or None
+        except OSError:
+            return None
+
+    def provider_rate_limit(self, provider: str) -> int:
+        return self.metadata_rate_limits.get(provider, self.default_rate_limit_per_minute)
 
     def default_price_cents(self, media_class: str) -> int:
         euros = self.default_prices.get(media_class, DEFAULT_PRICES_EUR.get(media_class, 10.0))

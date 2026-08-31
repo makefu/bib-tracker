@@ -7,6 +7,7 @@ import logging
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
+import httpx
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
@@ -16,6 +17,7 @@ from .config import Settings, load_settings
 from .db import queries
 from .db.connection import Database, connect
 from .db.migrator import current_version, migrate
+from .metadata.worker import EnrichmentWorker
 from .scheduler import PollScheduler
 from .services import PollService
 from .web import STATIC_DIR
@@ -47,7 +49,14 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
         service = PollService(db, settings, accounts)
         app.state.poll_service = service
-        scheduler = PollScheduler(service, settings)
+
+        enrichment = None
+        if settings.metadata_enabled:
+            enrichment_client = httpx.AsyncClient(follow_redirects=True, timeout=30.0)
+            enrichment = EnrichmentWorker(db, settings, enrichment_client)
+            app.state.enrichment = enrichment
+
+        scheduler = PollScheduler(service, settings, enrichment)
         app.state.scheduler = scheduler
 
         startup_poll: asyncio.Task[dict[str, int | None]] | None = None
@@ -66,6 +75,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                 startup_poll.cancel()
             scheduler.shutdown()
             await service.aclose()
+            if enrichment is not None:
+                await enrichment_client.aclose()
             db.close()
 
     app = FastAPI(

@@ -265,6 +265,36 @@ async def dismiss_media(request: Request, media_id: int) -> HTMLResponse:
     )
 
 
+@router.post("/media/{media_id}/price", response_class=HTMLResponse)
+async def set_price(request: Request, media_id: int) -> HTMLResponse:
+    """Enter a price by hand. Always beats anything a provider reported."""
+    from ...metadata.pricing import Price, PriceBasis, store_price
+
+    db = _db(request)
+    form = await request.form()
+    raw = str(form.get("price") or "").strip().replace("\u20ac", "").replace(".", "").replace(",", ".")
+    try:
+        cents = round(float(raw) * 100)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="price must be a number") from None
+    if cents < 0:
+        raise HTTPException(status_code=400, detail="price must not be negative")
+
+    media = await db.fetch_one("SELECT id, media_class FROM media WHERE id = ?", (media_id,))
+    if media is None:
+        raise HTTPException(status_code=404, detail=f"No media {media_id}")
+
+    await store_price(db, media_id, Price(cents, PriceBasis.MANUAL), source="manual", note="von Hand")
+
+    updated = await db.fetch_one(
+        "SELECT id, media_class, effective_price_cents, price_basis FROM media WHERE id = ?",
+        (media_id,),
+    )
+    if updated is None:  # pragma: no cover - the row was there a moment ago
+        raise HTTPException(status_code=404, detail=f"No media {media_id}")
+    return render(request, "partials/price.html", "partials/price.html", {"media": dict(updated)})
+
+
 @router.get("/accounts")
 async def list_accounts(request: Request) -> JSONResponse:
     rows = await _db(request).fetch_all(

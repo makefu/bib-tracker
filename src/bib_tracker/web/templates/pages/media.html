@@ -7,7 +7,15 @@
     <h1>{{ media.title }}</h1>
   </div>
 
-  <div class="card stack" style="margin-bottom: var(--sp-4)">
+  <div class="card media-detail" style="margin-bottom: var(--sp-4)">
+    <img
+      class="cover cover--lg"
+      src="/media/{{ media.id }}/cover/md.webp{% if media.cover_sha256 %}?v={{ media.cover_sha256[:8] }}{% endif %}"
+      width="200"
+      height="300"
+      alt="Cover von {{ media.title }}"
+    />
+    <div class="stack">
     <div class="row">
       <span class="badge" data-mt="{{ media.media_class }}">
         <span aria-hidden="true">{{ media.media_class | media_icon }}</span>
@@ -23,7 +31,30 @@
       <div class="rating--lg">{% include "partials/rating.html" %}</div>
     </div>
 
+    {% if media.description %}
+      <p class="muted">{{ media.description }}</p>
+    {% endif %}
+
+    {% if external_ratings %}
+      <div class="ratings-list">
+        {% for entry in external_ratings %}
+          <div class="ratings-list__row">
+            <span class="ratings-list__source">{{ entry.provider }}</span>
+            {# Each on its own scale: 7,8/10 and 4,1/5 are different claims. #}
+            <span class="ratings-list__value">
+              {{ "%.1f"|format(entry.value) | replace(".", ",") }}/{{ entry.scale | int }}
+            </span>
+            {% if entry.count %}
+              <span class="ratings-list__count">{{ entry.count | de_num }} Stimmen</span>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {% include "partials/price.html" %}
     {% include "partials/notes.html" %}
+    </div>
   </div>
 
   <div class="card">

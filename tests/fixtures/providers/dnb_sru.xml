@@ -1,0 +1,911 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<searchRetrieveResponse xmlns="http://www.loc.gov/zing/srw/"><version>1.1</version><numberOfRecords>107</numberOfRecords><records><record><recordSchema>MARC21-xml</recordSchema><recordPacking>xml</recordPacking><recordData><record xmlns="http://www.loc.gov/MARC21/slim" type="Bibliographic">
+    <leader>00000pam a2200000 c 4500</leader>
+    <controlfield tag="001">1374532193</controlfield>
+    <controlfield tag="003">DE-101</controlfield>
+    <controlfield tag="005">20251126220105.0</controlfield>
+    <controlfield tag="007">tu</controlfield>
+    <controlfield tag="008">250822s2025    gw ||||| |||| 00||||ger  </controlfield>
+    <datafield tag="015" ind1=" " ind2=" ">
+      <subfield code="a">25,A48</subfield>
+      <subfield code="z">25,N35</subfield>
+      <subfield code="2">dnb</subfield>
+    </datafield>
+    <datafield tag="016" ind1="7" ind2=" ">
+      <subfield code="2">DE-101</subfield>
+      <subfield code="a">1374532193</subfield>
+    </datafield>
+    <datafield tag="020" ind1=" " ind2=" ">
+      <subfield code="a">9783126741316</subfield>
+      <subfield code="c">Broschur : EUR 11.00 (DE), EUR 11.40 (AT), CHF 14.90 (freier Preis)</subfield>
+      <subfield code="9">978-3-12-674131-6</subfield>
+    </datafield>
+    <datafield tag="020" ind1=" " ind2=" ">
+      <subfield code="a">3126741312</subfield>
+      <subfield code="9">3-12-674131-2</subfield>
+    </datafield>
+    <datafield tag="024" ind1="3" ind2=" ">
+      <subfield code="a">9783126741316</subfield>
+    </datafield>
+    <datafield tag="035" ind1=" " ind2=" ">
+      <subfield code="a">(DE-599)DNB1374532193</subfield>
+    </datafield>
+    <datafield tag="035" ind1=" " ind2=" ">
+      <subfield code="a">(OCoLC)1553851871</subfield>
+    </datafield>
+    <datafield tag="040" ind1=" " ind2=" ">
+      <subfield code="a">1245</subfield>
+      <subfield code="b">ger</subfield>
+      <subfield code="c">DE-101</subfield>
+      <subfield code="d">9999</subfield>
+      <subfield code="e">rda</subfield>
+    </datafield>
+    <datafield tag="041" ind1=" " ind2=" ">
+      <subfield code="a">ger</subfield>
+    </datafield>
+    <datafield tag="044" ind1=" " ind2=" ">
+      <subfield code="c">XA-DE-BW</subfield>
+    </datafield>
+    <datafield tag="082" ind1="7" ind2="4">
+      <subfield code="8">4\p</subfield>
+      <subfield code="a">430</subfield>
+      <subfield code="q">DE-101</subfield>
+      <subfield code="2">23sdnb</subfield>
+    </datafield>
+    <datafield tag="100" ind1="1" ind2=" ">
+      <subfield code="8">1\p</subfield>
+      <subfield code="0">(DE-588)118530259</subfield>
+      <subfield code="0">https://d-nb.info/gnd/118530259</subfield>
+      <subfield code="0">(DE-101)118530259</subfield>
+      <subfield code="a">Ende, Michael</subfield>
+      <subfield code="d">1929-1995</subfield>
+      <subfield code="e">Verfasser</subfield>
+      <subfield code="4">aut</subfield>
+      <subfield code="2">gnd</subfield>
+    </datafield>
+    <datafield tag="240" ind1="1" ind2="0">
+      <subfield code="0">(DE-588)4065419-9</subfield>
+      <subfield code="0">https://d-nb.info/gnd/4065419-9</subfield>
+      <subfield code="0">(DE-101)040654192</subfield>
+      <subfield code="a">&#152;Die&#156; unendliche Geschichte</subfield>
+      <subfield code="2">gnd</subfield>
+    </datafield>
+    <datafield tag="245" ind1="1" ind2="0">
+      <subfield code="a">&#152;Die&#156; unendliche Geschichte</subfield>
+      <subfield code="c">Michael Ende ; bearbeitet von: Achim Seiffarth</subfield>
+    </datafield>
+    <datafield tag="250" ind1=" " ind2=" ">
+      <subfield code="a">[Hybride Ausgabe allango], 1. Auflage</subfield>
+    </datafield>
+    <datafield tag="264" ind1=" " ind2="1">
+      <subfield code="a">Stuttgart</subfield>
+      <subfield code="b">Ernst Klett Sprachen</subfield>
+      <subfield code="c">[2025]</subfield>
+    </datafield>
+    <datafield tag="300" ind1=" " ind2=" ">
+      <subfield code="a">127 Seiten</subfield>
+      <subfield code="c">20 cm, 182 g</subfield>
+    </datafield>
+    <datafield tag="336" ind1=" " ind2=" ">
+      <subfield code="a">Text</subfield>
+      <subfield code="b">txt</subfield>
+      <subfield code="2">rdacontent</subfield>
+    </datafield>
+    <datafield tag="337" ind1=" " ind2=" ">
+      <subfield code="a">ohne Hilfsmittel zu benutzen</subfield>
+      <subfield code="b">n</subfield>
+      <subfield code="2">rdamedia</subfield>
+    </datafield>
+    <datafield tag="338" ind1=" " ind2=" ">
+      <subfield code="a">Band</subfield>
+      <subfield code="b">nc</subfield>
+      <subfield code="2">rdacarrier</subfield>
+    </datafield>
+    <datafield tag="490" ind1="0" ind2=" ">
+      <subfield code="a">Deutsch - leichter lesen</subfield>
+    </datafield>
+    <datafield tag="500" ind1=" " ind2=" ">
+      <subfield code="a">Niveau 2</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">(Produktform)Paperback / softback</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">(Zielgruppe)5. Schuljahr,6. Schuljahr,7. Schuljahr,8. Schuljahr,9. Schuljahr,10. Schuljahr,1. Lernjahr,2. Lernjahr,3. Lernjahr,4. Lernjahr</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">(VLB-WN)1851: Hardcover, Softcover / Schule, Lernen/Lektüren, Interpretationen, Lektürehilfen/Deutsch</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">Deutsch als Fremdsprache (DaF)</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">Lektüre</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">Zusatzmaterialien</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">Sekundarstufe I</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">Sekundarstufe II</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">A2 - B1</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">Abitur</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">(VdS Bildungsmedien Fächer)DAF</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">(Zielgruppe)ab 12 bis 99 Jahre</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">(BISAC Subject Heading)JUV007000: JUVENILE FICTION / Classics</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">Jugendbücher</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">Phantastik</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">Fantasy</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">Michael Ende</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">Tolkien</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">Buxtehuder Bulle</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">Fuchur</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">Momo</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">(BISAC Subject Heading)JUV037000: JUVENILE FICTION / Fantasy &amp; Magic</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">(Zielgruppe)ab 13 Jahre</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">Die unendliche Geschichte Originalausgabe</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">Die unendliche Geschichte Originalillustrationen</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">Phantasien</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">Kinderbuch Klassiker</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">Jugendbuch Klassiker</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">(BISAC Subject Heading)JUV000000</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">(BISAC Subject Heading)JUV000000: JUVENILE FICTION / General</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">Jugendbuchklassiker</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">Klassiker Jugendbuch</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">Wunschpunsch</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">Jugendbuch ab</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">Fantastik</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">Fantastik für Jugendliche</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">(BISAC Subject Heading)JUV037000</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">(BISAC Subject Heading)YAF019000: YOUNG ADULT FICTION / Fantasy / General</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">(BISAC Subject Heading)JNF053160: JUVENILE NONFICTION / Social Issues / Self-Esteem &amp; Self-Reliance</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">(BISAC Subject Heading)JNF070000: JUVENILE NONFICTION / Inspirational &amp; Personal Growth</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">Jugendbuch</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">Klassiker</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">Schmöker</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">Jugendroman</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">Atréju</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">Buch zum Film</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">Kindliche Kaiserin</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">Fantasybestseller</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">Phantásien</subfield>
+    </datafield>
+    <datafield tag="700" ind1="1" ind2=" ">
+      <subfield code="8">2\p</subfield>
+      <subfield code="0">(DE-588)1104701960</subfield>
+      <subfield code="0">https://d-nb.info/gnd/1104701960</subfield>
+      <subfield code="0">(DE-101)1104701960</subfield>
+      <subfield code="a">Seiffarth, Achim</subfield>
+      <subfield code="d">1960-</subfield>
+      <subfield code="e">Mitwirkender</subfield>
+      <subfield code="4">ctb</subfield>
+      <subfield code="2">gnd</subfield>
+    </datafield>
+    <datafield tag="710" ind1="2" ind2=" ">
+      <subfield code="8">3\p</subfield>
+      <subfield code="0">(DE-588)1065360630</subfield>
+      <subfield code="0">https://d-nb.info/gnd/1065360630</subfield>
+      <subfield code="0">(DE-101)1065360630</subfield>
+      <subfield code="a">Ernst Klett Sprachen GmbH</subfield>
+      <subfield code="e">Verlag</subfield>
+      <subfield code="4">pbl</subfield>
+      <subfield code="2">gnd</subfield>
+    </datafield>
+    <datafield tag="850" ind1=" " ind2=" ">
+      <subfield code="a">DE-101a</subfield>
+      <subfield code="a">DE-101b</subfield>
+    </datafield>
+    <datafield tag="856" ind1="4" ind2="2">
+      <subfield code="m">X:MVB</subfield>
+      <subfield code="q">text/html</subfield>
+      <subfield code="u">https://services.dnb.de/plus/idn/1374532193/blurb/</subfield>
+      <subfield code="3">Inhaltstext</subfield>
+    </datafield>
+    <datafield tag="856" ind1="4" ind2="2">
+      <subfield code="m">X:MVB</subfield>
+      <subfield code="q">text/html</subfield>
+      <subfield code="u">https://deposit.dnb.de/cgi-bin/dokserv?id=5d275ea0816041d28c265d30c76f77ca</subfield>
+      <subfield code="3">Inhaltstext</subfield>
+    </datafield>
+    <datafield tag="856" ind1="4" ind2="2">
+      <subfield code="m">X:MVB</subfield>
+      <subfield code="q">text/html</subfield>
+      <subfield code="u">https://www.klett-sprachen.de</subfield>
+      <subfield code="3">Inhaltstext</subfield>
+    </datafield>
+    <datafield tag="856" ind1="4" ind2="2">
+      <subfield code="m">X:MVB</subfield>
+      <subfield code="q">text/html</subfield>
+      <subfield code="u">https://www.klett-sprachen.de/978-3-12-674131-6</subfield>
+      <subfield code="3">Inhaltstext</subfield>
+    </datafield>
+    <datafield tag="856" ind1="4" ind2="2">
+      <subfield code="m">B:DE-101</subfield>
+      <subfield code="q">application/pdf</subfield>
+      <subfield code="u">https://d-nb.info/1374532193/04</subfield>
+      <subfield code="3">Inhaltsverzeichnis</subfield>
+    </datafield>
+    <datafield tag="883" ind1="2" ind2=" ">
+      <subfield code="8">1\p</subfield>
+      <subfield code="a">dnb</subfield>
+      <subfield code="d">20251113</subfield>
+      <subfield code="q">DE-101</subfield>
+      <subfield code="u">https://d-nb.info/provenance/plan#dnb</subfield>
+    </datafield>
+    <datafield tag="883" ind1="2" ind2=" ">
+      <subfield code="8">2\p</subfield>
+      <subfield code="a">dnb</subfield>
+      <subfield code="d">20251113</subfield>
+      <subfield code="q">DE-101</subfield>
+      <subfield code="u">https://d-nb.info/provenance/plan#dnb</subfield>
+    </datafield>
+    <datafield tag="883" ind1="1" ind2=" ">
+      <subfield code="8">3\p</subfield>
+      <subfield code="a">adb</subfield>
+      <subfield code="d">20250822</subfield>
+      <subfield code="q">DE-101</subfield>
+      <subfield code="u">https://d-nb.info/provenance/plan#adb</subfield>
+    </datafield>
+    <datafield tag="883" ind1="2" ind2=" ">
+      <subfield code="8">4\p</subfield>
+      <subfield code="a">dnb</subfield>
+      <subfield code="d">20251119</subfield>
+      <subfield code="q">DE-101</subfield>
+      <subfield code="u">https://d-nb.info/provenance/plan#dnb</subfield>
+    </datafield>
+    <datafield tag="925" ind1="r" ind2=" ">
+      <subfield code="a">ra</subfield>
+    </datafield>
+    <datafield tag="926" ind1="1" ind2=" ">
+      <subfield code="a">YPCK91</subfield>
+      <subfield code="o">93</subfield>
+      <subfield code="q">Publisher</subfield>
+      <subfield code="v">1.6</subfield>
+      <subfield code="x">Schule und Lernen: Moderne (Nicht-Mutter- oder Zweit-) Sprachen: Schulausgaben literarischer Texte</subfield>
+    </datafield>
+    <datafield tag="926" ind1="2" ind2=" ">
+      <subfield code="a">2ACG</subfield>
+      <subfield code="o">95</subfield>
+      <subfield code="q">Publisher</subfield>
+      <subfield code="v">1.6</subfield>
+      <subfield code="x">Deutsch</subfield>
+    </datafield>
+  </record></recordData><recordPosition>1</recordPosition></record><record><recordSchema>MARC21-xml</recordSchema><recordPacking>xml</recordPacking><recordData><record xmlns="http://www.loc.gov/MARC21/slim" type="Bibliographic">
+    <leader>00000nim a2200000uc 4500</leader>
+    <controlfield tag="001">1265668515</controlfield>
+    <controlfield tag="003">DE-101</controlfield>
+    <controlfield tag="005">20250904132301.0</controlfield>
+    <controlfield tag="007">s|||||||||||||</controlfield>
+    <controlfield tag="007">cr||||||||||||</controlfield>
+    <controlfield tag="008">220818s2022    gw |||||o|||||||||||ger  </controlfield>
+    <datafield tag="015" ind1=" " ind2=" ">
+      <subfield code="a">22,O09</subfield>
+      <subfield code="2">dnb</subfield>
+    </datafield>
+    <datafield tag="016" ind1="7" ind2=" ">
+      <subfield code="2">DE-101</subfield>
+      <subfield code="a">1265668515</subfield>
+    </datafield>
+    <datafield tag="024" ind1="3" ind2=" ">
+      <subfield code="a">4066339052857</subfield>
+    </datafield>
+    <datafield tag="024" ind1="7" ind2=" ">
+      <subfield code="2">urn</subfield>
+      <subfield code="a">urn:nbn:de:101:1-2022081802402219916491</subfield>
+    </datafield>
+    <datafield tag="035" ind1=" " ind2=" ">
+      <subfield code="a">(DE-599)DNB1265668515</subfield>
+    </datafield>
+    <datafield tag="040" ind1=" " ind2=" ">
+      <subfield code="a">1140</subfield>
+      <subfield code="b">ger</subfield>
+      <subfield code="c">DE-101</subfield>
+      <subfield code="d">1210</subfield>
+    </datafield>
+    <datafield tag="041" ind1=" " ind2=" ">
+      <subfield code="8">1\p</subfield>
+      <subfield code="a">ger</subfield>
+    </datafield>
+    <datafield tag="044" ind1=" " ind2=" ">
+      <subfield code="c">XA-DE-BE</subfield>
+    </datafield>
+    <datafield tag="082" ind1="7" ind2="4">
+      <subfield code="8">31\p</subfield>
+      <subfield code="a">K</subfield>
+      <subfield code="q">DE-101</subfield>
+      <subfield code="2">23sdnb</subfield>
+    </datafield>
+    <datafield tag="100" ind1="1" ind2=" ">
+      <subfield code="8">3\p</subfield>
+      <subfield code="0">(DE-588)118530259</subfield>
+      <subfield code="0">https://d-nb.info/gnd/118530259</subfield>
+      <subfield code="0">(DE-101)118530259</subfield>
+      <subfield code="a">Ende, Michael</subfield>
+      <subfield code="d">1929-1995</subfield>
+      <subfield code="e">Künstler</subfield>
+      <subfield code="4">art</subfield>
+      <subfield code="2">gnd</subfield>
+    </datafield>
+    <datafield tag="245" ind1="1" ind2="0">
+      <subfield code="a">&#152;Die&#156; unendliche Geschichte</subfield>
+      <subfield code="c">Michael Ende</subfield>
+    </datafield>
+    <datafield tag="250" ind1=" " ind2=" ">
+      <subfield code="a">gekürzte Ausgabe</subfield>
+    </datafield>
+    <datafield tag="264" ind1=" " ind2="1">
+      <subfield code="a">EW Hilversum</subfield>
+      <subfield code="b">Karussell</subfield>
+      <subfield code="c">2022</subfield>
+    </datafield>
+    <datafield tag="300" ind1=" " ind2=" ">
+      <subfield code="a">Online-Ressource</subfield>
+    </datafield>
+    <datafield tag="336" ind1=" " ind2=" ">
+      <subfield code="a">gesprochenes Wort</subfield>
+      <subfield code="b">spw</subfield>
+      <subfield code="2">rdacontent</subfield>
+    </datafield>
+    <datafield tag="337" ind1=" " ind2=" ">
+      <subfield code="a">Computermedien</subfield>
+      <subfield code="b">c</subfield>
+      <subfield code="2">rdamedia</subfield>
+    </datafield>
+    <datafield tag="338" ind1=" " ind2=" ">
+      <subfield code="a">Online-Ressource</subfield>
+      <subfield code="b">cr</subfield>
+      <subfield code="2">rdacarrier</subfield>
+    </datafield>
+    <datafield tag="490" ind1="0" ind2=" ">
+      <subfield code="a">Michael Ende</subfield>
+    </datafield>
+    <datafield tag="583" ind1="1" ind2=" ">
+      <subfield code="a">Archivierung/Langzeitarchivierung gewährleistet</subfield>
+      <subfield code="5">DE-101</subfield>
+      <subfield code="2">pdager</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">(Produktform)Downloadable audio file</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">(Zielgruppe)ab 12 Jahre</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">(BISAC Subject Heading)JUV007000</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">(Produktform (spezifisch))MP3 format</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">Klassiker</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">Märchen</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">Kindergeschichten</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">Kinderliteratur</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">(VLB-WN)9250</subfield>
+    </datafield>
+    <datafield tag="655" ind1=" " ind2="7">
+      <subfield code="8">2\p</subfield>
+      <subfield code="0">(DE-588)4303251-5</subfield>
+      <subfield code="0">https://d-nb.info/gnd/4303251-5</subfield>
+      <subfield code="0">(DE-101)043032516</subfield>
+      <subfield code="a">Kinderbuch</subfield>
+      <subfield code="2">gnd-content</subfield>
+    </datafield>
+    <datafield tag="655" ind1=" " ind2="7">
+      <subfield code="0">(DE-101)1010718363</subfield>
+      <subfield code="a">Kinderbücher bis 11 Jahre</subfield>
+      <subfield code="2">gatbeg</subfield>
+    </datafield>
+    <datafield tag="700" ind1="1" ind2=" ">
+      <subfield code="8">4\p</subfield>
+      <subfield code="0">(DE-588)118530259</subfield>
+      <subfield code="0">https://d-nb.info/gnd/118530259</subfield>
+      <subfield code="0">(DE-101)118530259</subfield>
+      <subfield code="a">Ende, Michael</subfield>
+      <subfield code="d">1929-1995</subfield>
+      <subfield code="e">Verfasser</subfield>
+      <subfield code="4">aut</subfield>
+      <subfield code="2">gnd</subfield>
+    </datafield>
+    <datafield tag="700" ind1="1" ind2=" ">
+      <subfield code="8">5\p</subfield>
+      <subfield code="a">Kleiber, Clemens</subfield>
+      <subfield code="e">Erzähler</subfield>
+      <subfield code="4">nrt</subfield>
+    </datafield>
+    <datafield tag="700" ind1="1" ind2=" ">
+      <subfield code="8">6\p</subfield>
+      <subfield code="a">Traun, Ursula</subfield>
+      <subfield code="e">Erzähler</subfield>
+      <subfield code="4">nrt</subfield>
+    </datafield>
+    <datafield tag="700" ind1="1" ind2=" ">
+      <subfield code="8">7\p</subfield>
+      <subfield code="a">Sauer, Günter</subfield>
+      <subfield code="e">Erzähler</subfield>
+      <subfield code="4">nrt</subfield>
+    </datafield>
+    <datafield tag="700" ind1="1" ind2=" ">
+      <subfield code="8">8\p</subfield>
+      <subfield code="a">Kalenberg, Harry</subfield>
+      <subfield code="e">Erzähler</subfield>
+      <subfield code="4">nrt</subfield>
+    </datafield>
+    <datafield tag="700" ind1="1" ind2=" ">
+      <subfield code="8">9\p</subfield>
+      <subfield code="a">Malachowsky, Alexander</subfield>
+      <subfield code="e">Erzähler</subfield>
+      <subfield code="4">nrt</subfield>
+    </datafield>
+    <datafield tag="700" ind1="1" ind2=" ">
+      <subfield code="8">10\p</subfield>
+      <subfield code="a">Dners, Helga</subfield>
+      <subfield code="e">Erzähler</subfield>
+      <subfield code="4">nrt</subfield>
+    </datafield>
+    <datafield tag="700" ind1="1" ind2=" ">
+      <subfield code="8">11\p</subfield>
+      <subfield code="0">(DE-588)1061982122</subfield>
+      <subfield code="0">https://d-nb.info/gnd/1061982122</subfield>
+      <subfield code="0">(DE-101)1061982122</subfield>
+      <subfield code="a">Rudnick, Franz</subfield>
+      <subfield code="d">1931-2005</subfield>
+      <subfield code="e">Erzähler</subfield>
+      <subfield code="4">nrt</subfield>
+      <subfield code="2">gnd</subfield>
+    </datafield>
+    <datafield tag="700" ind1="1" ind2=" ">
+      <subfield code="8">12\p</subfield>
+      <subfield code="a">Wieder, Hanne</subfield>
+      <subfield code="e">Erzähler</subfield>
+      <subfield code="4">nrt</subfield>
+    </datafield>
+    <datafield tag="700" ind1="1" ind2=" ">
+      <subfield code="8">13\p</subfield>
+      <subfield code="a">Büttner, Wolfgang</subfield>
+      <subfield code="e">Erzähler</subfield>
+      <subfield code="4">nrt</subfield>
+    </datafield>
+    <datafield tag="700" ind1="1" ind2=" ">
+      <subfield code="8">14\p</subfield>
+      <subfield code="a">Reuer, Emely</subfield>
+      <subfield code="e">Erzähler</subfield>
+      <subfield code="4">nrt</subfield>
+    </datafield>
+    <datafield tag="700" ind1="1" ind2=" ">
+      <subfield code="8">15\p</subfield>
+      <subfield code="a">Quest, Christoph</subfield>
+      <subfield code="e">Erzähler</subfield>
+      <subfield code="4">nrt</subfield>
+    </datafield>
+    <datafield tag="700" ind1="1" ind2=" ">
+      <subfield code="8">16\p</subfield>
+      <subfield code="a">Sachtleben, Horst</subfield>
+      <subfield code="e">Erzähler</subfield>
+      <subfield code="4">nrt</subfield>
+    </datafield>
+    <datafield tag="700" ind1="1" ind2=" ">
+      <subfield code="8">17\p</subfield>
+      <subfield code="a">Bötticher, Herbert</subfield>
+      <subfield code="e">Erzähler</subfield>
+      <subfield code="4">nrt</subfield>
+    </datafield>
+    <datafield tag="700" ind1="1" ind2=" ">
+      <subfield code="8">18\p</subfield>
+      <subfield code="a">Striebeck, Jochen</subfield>
+      <subfield code="e">Erzähler</subfield>
+      <subfield code="4">nrt</subfield>
+    </datafield>
+    <datafield tag="700" ind1="1" ind2=" ">
+      <subfield code="8">19\p</subfield>
+      <subfield code="a">Philipp, Ulli</subfield>
+      <subfield code="e">Erzähler</subfield>
+      <subfield code="4">nrt</subfield>
+    </datafield>
+    <datafield tag="700" ind1="1" ind2=" ">
+      <subfield code="8">20\p</subfield>
+      <subfield code="a">Grosser, Renate</subfield>
+      <subfield code="e">Erzähler</subfield>
+      <subfield code="4">nrt</subfield>
+    </datafield>
+    <datafield tag="700" ind1="1" ind2=" ">
+      <subfield code="8">21\p</subfield>
+      <subfield code="a">Renar, Karl</subfield>
+      <subfield code="e">Erzähler</subfield>
+      <subfield code="4">nrt</subfield>
+    </datafield>
+    <datafield tag="700" ind1="1" ind2=" ">
+      <subfield code="8">22\p</subfield>
+      <subfield code="a">von Stegmann, Matthias</subfield>
+      <subfield code="e">Erzähler</subfield>
+      <subfield code="4">nrt</subfield>
+    </datafield>
+    <datafield tag="700" ind1="1" ind2=" ">
+      <subfield code="8">23\p</subfield>
+      <subfield code="a">Hoffmann, Gerd Günther</subfield>
+      <subfield code="e">Erzähler</subfield>
+      <subfield code="4">nrt</subfield>
+    </datafield>
+    <datafield tag="700" ind1="1" ind2=" ">
+      <subfield code="8">24\p</subfield>
+      <subfield code="a">Lenz, Michael</subfield>
+      <subfield code="e">Erzähler</subfield>
+      <subfield code="4">nrt</subfield>
+    </datafield>
+    <datafield tag="700" ind1="1" ind2=" ">
+      <subfield code="8">25\p</subfield>
+      <subfield code="a">Zips, Kurt</subfield>
+      <subfield code="e">Erzähler</subfield>
+      <subfield code="4">nrt</subfield>
+    </datafield>
+    <datafield tag="700" ind1="1" ind2=" ">
+      <subfield code="8">26\p</subfield>
+      <subfield code="a">Breitenfeld, Horst</subfield>
+      <subfield code="e">Erzähler</subfield>
+      <subfield code="4">nrt</subfield>
+    </datafield>
+    <datafield tag="700" ind1="1" ind2=" ">
+      <subfield code="8">27\p</subfield>
+      <subfield code="a">Goslar, Jürgen</subfield>
+      <subfield code="e">Erzähler</subfield>
+      <subfield code="4">nrt</subfield>
+    </datafield>
+    <datafield tag="700" ind1="1" ind2=" ">
+      <subfield code="8">28\p</subfield>
+      <subfield code="a">Leipnitz, Harald</subfield>
+      <subfield code="e">Erzähler</subfield>
+      <subfield code="4">nrt</subfield>
+    </datafield>
+    <datafield tag="700" ind1="1" ind2=" ">
+      <subfield code="8">29\p</subfield>
+      <subfield code="a">Duval, Frank</subfield>
+      <subfield code="e">Komponist</subfield>
+      <subfield code="4">cmp</subfield>
+    </datafield>
+    <datafield tag="700" ind1="1" ind2=" ">
+      <subfield code="8">30\p</subfield>
+      <subfield code="0">(DE-588)122544544</subfield>
+      <subfield code="0">https://d-nb.info/gnd/122544544</subfield>
+      <subfield code="0">(DE-101)122544544</subfield>
+      <subfield code="a">Beckert, Anke</subfield>
+      <subfield code="e">Produzent</subfield>
+      <subfield code="4">pro</subfield>
+      <subfield code="2">gnd</subfield>
+    </datafield>
+    <datafield tag="850" ind1=" " ind2=" ">
+      <subfield code="a">DE-101a</subfield>
+      <subfield code="a">DE-101b</subfield>
+    </datafield>
+    <datafield tag="856" ind1="4" ind2="0">
+      <subfield code="u">https://nbn-resolving.org/urn:nbn:de:101:1-2022081802402219916491</subfield>
+      <subfield code="x">Resolving-System</subfield>
+    </datafield>
+    <datafield tag="856" ind1=" " ind2="0">
+      <subfield code="u">https://d-nb.info/1265668515/34</subfield>
+      <subfield code="x">Langzeitarchivierung Nationalbibliothek</subfield>
+    </datafield>
+    <datafield tag="856" ind1="4" ind2=" ">
+      <subfield code="q">mp3</subfield>
+    </datafield>
+    <datafield tag="883" ind1="1" ind2=" ">
+      <subfield code="8">1\p</subfield>
+      <subfield code="a">npi</subfield>
+      <subfield code="d">20220818</subfield>
+      <subfield code="q">DE-101</subfield>
+      <subfield code="u">https://d-nb.info/provenance/plan#npi</subfield>
+    </datafield>
+    <datafield tag="883" ind1=" " ind2=" ">
+      <subfield code="8">2\p</subfield>
+      <subfield code="a">dnb-cgwrk</subfield>
+      <subfield code="d">20250722</subfield>
+      <subfield code="q">DE-101</subfield>
+      <subfield code="u">https://d-nb.info/provenance/plan#dnb-cgwrk</subfield>
+    </datafield>
+    <datafield tag="883" ind1=" " ind2=" ">
+      <subfield code="8">3\p</subfield>
+      <subfield code="a">cgwrk</subfield>
+      <subfield code="d">20230507</subfield>
+      <subfield code="q">DE-101</subfield>
+      <subfield code="u">https://d-nb.info/provenance/plan#cgwrk</subfield>
+    </datafield>
+    <datafield tag="883" ind1=" " ind2=" ">
+      <subfield code="8">4\p</subfield>
+      <subfield code="a">cgwrk</subfield>
+      <subfield code="d">20230507</subfield>
+      <subfield code="q">DE-101</subfield>
+      <subfield code="u">https://d-nb.info/provenance/plan#cgwrk</subfield>
+    </datafield>
+    <datafield tag="883" ind1="1" ind2=" ">
+      <subfield code="8">5\p</subfield>
+      <subfield code="a">npi</subfield>
+      <subfield code="d">20220818</subfield>
+      <subfield code="q">DE-101</subfield>
+      <subfield code="u">https://d-nb.info/provenance/plan#npi</subfield>
+    </datafield>
+    <datafield tag="883" ind1="1" ind2=" ">
+      <subfield code="8">6\p</subfield>
+      <subfield code="a">npi</subfield>
+      <subfield code="d">20220818</subfield>
+      <subfield code="q">DE-101</subfield>
+      <subfield code="u">https://d-nb.info/provenance/plan#npi</subfield>
+    </datafield>
+    <datafield tag="883" ind1="1" ind2=" ">
+      <subfield code="8">7\p</subfield>
+      <subfield code="a">npi</subfield>
+      <subfield code="d">20220818</subfield>
+      <subfield code="q">DE-101</subfield>
+      <subfield code="u">https://d-nb.info/provenance/plan#npi</subfield>
+    </datafield>
+    <datafield tag="883" ind1="1" ind2=" ">
+      <subfield code="8">8\p</subfield>
+      <subfield code="a">npi</subfield>
+      <subfield code="d">20220818</subfield>
+      <subfield code="q">DE-101</subfield>
+      <subfield code="u">https://d-nb.info/provenance/plan#npi</subfield>
+    </datafield>
+    <datafield tag="883" ind1="1" ind2=" ">
+      <subfield code="8">9\p</subfield>
+      <subfield code="a">npi</subfield>
+      <subfield code="d">20220818</subfield>
+      <subfield code="q">DE-101</subfield>
+      <subfield code="u">https://d-nb.info/provenance/plan#npi</subfield>
+    </datafield>
+    <datafield tag="883" ind1="1" ind2=" ">
+      <subfield code="8">10\p</subfield>
+      <subfield code="a">npi</subfield>
+      <subfield code="d">20220818</subfield>
+      <subfield code="q">DE-101</subfield>
+      <subfield code="u">https://d-nb.info/provenance/plan#npi</subfield>
+    </datafield>
+    <datafield tag="883" ind1="2" ind2=" ">
+      <subfield code="8">11\p</subfield>
+      <subfield code="a">dnb</subfield>
+      <subfield code="d">20250904</subfield>
+      <subfield code="q">DE-101</subfield>
+      <subfield code="u">https://d-nb.info/provenance/plan#dnb</subfield>
+    </datafield>
+    <datafield tag="883" ind1="1" ind2=" ">
+      <subfield code="8">12\p</subfield>
+      <subfield code="a">npi</subfield>
+      <subfield code="d">20220818</subfield>
+      <subfield code="q">DE-101</subfield>
+      <subfield code="u">https://d-nb.info/provenance/plan#npi</subfield>
+    </datafield>
+    <datafield tag="883" ind1="1" ind2=" ">
+      <subfield code="8">13\p</subfield>
+      <subfield code="a">npi</subfield>
+      <subfield code="d">20220818</subfield>
+      <subfield code="q">DE-101</subfield>
+      <subfield code="u">https://d-nb.info/provenance/plan#npi</subfield>
+    </datafield>
+    <datafield tag="883" ind1="1" ind2=" ">
+      <subfield code="8">14\p</subfield>
+      <subfield code="a">npi</subfield>
+      <subfield code="d">20220818</subfield>
+      <subfield code="q">DE-101</subfield>
+      <subfield code="u">https://d-nb.info/provenance/plan#npi</subfield>
+    </datafield>
+    <datafield tag="883" ind1="1" ind2=" ">
+      <subfield code="8">15\p</subfield>
+      <subfield code="a">npi</subfield>
+      <subfield code="d">20220818</subfield>
+      <subfield code="q">DE-101</subfield>
+      <subfield code="u">https://d-nb.info/provenance/plan#npi</subfield>
+    </datafield>
+    <datafield tag="883" ind1="1" ind2=" ">
+      <subfield code="8">16\p</subfield>
+      <subfield code="a">npi</subfield>
+      <subfield code="d">20220818</subfield>
+      <subfield code="q">DE-101</subfield>
+      <subfield code="u">https://d-nb.info/provenance/plan#npi</subfield>
+    </datafield>
+    <datafield tag="883" ind1="1" ind2=" ">
+      <subfield code="8">17\p</subfield>
+      <subfield code="a">npi</subfield>
+      <subfield code="d">20220818</subfield>
+      <subfield code="q">DE-101</subfield>
+      <subfield code="u">https://d-nb.info/provenance/plan#npi</subfield>
+    </datafield>
+    <datafield tag="883" ind1="1" ind2=" ">
+      <subfield code="8">18\p</subfield>
+      <subfield code="a">npi</subfield>
+      <subfield code="d">20220818</subfield>
+      <subfield code="q">DE-101</subfield>
+      <subfield code="u">https://d-nb.info/provenance/plan#npi</subfield>
+    </datafield>
+    <datafield tag="883" ind1="1" ind2=" ">
+      <subfield code="8">19\p</subfield>
+      <subfield code="a">npi</subfield>
+      <subfield code="d">20220818</subfield>
+      <subfield code="q">DE-101</subfield>
+      <subfield code="u">https://d-nb.info/provenance/plan#npi</subfield>
+    </datafield>
+    <datafield tag="883" ind1="1" ind2=" ">
+      <subfield code="8">20\p</subfield>
+      <subfield code="a">npi</subfield>
+      <subfield code="d">20220818</subfield>
+      <subfield code="q">DE-101</subfield>
+      <subfield code="u">https://d-nb.info/provenance/plan#npi</subfield>
+    </datafield>
+    <datafield tag="883" ind1="1" ind2=" ">
+      <subfield code="8">21\p</subfield>
+      <subfield code="a">npi</subfield>
+      <subfield code="d">20220818</subfield>
+      <subfield code="q">DE-101</subfield>
+      <subfield code="u">https://d-nb.info/provenance/plan#npi</subfield>
+    </datafield>
+    <datafield tag="883" ind1="1" ind2=" ">
+      <subfield code="8">22\p</subfield>
+      <subfield code="a">npi</subfield>
+      <subfield code="d">20220818</subfield>
+      <subfield code="q">DE-101</subfield>
+      <subfield code="u">https://d-nb.info/provenance/plan#npi</subfield>
+    </datafield>
+    <datafield tag="883" ind1="1" ind2=" ">
+      <subfield code="8">23\p</subfield>
+      <subfield code="a">npi</subfield>
+      <subfield code="d">20220818</subfield>
+      <subfield code="q">DE-101</subfield>
+      <subfield code="u">https://d-nb.info/provenance/plan#npi</subfield>
+    </datafield>
+    <datafield tag="883" ind1="1" ind2=" ">
+      <subfield code="8">24\p</subfield>
+      <subfield code="a">npi</subfield>
+      <subfield code="d">20220818</subfield>
+      <subfield code="q">DE-101</subfield>
+      <subfield code="u">https://d-nb.info/provenance/plan#npi</subfield>
+    </datafield>
+    <datafield tag="883" ind1="1" ind2=" ">
+      <subfield code="8">25\p</subfield>
+      <subfield code="a">npi</subfield>
+      <subfield code="d">20220818</subfield>
+      <subfield code="q">DE-101</subfield>
+      <subfield code="u">https://d-nb.info/provenance/plan#npi</subfield>
+    </datafield>
+    <datafield tag="883" ind1="1" ind2=" ">
+      <subfield code="8">26\p</subfield>
+      <subfield code="a">npi</subfield>
+      <subfield code="d">20220818</subfield>
+      <subfield code="q">DE-101</subfield>
+      <subfield code="u">https://d-nb.info/provenance/plan#npi</subfield>
+    </datafield>
+    <datafield tag="883" ind1="1" ind2=" ">
+      <subfield code="8">27\p</subfield>
+      <subfield code="a">npi</subfield>
+      <subfield code="d">20220818</subfield>
+      <subfield code="q">DE-101</subfield>
+      <subfield code="u">https://d-nb.info/provenance/plan#npi</subfield>
+    </datafield>
+    <datafield tag="883" ind1="1" ind2=" ">
+      <subfield code="8">28\p</subfield>
+      <subfield code="a">npi</subfield>
+      <subfield code="d">20220818</subfield>
+      <subfield code="q">DE-101</subfield>
+      <subfield code="u">https://d-nb.info/provenance/plan#npi</subfield>
+    </datafield>
+    <datafield tag="883" ind1="1" ind2=" ">
+      <subfield code="8">29\p</subfield>
+      <subfield code="a">npi</subfield>
+      <subfield code="d">20220818</subfield>
+      <subfield code="q">DE-101</subfield>
+      <subfield code="u">https://d-nb.info/provenance/plan#npi</subfield>
+    </datafield>
+    <datafield tag="883" ind1=" " ind2=" ">
+      <subfield code="8">30\p</subfield>
+      <subfield code="a">cgwrk</subfield>
+      <subfield code="d">20230507</subfield>
+      <subfield code="q">DE-101</subfield>
+      <subfield code="u">https://d-nb.info/provenance/plan#cgwrk</subfield>
+    </datafield>
+    <datafield tag="883" ind1=" " ind2=" ">
+      <subfield code="8">31\p</subfield>
+      <subfield code="a">dnb-cgwrk</subfield>
+      <subfield code="d">20250722</subfield>
+      <subfield code="q">DE-101</subfield>
+      <subfield code="u">https://d-nb.info/provenance/plan#dnb-cgwrk</subfield>
+    </datafield>
+    <datafield tag="925" ind1="r" ind2=" ">
+      <subfield code="a">ro</subfield>
+      <subfield code="a">ra</subfield>
+    </datafield>
+    <datafield tag="926" ind1="1" ind2=" ">
+      <subfield code="a">YFA</subfield>
+      <subfield code="o">93</subfield>
+      <subfield code="v">1.5</subfield>
+    </datafield>
+    <datafield tag="927" ind1=" " ind2=" ">
+      <subfield code="a">322273295</subfield>
+    </datafield>
+  </record></recordData><recordPosition>2</recordPosition></record></records><nextRecordPosition>3</nextRecordPosition><echoedSearchRetrieveRequest><version>1.1</version><query>WOE=Unendliche Geschichte Ende</query><xQuery xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/><maximumRecords>2</maximumRecords><recordSchema>MARC21-xml</recordSchema></echoedSearchRetrieveRequest></searchRetrieveResponse>

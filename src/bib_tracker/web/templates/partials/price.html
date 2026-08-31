@@ -1,0 +1,35 @@
+{#
+  A price you type always wins over anything looked up: you can see the book,
+  and no provider outranks that. The basis is always shown, so a figure built
+  on a default is never mistaken for a real price.
+#}
+<form
+  id="price"
+  class="row"
+  hx-post="/api/media/{{ media.id }}/price"
+  hx-target="#price"
+  hx-swap="outerHTML"
+>
+  <label class="muted" for="price-{{ media.id }}">Preis</label>
+  <input
+    class="field nums"
+    id="price-{{ media.id }}"
+    name="price"
+    type="text"
+    inputmode="decimal"
+    size="8"
+    value="{{ '%.2f'|format((media.effective_price_cents or 0) / 100) | replace('.', ',') }}"
+  />
+  <span class="faint">
+    {% if media.price_basis == 'manual' %}
+      von dir eingetragen
+    {% elif media.price_basis == 'provider_list_price' %}
+      Listenpreis
+    {% elif media.price_basis == 'default_by_class' %}
+      geschätzt ({{ media.media_class | media_label }}-Standardpreis)
+    {% else %}
+      unbekannt
+    {% endif %}
+  </span>
+  <button class="btn" type="submit">Speichern</button>
+</form>

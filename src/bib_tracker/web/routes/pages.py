@@ -11,9 +11,11 @@ from typing import Any
 from urllib.parse import urlencode
 
 from fastapi import APIRouter, HTTPException, Request
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, Response
 
 from ...db.connection import Database
+from ...metadata.covers import VARIANTS, placeholder_svg, read_cover
+from ..filters import MEDIA_CLASS_LABELS
 from ..render import render
 
 router = APIRouter()
@@ -209,6 +211,7 @@ async def history(request: Request) -> HTMLResponse:
             CASE WHEN o.return_date IS NOT NULL THEN 'manual' ELSE l.return_date_source END
                 AS return_date_source,
             l.return_date_earliest, l.return_date_latest,
+            m.cover_sha256,
             l.last_due_date, l.times_renewed, l.max_renewals, l.duration_days,
             l.duration_uncertainty_days,
             CAST(julianday(l.last_due_date) - julianday(date('now')) AS INTEGER) AS days_remaining,
@@ -297,8 +300,26 @@ async def media_detail(request: Request, media_id: int) -> HTMLResponse:
         (media_id,),
     )
 
+    provider_rows = await db.fetch_all(
+        "SELECT provider, rating_value, rating_scale, rating_count FROM metadata_records"
+        " WHERE media_id = ? AND status = 'ok' AND rating_value IS NOT NULL",
+        (media_id,),
+    )
+
     context = await _shell(request, "/history")
-    context |= {"media": dict(media), "loans": [dict(row) for row in rows]}
+    context |= {
+        "media": dict(media),
+        "loans": [dict(row) for row in rows],
+        "external_ratings": [
+            {
+                "provider": row["provider"],
+                "value": row["rating_value"],
+                "scale": row["rating_scale"],
+                "count": row["rating_count"],
+            }
+            for row in provider_rows
+        ],
+    }
     return render(request, "pages/media.html", None, context)
 
 
@@ -350,6 +371,43 @@ async def rate_next(request: Request, after: int | None = None) -> HTMLResponse:
     media, remaining = await _unrated(_db(request), after)
     context = {"media": media, "remaining": remaining}
     return render(request, "partials/rate_card.html", "partials/rate_card.html", context)
+
+
+@router.get("/media/{media_id}/cover/{variant}.webp")
+async def cover(request: Request, media_id: int, variant: str) -> Response:
+    """Serve a stored cover, or a generated stand-in.
+
+    Never a 404: a missing cover should look like a plain book, not a broken
+    image, and a wall of placeholders should still read as a shelf.
+    """
+    if variant not in VARIANTS:
+        raise HTTPException(status_code=404, detail="Unknown variant")
+
+    db = _db(request)
+    stored = await read_cover(db, media_id, variant)
+    if stored is None:
+        row = await db.fetch_one("SELECT title, media_class FROM media WHERE id = ?", (media_id,))
+        title = row["title"] if row else "?"
+        media_class = MEDIA_CLASS_LABELS.get(row["media_class"], "") if row else ""
+        return Response(
+            placeholder_svg(title, media_class),
+            media_type="image/svg+xml",
+            headers={"Cache-Control": "public, max-age=3600"},
+        )
+
+    data, mime, etag = stored
+    if request.headers.get("if-none-match") == f'"{etag}"':
+        return Response(status_code=304)
+
+    return Response(
+        data,
+        media_type=mime,
+        headers={
+            "ETag": f'"{etag}"',
+            # The URL carries the digest, so a new cover is a new URL.
+            "Cache-Control": "public, max-age=31536000, immutable",
+        },
+    )
 
 
 @router.get("/partials/poll-status", response_class=HTMLResponse)

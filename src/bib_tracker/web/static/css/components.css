@@ -500,3 +500,39 @@
   color: var(--text-faint);
   font-size: var(--fs-xs);
 }
+
+/* -- covers ----------------------------------------------------------------- */
+.cover {
+  display: block;
+  border-radius: 4px;
+  background: var(--surface-2);
+  box-shadow: var(--sh-1);
+  object-fit: cover;
+}
+
+.cover--lg {
+  width: 200px;
+  height: auto;
+}
+
+.cell-cover {
+  width: 44px;
+  padding-right: 0;
+}
+
+.media-detail {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: var(--sp-6);
+  align-items: start;
+}
+
+@media (max-width: 599px) {
+  .media-detail {
+    grid-template-columns: 1fr;
+  }
+
+  .cover--lg {
+    width: 140px;
+  }
+}

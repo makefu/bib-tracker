@@ -218,27 +218,54 @@ in
             "googlebooks"
             "dnb"
             "bgg"
+            "wikidata"
           ]
         );
         default = [
           "openlibrary"
-          "googlebooks"
           "dnb"
-          "bgg"
+          "wikidata"
         ];
-        description = "Metadata providers to query.";
+        description = ''
+          Metadata providers to query.
+
+          Open Library, the DNB and Wikidata need no credentials. Google Books
+          works anonymously only until its per-address daily quota runs out, and
+          BoardGameGeek refuses anonymous requests outright, so both are left out
+          by default: add them together with an entry in
+          {option}`services.bib-tracker.metadata.apiKeyFiles`.
+
+          Wikidata is what board games get without a BoardGameGeek credential.
+          It has publisher, year and player counts, but no community rating.
+        '';
+      };
+
+      apiKeyFiles = lib.mkOption {
+        type = lib.types.attrsOf lib.types.path;
+        default = { };
+        example = lib.literalExpression ''
+          {
+            googlebooks = "/run/secrets/google-books-key";
+            bgg = "/run/secrets/bgg-token";
+          }
+        '';
+        description = "Credential files per provider, read through systemd's credential store so they never enter the Nix store.";
+      };
+
+      rateLimits = lib.mkOption {
+        type = lib.types.attrsOf lib.types.ints.positive;
+        default = { };
+        example = {
+          openlibrary = 60;
+          dnb = 30;
+        };
+        description = "Requests per minute per provider. These are free services run by libraries and volunteers; the defaults are deliberately gentle.";
       };
 
       userAgentContact = lib.mkOption {
         type = lib.types.str;
         default = "https://github.com/makefu/bib-tracker";
         description = "Contact URL sent in the User-Agent. Open Library and the DNB ask for one.";
-      };
-
-      googleBooksApiKeyFile = lib.mkOption {
-        type = lib.types.nullOr lib.types.path;
-        default = null;
-        description = "File holding a Google Books API key. Optional; the API works unauthenticated at a lower rate limit.";
       };
 
       baseUrls = lib.mkOption {
@@ -304,11 +331,13 @@ in
         BIB_TRACKER_METADATA_ENABLED = lib.boolToString cfg.metadata.enable;
         BIB_TRACKER_METADATA_PROVIDERS = builtins.toJSON cfg.metadata.providers;
         BIB_TRACKER_METADATA_BASE_URLS = builtins.toJSON cfg.metadata.baseUrls;
+        BIB_TRACKER_METADATA_RATE_LIMITS = builtins.toJSON cfg.metadata.rateLimits;
+        # Credential names, resolved against $CREDENTIALS_DIRECTORY at runtime.
+        BIB_TRACKER_METADATA_API_KEY_FILES = builtins.toJSON (
+          lib.mapAttrs (name: _: "provider-${name}-key") cfg.metadata.apiKeyFiles
+        );
         BIB_TRACKER_USER_AGENT_CONTACT = cfg.metadata.userAgentContact;
         BIB_TRACKER_DEFAULT_PRICES = builtins.toJSON cfg.defaultPrices;
-      }
-      // lib.optionalAttrs (cfg.metadata.googleBooksApiKeyFile != null) {
-        BIB_TRACKER_GOOGLE_BOOKS_API_KEY_FILE = "%d/google-books-api-key";
       }
       // cfg.settings;
 
@@ -328,9 +357,9 @@ in
         # works with DynamicUser, whose uid is not known at evaluation time.
         LoadCredential =
           lib.mapAttrsToList (name: a: "${credentialName name}:${toString a.passwordFile}") enabledAccounts
-          ++ lib.optional (
-            cfg.metadata.googleBooksApiKeyFile != null
-          ) "google-books-api-key:${toString cfg.metadata.googleBooksApiKeyFile}";
+          ++ lib.mapAttrsToList (
+            name: file: "provider-${name}-key:${toString file}"
+          ) cfg.metadata.apiKeyFiles;
       }
       // (
         if cfg.user == null then

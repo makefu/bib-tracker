@@ -14,6 +14,9 @@ import unicodedata
 
 from .media_class import MediaClass
 
+#: Catalogues mark non-filing characters differently: aDIS uses "\u00ac",
+#: MARC uses control codes. Neither belongs in a fingerprint.
+_NON_FILING = str.maketrans("", "", "\u00ac\u0098\u009c\u0088\u0089")
 _PUNCTUATION = re.compile(r"[^\w\s]", re.UNICODE)
 _WHITESPACE = re.compile(r"\s+")
 
@@ -22,7 +25,7 @@ def normalise(value: str | None) -> str:
     """Fold a catalogue string down to something comparable across polls."""
     if not value:
         return ""
-    text = value.replace("¬", "")
+    text = value.translate(_NON_FILING)
     text = unicodedata.normalize("NFKD", text)
     text = "".join(ch for ch in text if not unicodedata.combining(ch))
     text = _PUNCTUATION.sub(" ", text.casefold())
