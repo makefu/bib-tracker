@@ -30,12 +30,11 @@ pretend otherwise.
   page would otherwise look exactly like an emptied account. Failures are
   classified and store nothing; a sudden emptiness is held back until a second
   poll confirms it.
-- **Money is never one number.** The only free source of list prices is Google
-  Books, and it has nothing for most German library holdings, so most prices
-  come from configured per-media-type defaults. "Money saved" therefore always
-  reports the split between real prices and estimates, and the estimated share
-  is drawn hatched in the chart rather than hidden in a footnote. A price you
-  enter by hand always wins.
+- **Money is never one number.** Prices come from a configurable ladder
+  (see below) and fall back to per-media-type defaults, so a good share of any
+  total is a guess. "Money saved" therefore always reports the split between
+  real prices and estimates, and the estimated share is drawn hatched in the
+  chart rather than hidden in a footnote. A price you enter by hand always wins.
 - **History can be recomputed.** The polls are stored verbatim and the derived
   tables can be dropped and rebuilt from them, so a reconciler bug found next
   year is still fixable for history already recorded. Manual corrections
@@ -80,8 +79,9 @@ through systemd's credential store and never enter the Nix store.
 | `openlibrary` | no | covers, bibliographic data, community ratings |
 | `dnb` | no | the best coverage for German titles |
 | `wikidata` | no | board games: publisher, year, player counts |
-| `googlebooks` | in practice | descriptions, page counts, **list prices** |
+| `googlebooks` | in practice | descriptions, page counts, list prices |
 | `bgg` | yes | board-game ratings and weights |
+| `vlb` | yes (contract) | the authoritative *gebundener Ladenpreis* |
 
 Google Books works anonymously only until its per-address daily quota runs out,
 and BoardGameGeek returns 401 to every anonymous request as of 2026. Both are
@@ -102,6 +102,29 @@ back to the configured defaults, labelled as estimates.
 
 ### Prices
 
+Germany has a fixed book price, so "what would this have cost" has a real
+answer — if you can get at it. Sources are tried in a configurable order:
+
+```nix
+services.bib-tracker.metadata.priceProviders = [ "vlb" "dnb" "googlebooks" ];
+```
+
+- **VLB** — since 2011 the reference database for the *gebundener Ladenpreis*
+  under the Börsenverein's Verkehrsordnung, and the OLG Frankfurt has held that
+  a price recorded there beats a differing one on a publisher's own site. It
+  needs a contract with MVB, so most installations will not have it.
+- **DNB** — the price as catalogued, in MARC 020 $c, free and with good German
+  coverage. It is the price at cataloguing time, so a later change or a lifted
+  price binding is not reflected: right for "what would this have cost", not a
+  statement about today's price.
+- **Google Books** — the fallback, and rarely knows German titles at all.
+
+Whatever the ladder finds, a price typed on a work's page overrides it: you can
+see the book, and no database outranks that.
+
+When nothing is found, the media-class default applies and every figure resting
+on it says so:
+
 ```nix
 services.bib-tracker.defaultPrices = {
   book = 15.0;
@@ -109,9 +132,6 @@ services.bib-tracker.defaultPrices = {
   # audiobook, music, movie, magazine, other
 };
 ```
-
-These are only used when no real price could be found, and any figure resting
-on them says so. A price entered on a work's page overrides everything.
 
 ## Commands
 
@@ -137,3 +157,41 @@ The VM test is the real gate: it boots the service on a NixOS machine against a
 fake Koha OPAC serving recorded fixtures, with outbound traffic blocked at the
 unit level so an accidental call to a real library fails the test rather than
 passing quietly.
+
+### Live checks
+
+Some things only the real services can answer — whether the DNB actually has a
+price for the books this household borrows, whether a BoardGameGeek token still
+works. Those live in `tests/integration`, are marked `live`, and are excluded
+from every automated run:
+
+```sh
+nix run .#integration       # or: pytest -m live
+```
+
+They read credentials from a git-ignored `.secrets.yml`:
+
+```yaml
+remseck_username: "..."
+remseck_password: "..."
+stuttgart_username: "..."
+stuttgart_password: "..."
+bgg_api_key: "..."
+# vlb_api_key: "..."   # needs an MVB contract
+```
+
+A test whose credential is missing skips rather than fails.
+
+Live checks against the real services are marked `live` and excluded from every
+build. They need credentials in a git-ignored `.secrets.yml`, and each one
+skips rather than fails when its credential is missing:
+
+```sh
+pytest -m live                       # all of them
+pytest -m live tests/integration     # explicit
+```
+
+They exist for the questions unit tests cannot answer — whether the DNB really
+has a price for the books this household borrows, and whether a scraper's idea
+of "logged in" still matches the live OPAC. Both have already caught real bugs
+that fixture-based tests happily passed.

@@ -9,3 +9,9 @@ tmp/
 *.db
 *.db-wal
 *.db-shm
+
+# Local credentials for live tests -- never commit.
+.secrets.yml
+.secrets*
+secrets/
+*.key

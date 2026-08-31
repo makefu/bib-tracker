@@ -59,4 +59,6 @@ ignore_missing_imports = true
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 testpaths = ["tests"]
+# Live tests need the network and real services; opt in with -m live.
+addopts = "-m 'not live'"
 markers = ["live: hits real library or metadata APIs; excluded from the nix build"]

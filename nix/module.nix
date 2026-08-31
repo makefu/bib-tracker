@@ -219,6 +219,7 @@ in
             "dnb"
             "bgg"
             "wikidata"
+            "vlb"
           ]
         );
         default = [
@@ -240,6 +241,39 @@ in
         '';
       };
 
+      priceProviders = lib.mkOption {
+        type = lib.types.listOf (
+          lib.types.enum [
+            "vlb"
+            "dnb"
+            "googlebooks"
+            "openlibrary"
+          ]
+        );
+        default = [
+          "vlb"
+          "dnb"
+          "googlebooks"
+        ];
+        description = ''
+          Which providers may supply a purchase price, most trusted first.
+
+          The VLB is, under the Börsenverein's Verkehrsordnung, the reference
+          database for the gebundener Ladenpreis, and a price recorded there
+          takes precedence over one on a publisher's own site. It needs a
+          contract with MVB, so without one the ladder falls through.
+
+          The DNB carries the price as catalogued in MARC 020 $c, free and with
+          good coverage of German titles. Later price changes or a lifted price
+          binding are not reflected there, which is fine for "what would this
+          have cost" and not a claim about today's price.
+
+          Google Books is the fallback and rarely knows German titles at all.
+
+          A price entered by hand always beats every entry in this list.
+        '';
+      };
+
       apiKeyFiles = lib.mkOption {
         type = lib.types.attrsOf lib.types.path;
         default = { };
@@ -247,6 +281,7 @@ in
           {
             googlebooks = "/run/secrets/google-books-key";
             bgg = "/run/secrets/bgg-token";
+            vlb = "/run/secrets/vlb-token";
           }
         '';
         description = "Credential files per provider, read through systemd's credential store so they never enter the Nix store.";
@@ -330,6 +365,7 @@ in
         BIB_TRACKER_RENEW_THRESHOLD_DAYS = toString cfg.renewThresholdDays;
         BIB_TRACKER_METADATA_ENABLED = lib.boolToString cfg.metadata.enable;
         BIB_TRACKER_METADATA_PROVIDERS = builtins.toJSON cfg.metadata.providers;
+        BIB_TRACKER_PRICE_PROVIDERS = builtins.toJSON cfg.metadata.priceProviders;
         BIB_TRACKER_METADATA_BASE_URLS = builtins.toJSON cfg.metadata.baseUrls;
         BIB_TRACKER_METADATA_RATE_LIMITS = builtins.toJSON cfg.metadata.rateLimits;
         # Credential names, resolved against $CREDENTIALS_DIRECTORY at runtime.

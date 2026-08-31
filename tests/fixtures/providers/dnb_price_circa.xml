@@ -1,0 +1,471 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<searchRetrieveResponse xmlns="http://www.loc.gov/zing/srw/"><version>1.1</version><numberOfRecords>1</numberOfRecords><records><record><recordSchema>MARC21-xml</recordSchema><recordPacking>xml</recordPacking><recordData><record xmlns="http://www.loc.gov/MARC21/slim" type="Bibliographic">
+    <leader>00000pam a2200000 c 4500</leader>
+    <controlfield tag="001">124309981X</controlfield>
+    <controlfield tag="003">DE-101</controlfield>
+    <controlfield tag="005">20220831220106.0</controlfield>
+    <controlfield tag="007">tu</controlfield>
+    <controlfield tag="008">211013s2022    gw ||||| |||| 00||||ger  </controlfield>
+    <datafield tag="015" ind1=" " ind2=" ">
+      <subfield code="a">22,A35</subfield>
+      <subfield code="z">21,N42</subfield>
+      <subfield code="2">dnb</subfield>
+    </datafield>
+    <datafield tag="016" ind1="7" ind2=" ">
+      <subfield code="2">DE-101</subfield>
+      <subfield code="a">124309981X</subfield>
+    </datafield>
+    <datafield tag="020" ind1=" " ind2=" ">
+      <subfield code="a">9783518472392</subfield>
+      <subfield code="c">Broschur : circa EUR 16.00 (DE), circa EUR 16.50 (AT), circa CHF 23.50 (freier Preis)</subfield>
+      <subfield code="9">978-3-518-47239-2</subfield>
+    </datafield>
+    <datafield tag="020" ind1=" " ind2=" ">
+      <subfield code="a">3518472399</subfield>
+      <subfield code="9">3-518-47239-9</subfield>
+    </datafield>
+    <datafield tag="024" ind1="3" ind2=" ">
+      <subfield code="a">9783518472392</subfield>
+    </datafield>
+    <datafield tag="035" ind1=" " ind2=" ">
+      <subfield code="a">(DE-599)DNB124309981X</subfield>
+    </datafield>
+    <datafield tag="035" ind1=" " ind2=" ">
+      <subfield code="a">(OCoLC)1310401128</subfield>
+    </datafield>
+    <datafield tag="040" ind1=" " ind2=" ">
+      <subfield code="a">1145</subfield>
+      <subfield code="b">ger</subfield>
+      <subfield code="c">DE-101</subfield>
+      <subfield code="d">9999</subfield>
+      <subfield code="e">rda</subfield>
+    </datafield>
+    <datafield tag="041" ind1=" " ind2=" ">
+      <subfield code="a">ger</subfield>
+    </datafield>
+    <datafield tag="044" ind1=" " ind2=" ">
+      <subfield code="c">XA-DE-BE</subfield>
+    </datafield>
+    <datafield tag="082" ind1="0" ind2="4">
+      <subfield code="8">3\u</subfield>
+      <subfield code="a">201.68</subfield>
+      <subfield code="q">DE-101</subfield>
+      <subfield code="2">23/ger</subfield>
+    </datafield>
+    <datafield tag="083" ind1="7" ind2=" ">
+      <subfield code="8">4\p</subfield>
+      <subfield code="a">200</subfield>
+      <subfield code="a">230</subfield>
+      <subfield code="a">800</subfield>
+      <subfield code="q">DE-101</subfield>
+      <subfield code="2">23sdnb</subfield>
+    </datafield>
+    <datafield tag="085" ind1=" " ind2=" ">
+      <subfield code="8">3\u</subfield>
+      <subfield code="b">201.6</subfield>
+    </datafield>
+    <datafield tag="085" ind1=" " ind2=" ">
+      <subfield code="8">3\u</subfield>
+      <subfield code="s">800</subfield>
+    </datafield>
+    <datafield tag="100" ind1="1" ind2=" ">
+      <subfield code="8">1\p</subfield>
+      <subfield code="0">(DE-588)118825968</subfield>
+      <subfield code="0">https://d-nb.info/gnd/118825968</subfield>
+      <subfield code="0">(DE-101)118825968</subfield>
+      <subfield code="a">Sloterdijk, Peter</subfield>
+      <subfield code="d">1947-</subfield>
+      <subfield code="e">Verfasser</subfield>
+      <subfield code="4">aut</subfield>
+      <subfield code="2">gnd</subfield>
+    </datafield>
+    <datafield tag="245" ind1="1" ind2="0">
+      <subfield code="a">&#152;Den&#156; Himmel zum Sprechen bringen</subfield>
+      <subfield code="b">über Theopoesie</subfield>
+      <subfield code="c">Peter Sloterdijk</subfield>
+    </datafield>
+    <datafield tag="250" ind1=" " ind2=" ">
+      <subfield code="a">Erste Auflage</subfield>
+    </datafield>
+    <datafield tag="264" ind1=" " ind2="1">
+      <subfield code="a">Berlin</subfield>
+      <subfield code="b">Suhrkamp</subfield>
+      <subfield code="c">2022</subfield>
+    </datafield>
+    <datafield tag="300" ind1=" " ind2=" ">
+      <subfield code="a">344 Seiten</subfield>
+      <subfield code="c">19 cm, 322 g</subfield>
+    </datafield>
+    <datafield tag="336" ind1=" " ind2=" ">
+      <subfield code="a">Text</subfield>
+      <subfield code="b">txt</subfield>
+      <subfield code="2">rdacontent</subfield>
+    </datafield>
+    <datafield tag="337" ind1=" " ind2=" ">
+      <subfield code="a">ohne Hilfsmittel zu benutzen</subfield>
+      <subfield code="b">n</subfield>
+      <subfield code="2">rdamedia</subfield>
+    </datafield>
+    <datafield tag="338" ind1=" " ind2=" ">
+      <subfield code="a">Band</subfield>
+      <subfield code="b">nc</subfield>
+      <subfield code="2">rdacarrier</subfield>
+    </datafield>
+    <datafield tag="490" ind1="1" ind2=" ">
+      <subfield code="a">Suhrkamp Taschenbuch</subfield>
+      <subfield code="v">5239</subfield>
+    </datafield>
+    <datafield tag="648" ind1=" " ind2="7">
+      <subfield code="a">Geschichte</subfield>
+      <subfield code="9">rswk-swf</subfield>
+      <subfield code="2">gnd</subfield>
+    </datafield>
+    <datafield tag="648" ind1=" " ind2="7">
+      <subfield code="a">Geschichte</subfield>
+      <subfield code="9">rswk-swf</subfield>
+      <subfield code="2">gnd</subfield>
+    </datafield>
+    <datafield tag="648" ind1=" " ind2="7">
+      <subfield code="a">Geschichte</subfield>
+      <subfield code="9">rswk-swf</subfield>
+      <subfield code="2">gnd</subfield>
+    </datafield>
+    <datafield tag="650" ind1=" " ind2="7">
+      <subfield code="0">(DE-588)4049396-9</subfield>
+      <subfield code="0">https://d-nb.info/gnd/4049396-9</subfield>
+      <subfield code="0">(DE-101)040493962</subfield>
+      <subfield code="a">Religion</subfield>
+      <subfield code="9">rswk-swf</subfield>
+      <subfield code="2">gnd</subfield>
+    </datafield>
+    <datafield tag="650" ind1=" " ind2="7">
+      <subfield code="0">(DE-588)4046449-0</subfield>
+      <subfield code="0">https://d-nb.info/gnd/4046449-0</subfield>
+      <subfield code="0">(DE-101)040464490</subfield>
+      <subfield code="a">Poetik</subfield>
+      <subfield code="9">rswk-swf</subfield>
+      <subfield code="2">gnd</subfield>
+    </datafield>
+    <datafield tag="650" ind1=" " ind2="7">
+      <subfield code="0">(DE-588)4000626-8</subfield>
+      <subfield code="0">https://d-nb.info/gnd/4000626-8</subfield>
+      <subfield code="0">(DE-101)040006263</subfield>
+      <subfield code="a">Ästhetik</subfield>
+      <subfield code="9">rswk-swf</subfield>
+      <subfield code="2">gnd</subfield>
+    </datafield>
+    <datafield tag="650" ind1=" " ind2="7">
+      <subfield code="0">(DE-588)4049396-9</subfield>
+      <subfield code="0">https://d-nb.info/gnd/4049396-9</subfield>
+      <subfield code="0">(DE-101)040493962</subfield>
+      <subfield code="a">Religion</subfield>
+      <subfield code="9">rswk-swf</subfield>
+      <subfield code="2">gnd</subfield>
+    </datafield>
+    <datafield tag="650" ind1=" " ind2="7">
+      <subfield code="0">(DE-588)4035964-5</subfield>
+      <subfield code="0">https://d-nb.info/gnd/4035964-5</subfield>
+      <subfield code="0">(DE-101)040359646</subfield>
+      <subfield code="a">Literatur</subfield>
+      <subfield code="9">rswk-swf</subfield>
+      <subfield code="2">gnd</subfield>
+    </datafield>
+    <datafield tag="650" ind1=" " ind2="7">
+      <subfield code="0">(DE-588)4059758-1</subfield>
+      <subfield code="0">https://d-nb.info/gnd/4059758-1</subfield>
+      <subfield code="0">(DE-101)04059758X</subfield>
+      <subfield code="a">Theologie</subfield>
+      <subfield code="9">rswk-swf</subfield>
+      <subfield code="2">gnd</subfield>
+    </datafield>
+    <datafield tag="650" ind1=" " ind2="7">
+      <subfield code="0">(DE-588)4046449-0</subfield>
+      <subfield code="0">https://d-nb.info/gnd/4046449-0</subfield>
+      <subfield code="0">(DE-101)040464490</subfield>
+      <subfield code="a">Poetik</subfield>
+      <subfield code="9">rswk-swf</subfield>
+      <subfield code="2">gnd</subfield>
+    </datafield>
+    <datafield tag="650" ind1=" " ind2="7">
+      <subfield code="0">(DE-588)4000626-8</subfield>
+      <subfield code="0">https://d-nb.info/gnd/4000626-8</subfield>
+      <subfield code="0">(DE-101)040006263</subfield>
+      <subfield code="a">Ästhetik</subfield>
+      <subfield code="9">rswk-swf</subfield>
+      <subfield code="2">gnd</subfield>
+    </datafield>
+    <datafield tag="650" ind1=" " ind2="7">
+      <subfield code="0">(DE-588)4130394-5</subfield>
+      <subfield code="0">https://d-nb.info/gnd/4130394-5</subfield>
+      <subfield code="0">(DE-101)041303946</subfield>
+      <subfield code="a">Religiöse Literatur</subfield>
+      <subfield code="9">rswk-swf</subfield>
+      <subfield code="2">gnd</subfield>
+    </datafield>
+    <datafield tag="650" ind1=" " ind2="7">
+      <subfield code="0">(DE-588)4049386-6</subfield>
+      <subfield code="0">https://d-nb.info/gnd/4049386-6</subfield>
+      <subfield code="0">(DE-101)040493865</subfield>
+      <subfield code="a">Religiöse Sprache</subfield>
+      <subfield code="9">rswk-swf</subfield>
+      <subfield code="2">gnd</subfield>
+    </datafield>
+    <datafield tag="650" ind1=" " ind2="7">
+      <subfield code="0">(DE-588)4323423-9</subfield>
+      <subfield code="0">https://d-nb.info/gnd/4323423-9</subfield>
+      <subfield code="0">(DE-101)043234232</subfield>
+      <subfield code="a">Poetologie</subfield>
+      <subfield code="9">rswk-swf</subfield>
+      <subfield code="2">gnd</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">(Produktform)Paperback / softback</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">Theologiegeschichte</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">Philosophie</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">Bestseller</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">Religion</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">Kulturgeschichte</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">Dichtung</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">Mythen</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">Medien</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">Spiegel Bestseller</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">Spiegel Bestsellerliste</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">Theologie</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">Sphären</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">Fake-News</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">Deus ex Machina</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">Narrativ</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">Nach Gott</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">Gottesbilder</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">Medien und Religion</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">Gottesvorstellungen</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">(VLB-WN)2520: Taschenbuch / Philosophie</subfield>
+    </datafield>
+    <datafield tag="653" ind1=" " ind2=" ">
+      <subfield code="a">Fake-News;Theologie;Sphären;Narrativ;Deus ex Machina;Religion;Nach Gott;Dichtung</subfield>
+    </datafield>
+    <datafield tag="689" ind1="0" ind2="0">
+      <subfield code="0">(DE-588)4049396-9</subfield>
+      <subfield code="0">https://d-nb.info/gnd/4049396-9</subfield>
+      <subfield code="0">(DE-101)040493962</subfield>
+      <subfield code="D">s</subfield>
+      <subfield code="a">Religion</subfield>
+    </datafield>
+    <datafield tag="689" ind1="0" ind2="1">
+      <subfield code="0">(DE-588)4046449-0</subfield>
+      <subfield code="0">https://d-nb.info/gnd/4046449-0</subfield>
+      <subfield code="0">(DE-101)040464490</subfield>
+      <subfield code="D">s</subfield>
+      <subfield code="a">Poetik</subfield>
+    </datafield>
+    <datafield tag="689" ind1="0" ind2="2">
+      <subfield code="0">(DE-588)4000626-8</subfield>
+      <subfield code="0">https://d-nb.info/gnd/4000626-8</subfield>
+      <subfield code="0">(DE-101)040006263</subfield>
+      <subfield code="D">s</subfield>
+      <subfield code="a">Ästhetik</subfield>
+    </datafield>
+    <datafield tag="689" ind1="0" ind2="3">
+      <subfield code="A">z</subfield>
+      <subfield code="a">Geschichte</subfield>
+    </datafield>
+    <datafield tag="689" ind1="0" ind2=" ">
+      <subfield code="5">DE-101</subfield>
+      <subfield code="5">DE-101</subfield>
+    </datafield>
+    <datafield tag="689" ind1="1" ind2="0">
+      <subfield code="0">(DE-588)4049396-9</subfield>
+      <subfield code="0">https://d-nb.info/gnd/4049396-9</subfield>
+      <subfield code="0">(DE-101)040493962</subfield>
+      <subfield code="D">s</subfield>
+      <subfield code="a">Religion</subfield>
+    </datafield>
+    <datafield tag="689" ind1="1" ind2="1">
+      <subfield code="0">(DE-588)4035964-5</subfield>
+      <subfield code="0">https://d-nb.info/gnd/4035964-5</subfield>
+      <subfield code="0">(DE-101)040359646</subfield>
+      <subfield code="D">s</subfield>
+      <subfield code="a">Literatur</subfield>
+    </datafield>
+    <datafield tag="689" ind1="1" ind2="2">
+      <subfield code="A">z</subfield>
+      <subfield code="a">Geschichte</subfield>
+    </datafield>
+    <datafield tag="689" ind1="1" ind2=" ">
+      <subfield code="5">DE-101</subfield>
+      <subfield code="5">DE-101</subfield>
+    </datafield>
+    <datafield tag="689" ind1="2" ind2="0">
+      <subfield code="0">(DE-588)4059758-1</subfield>
+      <subfield code="0">https://d-nb.info/gnd/4059758-1</subfield>
+      <subfield code="0">(DE-101)04059758X</subfield>
+      <subfield code="D">s</subfield>
+      <subfield code="a">Theologie</subfield>
+    </datafield>
+    <datafield tag="689" ind1="2" ind2="1">
+      <subfield code="0">(DE-588)4046449-0</subfield>
+      <subfield code="0">https://d-nb.info/gnd/4046449-0</subfield>
+      <subfield code="0">(DE-101)040464490</subfield>
+      <subfield code="D">s</subfield>
+      <subfield code="a">Poetik</subfield>
+    </datafield>
+    <datafield tag="689" ind1="2" ind2="2">
+      <subfield code="0">(DE-588)4000626-8</subfield>
+      <subfield code="0">https://d-nb.info/gnd/4000626-8</subfield>
+      <subfield code="0">(DE-101)040006263</subfield>
+      <subfield code="D">s</subfield>
+      <subfield code="a">Ästhetik</subfield>
+    </datafield>
+    <datafield tag="689" ind1="2" ind2="3">
+      <subfield code="A">z</subfield>
+      <subfield code="a">Geschichte</subfield>
+    </datafield>
+    <datafield tag="689" ind1="2" ind2=" ">
+      <subfield code="5">DE-101</subfield>
+      <subfield code="5">DE-101</subfield>
+    </datafield>
+    <datafield tag="689" ind1="3" ind2="0">
+      <subfield code="0">(DE-588)4130394-5</subfield>
+      <subfield code="0">https://d-nb.info/gnd/4130394-5</subfield>
+      <subfield code="0">(DE-101)041303946</subfield>
+      <subfield code="D">s</subfield>
+      <subfield code="a">Religiöse Literatur</subfield>
+    </datafield>
+    <datafield tag="689" ind1="3" ind2="1">
+      <subfield code="0">(DE-588)4049386-6</subfield>
+      <subfield code="0">https://d-nb.info/gnd/4049386-6</subfield>
+      <subfield code="0">(DE-101)040493865</subfield>
+      <subfield code="D">s</subfield>
+      <subfield code="a">Religiöse Sprache</subfield>
+    </datafield>
+    <datafield tag="689" ind1="3" ind2="2">
+      <subfield code="0">(DE-588)4323423-9</subfield>
+      <subfield code="0">https://d-nb.info/gnd/4323423-9</subfield>
+      <subfield code="0">(DE-101)043234232</subfield>
+      <subfield code="D">s</subfield>
+      <subfield code="a">Poetologie</subfield>
+    </datafield>
+    <datafield tag="689" ind1="3" ind2=" ">
+      <subfield code="5">DE-101</subfield>
+      <subfield code="5">DE-101</subfield>
+    </datafield>
+    <datafield tag="710" ind1="2" ind2=" ">
+      <subfield code="8">2\p</subfield>
+      <subfield code="0">(DE-588)300755-8</subfield>
+      <subfield code="0">https://d-nb.info/gnd/300755-8</subfield>
+      <subfield code="0">(DE-101)003007553</subfield>
+      <subfield code="a">Suhrkamp Verlag</subfield>
+      <subfield code="e">Verlag</subfield>
+      <subfield code="4">pbl</subfield>
+      <subfield code="2">gnd</subfield>
+    </datafield>
+    <datafield tag="776" ind1="0" ind2="8">
+      <subfield code="i">Erscheint auch als</subfield>
+      <subfield code="z">9783518429334</subfield>
+    </datafield>
+    <datafield tag="776" ind1="0" ind2="8">
+      <subfield code="i">Erscheint auch als</subfield>
+      <subfield code="z">9783518764787</subfield>
+    </datafield>
+    <datafield tag="830" ind1=" " ind2="0">
+      <subfield code="a">Suhrkamp Taschenbuch</subfield>
+      <subfield code="v">5239</subfield>
+      <subfield code="w">(DE-101)015103463</subfield>
+      <subfield code="w">(DE-600)968207-7</subfield>
+      <subfield code="9">45239</subfield>
+      <subfield code="7">as</subfield>
+    </datafield>
+    <datafield tag="850" ind1=" " ind2=" ">
+      <subfield code="a">DE-101a</subfield>
+      <subfield code="a">DE-101b</subfield>
+    </datafield>
+    <datafield tag="856" ind1="4" ind2="2">
+      <subfield code="m">X:MVB</subfield>
+      <subfield code="q">text/html</subfield>
+      <subfield code="u">https://services.dnb.de/plus/idn/124309981X/blurb/</subfield>
+      <subfield code="3">Inhaltstext</subfield>
+    </datafield>
+    <datafield tag="856" ind1="4" ind2="2">
+      <subfield code="m">X:MVB</subfield>
+      <subfield code="q">text/html</subfield>
+      <subfield code="u">http://deposit.dnb.de/cgi-bin/dokserv?id=e5fa14948c1b43469338d257e707f6e4&amp;prov=M&amp;dok_var=1&amp;dok_ext=htm</subfield>
+      <subfield code="3">Inhaltstext</subfield>
+    </datafield>
+    <datafield tag="856" ind1="4" ind2="2">
+      <subfield code="m">B:DE-101</subfield>
+      <subfield code="q">application/pdf</subfield>
+      <subfield code="u">https://d-nb.info/124309981X/04</subfield>
+      <subfield code="3">Inhaltsverzeichnis</subfield>
+    </datafield>
+    <datafield tag="883" ind1="2" ind2=" ">
+      <subfield code="8">1\p</subfield>
+      <subfield code="a">dnb</subfield>
+      <subfield code="d">20220822</subfield>
+      <subfield code="q">DE-101</subfield>
+      <subfield code="u">https://d-nb.info/provenance/plan#dnb</subfield>
+    </datafield>
+    <datafield tag="883" ind1="1" ind2=" ">
+      <subfield code="8">2\p</subfield>
+      <subfield code="a">adb</subfield>
+      <subfield code="d">20211013</subfield>
+      <subfield code="q">DE-101</subfield>
+      <subfield code="u">https://d-nb.info/provenance/plan#adb</subfield>
+    </datafield>
+    <datafield tag="883" ind1="2" ind2=" ">
+      <subfield code="8">4\p</subfield>
+      <subfield code="a">dnb</subfield>
+      <subfield code="d">20220823</subfield>
+      <subfield code="q">DE-101</subfield>
+      <subfield code="u">https://d-nb.info/provenance/plan#dnb</subfield>
+    </datafield>
+    <datafield tag="925" ind1="r" ind2=" ">
+      <subfield code="a">ra</subfield>
+    </datafield>
+    <datafield tag="926" ind1="1" ind2=" ">
+      <subfield code="a">QD</subfield>
+      <subfield code="o">93</subfield>
+      <subfield code="q">Publisher</subfield>
+      <subfield code="v">1.4</subfield>
+      <subfield code="x">Philosophie</subfield>
+    </datafield>
+  </record></recordData><recordPosition>1</recordPosition></record></records><echoedSearchRetrieveRequest><version>1.1</version><query>NUM=9783518472392</query><xQuery xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/><maximumRecords>1</maximumRecords><recordSchema>MARC21-xml</recordSchema></echoedSearchRetrieveRequest></searchRetrieveResponse>

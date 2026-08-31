@@ -43,6 +43,39 @@
 
       nixosModules.default = import ./nix/module.nix;
 
+      apps = forAllSystems (pkgs: {
+        # Live checks against the real libraries and metadata services. Run
+        # from the source tree, since they are about this working copy rather
+        # than about a built package. Credentials come from a git-ignored
+        # .secrets.yml.
+        integration = {
+          type = "app";
+          program = "${pkgs.writeShellScript "bib-tracker-integration" ''
+            export PYTHONPATH="$PWD/src''${PYTHONPATH:+:$PYTHONPATH}"
+            exec ${
+              pkgs.python313.withPackages (ps: [
+                ps.pytest
+                ps.pytest-asyncio
+                ps.respx
+                ps.freezegun
+                ps.asgi-lifespan
+                ps.fastapi
+                ps.uvicorn
+                ps.jinja2
+                ps.httpx
+                ps.apscheduler
+                ps.pydantic
+                ps.pydantic-settings
+                ps.python-multipart
+                ps.pillow
+                ps.structlog
+                ps.ha-stadtbibliothek
+              ])
+            }/bin/pytest -m live -v tests/integration "$@"
+          ''}";
+        };
+      });
+
       devShells = forAllSystems (pkgs: {
         default = pkgs.mkShell {
           packages = [

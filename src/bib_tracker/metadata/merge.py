@@ -24,9 +24,13 @@ FIELD_PRECEDENCE: dict[str, tuple[str, ...]] = {
     "page_count": ("googlebooks", "openlibrary", "dnb"),
     "description": ("googlebooks", "openlibrary", "bgg", "wikidata"),
     "cover_source_url": ("openlibrary", "googlebooks", "bgg", "wikidata"),
-    # Only Google publishes a list price at all.
-    "list_price_cents": ("googlebooks",),
-    "list_price_currency": ("googlebooks",),
+    # Order mirrors the default price preference: the VLB is the reference
+    # database for the bound retail price, the DNB has it as catalogued, and
+    # Google Books rarely knows German titles at all. The effective price is
+    # chosen by pricing.preferred_provider_price(), which honours the user's
+    # configured order; this is only the fallback for a merged record.
+    "list_price_cents": ("vlb", "dnb", "googlebooks"),
+    "list_price_currency": ("vlb", "dnb", "googlebooks"),
 }
 
 MERGED_FIELDS = tuple(FIELD_PRECEDENCE)

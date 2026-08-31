@@ -106,6 +106,11 @@ class Settings(BaseSettings):
     #: anonymously only until its per-address quota runs out, and BoardGameGeek
     #: refuses anonymous requests outright, so both are off unless configured.
     metadata_providers: list[str] = Field(default_factory=lambda: ["openlibrary", "dnb", "wikidata"])
+    #: Which providers may supply a purchase price, in order of preference.
+    #: The VLB is the reference database for the gebundener Ladenpreis but
+    #: needs a contract; the DNB has the price as catalogued, free; Google
+    #: Books is the fallback and rarely knows German titles.
+    price_providers: list[str] = Field(default_factory=lambda: ["vlb", "dnb", "googlebooks"])
     metadata_base_urls: dict[str, str] = Field(default_factory=dict)
     #: Per-provider credential files, keyed by provider name.
     metadata_api_key_files: dict[str, Path] = Field(default_factory=dict)
@@ -119,6 +124,7 @@ class Settings(BaseSettings):
 
     @field_validator(
         "metadata_providers",
+        "price_providers",
         "metadata_base_urls",
         "metadata_api_key_files",
         "metadata_rate_limits",

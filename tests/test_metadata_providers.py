@@ -285,3 +285,17 @@ def test_every_registered_provider_declares_what_it_supports() -> None:
     for name, factory in PROVIDER_FACTORIES.items():
         assert factory.name == name
         assert factory.supports, f"{name} supports no media class"
+
+
+@respx.mock
+async def test_dnb_fetches_by_its_own_record_number(http) -> None:
+    """search() returns the DNB's IDN, so fetch() has to look up that index --
+    NID, which reads plausibly, matches nothing at all."""
+    route = respx.get("http://meta.test").mock(return_value=httpx.Response(200, text=payload("dnb_sru.xml")))
+    provider = _provider("dnb", http)
+
+    await provider.fetch("1374532193")
+
+    assert route.called
+    query = dict(route.calls[0].request.url.params)
+    assert query["query"] == "IDN=1374532193"

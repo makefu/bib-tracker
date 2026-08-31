@@ -23,6 +23,7 @@ from .bgg import BoardGameGeekProvider
 from .dnb import DnbProvider
 from .googlebooks import GoogleBooksProvider
 from .openlibrary import OpenLibraryProvider
+from .vlb import VlbProvider
 from .wikidata import WikidataProvider
 
 PROVIDER_FACTORIES: dict[str, Callable[[ProviderConfig, Any], BaseProvider]] = {
@@ -31,6 +32,7 @@ PROVIDER_FACTORIES: dict[str, Callable[[ProviderConfig, Any], BaseProvider]] = {
     DnbProvider.name: DnbProvider,
     BoardGameGeekProvider.name: BoardGameGeekProvider,
     WikidataProvider.name: WikidataProvider,
+    VlbProvider.name: VlbProvider,
 }
 
 
@@ -60,6 +62,7 @@ __all__ = [
     "ProviderConfig",
     "ProviderRecord",
     "ProviderStatus",
+    "VlbProvider",
     "WikidataProvider",
     "available_providers",
     "build_provider",

@@ -44,7 +44,12 @@ async def resolve_price(
     media_class: str,
     provider_price_cents: int | None = None,
 ) -> Price:
-    """Pick the best price available, and record where it came from."""
+    """Pick the best price available, and record where it came from.
+
+    A price you entered always wins: you can see the book, and no database
+    outranks that. Then the configured price providers in their configured
+    order. Then the media-class default, which is a guess and says so.
+    """
     manual = await db.fetch_one(
         "SELECT price_cents FROM price_estimates WHERE media_id = ? AND source = 'manual'",
         (media_id,),
@@ -55,15 +60,35 @@ async def resolve_price(
     if provider_price_cents is not None:
         return Price(provider_price_cents, PriceBasis.PROVIDER)
 
-    stored = await db.fetch_one(
-        "SELECT price_cents FROM price_estimates WHERE media_id = ? AND source != 'manual'"
-        " ORDER BY CASE source WHEN 'default_by_class' THEN 1 ELSE 0 END LIMIT 1",
-        (media_id,),
-    )
+    stored = await preferred_provider_price(db, settings, media_id)
     if stored is not None:
-        return Price(int(stored["price_cents"]), PriceBasis.PROVIDER)
+        return stored
 
     return Price(settings.default_price_cents(media_class), PriceBasis.DEFAULT)
+
+
+async def preferred_provider_price(db: Database, settings: Settings, media_id: int) -> Price | None:
+    """The best stored provider price, honouring the configured order."""
+    rows = await db.fetch_all(
+        "SELECT provider, list_price_cents, list_price_currency FROM metadata_records"
+        " WHERE media_id = ? AND list_price_cents IS NOT NULL AND status = 'ok'",
+        (media_id,),
+    )
+    by_provider = {row["provider"]: row for row in rows}
+
+    for provider in settings.price_providers:
+        row = by_provider.get(provider)
+        if row is not None:
+            return Price(
+                int(row["list_price_cents"]),
+                PriceBasis.PROVIDER,
+                row["list_price_currency"] or "EUR",
+            )
+
+    # A provider that is not in the preference list still beats a pure guess.
+    for row in rows:
+        return Price(int(row["list_price_cents"]), PriceBasis.PROVIDER, row["list_price_currency"] or "EUR")
+    return None
 
 
 async def store_price(

@@ -43,7 +43,9 @@ class DnbProvider(BaseProvider):
         ]
 
     async def fetch(self, external_id: str) -> ProviderRecord | None:
-        records = await self._search(f"NID={external_id}", limit=1)
+        # IDN is the index for the DNB's own record number, which is what
+        # search() hands back as the external id. NID matches nothing.
+        records = await self._search(f"IDN={external_id}", limit=1)
         if records:
             return records[0]
         return ProviderRecord(provider=self.name, external_id=external_id, status=ProviderStatus.NOT_FOUND)
@@ -90,10 +92,14 @@ def _from_marc(marc: ElementTree.Element, provider: str) -> ProviderRecord | Non
     if title and subtitle:
         title = f"{title}: {subtitle}"
 
+    price_cents, price_note = _price(marc)
+
     return ProviderRecord(
         provider=provider,
         external_id=identifier,
         external_url=f"https://d-nb.info/{identifier}",
+        list_price_cents=price_cents,
+        list_price_currency="EUR" if price_cents is not None else None,
         title=_clean(title),
         authors=_authors(marc),
         isbn13=_isbn13(marc),
@@ -101,7 +107,7 @@ def _from_marc(marc: ElementTree.Element, provider: str) -> ProviderRecord | Non
         publisher=_clean(_subfield(marc, "264", "b") or _subfield(marc, "260", "b")),
         page_count=_pages(_subfield(marc, "300", "a")),
         language=_subfield(marc, "041", "a"),
-        payload={"id": identifier},
+        payload={"id": identifier, "price_note": price_note},
     )
 
 
@@ -116,6 +122,36 @@ def _authors(marc: ElementTree.Element) -> list[str]:
         if name and name not in found:
             found.append(name)
     return found
+
+
+#: "Festeinband : EUR 19.99 (DE), EUR 20.60 (AT)" and, for titles whose price
+#: is only a recommendation, "Broschur : circa EUR 16.00 (DE)".
+_PRICE_DE = re.compile(r"(circa\s+)?EUR\s*(\d+[.,]\d{2})\s*\(DE\)", re.IGNORECASE)
+#: Some records give a bare figure with no country qualifier.
+_PRICE_ANY = re.compile(r"(circa\s+)?EUR\s*(\d+[.,]\d{2})", re.IGNORECASE)
+
+
+def _price(marc: ElementTree.Element) -> tuple[int | None, str | None]:
+    """Extract the German retail price from MARC 020 $c.
+
+    Returns the amount in cents and a note when the record marks it as
+    approximate. This is the price as catalogued, so a later change or a
+    lifted price binding is not reflected -- fine for "what would this have
+    cost", not a statement about today's price.
+    """
+    for field in marc.iter(f"{{{MARC_NS['marc']}}}datafield"):
+        if field.get("tag") != "020":
+            continue
+        for sub in field.iter(f"{{{MARC_NS['marc']}}}subfield"):
+            if sub.get("code") != "c" or not sub.text:
+                continue
+            match = _PRICE_DE.search(sub.text) or _PRICE_ANY.search(sub.text)
+            if match is None:
+                continue
+            cents = round(float(match.group(2).replace(",", ".")) * 100)
+            note = "circa" if match.group(1) else None
+            return cents, note
+    return None, None
 
 
 def _controlfield(marc: ElementTree.Element, tag: str) -> str | None:

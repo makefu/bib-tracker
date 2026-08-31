@@ -23,7 +23,7 @@ from .covers import store_cover
 from .http import CachedClient
 from .matcher import choose
 from .merge import merge_records
-from .pricing import Price, PriceBasis, store_price
+from .pricing import preferred_provider_price, store_price
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -285,14 +285,13 @@ class EnrichmentWorker:
 
             await self._write_media(media_id, merged, state)
 
-            price_cents = merged.get("list_price_cents")
-            if price_cents is not None:
-                await store_price(
-                    self._db,
-                    media_id,
-                    Price(int(price_cents), PriceBasis.PROVIDER, merged.get("list_price_currency") or "EUR"),
-                    source="googlebooks",
-                )
+            # Prices follow their own preference order, not the general
+            # merge precedence: which source is authoritative for a German
+            # retail price is a different question from who has the best
+            # description.
+            price = await preferred_provider_price(self._db, self._settings, media_id)
+            if price is not None:
+                await store_price(self._db, media_id, price, source="provider")
 
             cover_url = merged.get("cover_source_url")
             if cover_url:
