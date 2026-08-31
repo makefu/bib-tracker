@@ -1,0 +1,55 @@
+{#
+  A native radio group: arrow-key navigation, focus handling and screen-reader
+  labelling all come free, which a div-based star widget has to reimplement
+  badly. Alpine only fills the stars optimistically; the server's answer wins.
+#}
+<form
+  class="rating"
+  hx-post="/api/media/{{ media.id }}/rating"
+  hx-trigger="change"
+  hx-target="closest .rating"
+  hx-swap="outerHTML"
+  hx-disabled-elt="this"
+  x-data="{ value: {{ media.rating or 0 }}, hover: 0, saved: false }"
+  x-on:htmx:after-request="saved = true; setTimeout(() => saved = false, 1600)"
+  x-on:htmx:response-error="value = {{ media.rating or 0 }}"
+>
+  <fieldset class="rating__stars">
+    <legend class="sr-only">Deine Bewertung für {{ media.title }}</legend>
+    {% for n in range(1, 6) %}
+      <input
+        class="sr-only"
+        type="radio"
+        name="rating"
+        id="r{{ media.id }}-{{ n }}"
+        value="{{ n }}"
+        {% if media.rating == n %}checked{% endif %}
+        x-on:click="value = {{ n }}"
+      />
+      <label
+        class="star"
+        for="r{{ media.id }}-{{ n }}"
+        x-on:mouseenter="hover = {{ n }}"
+        x-on:mouseleave="hover = 0"
+        :class="{ 'is-on': (hover || value) >= {{ n }} }"
+      >
+        <span aria-hidden="true">★</span>
+        <span class="sr-only">{{ n }} von 5 Sternen</span>
+      </label>
+    {% endfor %}
+  </fieldset>
+
+  <button
+    class="btn btn--ghost rating__clear"
+    type="submit"
+    name="rating"
+    value="0"
+    x-show="value > 0"
+    x-cloak
+    title="Bewertung entfernen"
+  >
+    ✕<span class="sr-only">Bewertung entfernen</span>
+  </button>
+
+  <span class="rating__saved faint" x-show="saved" x-cloak role="status">gespeichert</span>
+</form>

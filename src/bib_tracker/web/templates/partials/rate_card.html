@@ -1,0 +1,50 @@
+{% if media %}
+  <div class="card stack" style="max-width: 34rem">
+    <div class="row">
+      <span class="badge" data-mt="{{ media.media_class }}">
+        <span aria-hidden="true">{{ media.media_class | media_icon }}</span>
+        {{ media.media_class | media_label }}
+      </span>
+      <span class="muted">{{ media.account }}</span>
+    </div>
+
+    <div>
+      <h2><a href="/media/{{ media.id }}">{{ media.title }}</a></h2>
+      {% if media.author %}<p class="muted" style="margin: 0">{{ media.author }}</p>{% endif %}
+    </div>
+
+    <p class="muted" style="margin: 0">
+      {{ media.lend_date | de_date_short }} – {{ media.return_date | de_date_short }}
+      · {{ media.duration_days | duration_de }}
+    </p>
+
+    <div class="rating--lg" x-ref="stars">{% include "partials/rating.html" %}</div>
+
+    <div class="row">
+      <button
+        class="btn"
+        x-ref="skip"
+        hx-get="/rate/next?after={{ media.id }}"
+        hx-target="#rate-card"
+        hx-swap="innerHTML"
+      >
+        Überspringen <span class="faint">(N)</span>
+      </button>
+      <button
+        class="btn btn--ghost"
+        hx-post="/api/media/{{ media.id }}/dismiss"
+        hx-target="#rate-card"
+        hx-swap="innerHTML"
+      >
+        Nie fragen
+      </button>
+      <span class="faint" style="margin-left: auto">Tasten 1–5</span>
+    </div>
+  </div>
+{% else %}
+  <div class="card empty">
+    <p><strong>Alles bewertet.</strong></p>
+    <p class="muted">Zurückgegebene Titel tauchen hier auf, sobald sie zurück sind.</p>
+    <a class="btn" href="/history?state=returned">Verlauf ansehen</a>
+  </div>
+{% endif %}

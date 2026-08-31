@@ -39,9 +39,18 @@ async def _counts(db: Database) -> dict[str, int]:
         "SELECT COUNT(*) AS n FROM poll_runs WHERE status NOT IN ('success', 'running')"
         " AND started_at >= datetime('now', '-7 day')"
     )
+    unrated = await db.fetch_one(
+        """
+        SELECT COUNT(DISTINCT l.media_id) AS n
+        FROM loans l LEFT JOIN ratings r ON r.media_id = l.media_id
+        WHERE l.state = 'returned' AND r.rating IS NULL AND r.dismissed_at IS NULL
+              AND l.return_date >= date('now', '-90 day')
+        """
+    )
     return {
         "open_loans": int(open_loans["n"]) if open_loans else 0,
         "failed_runs": int(failed["n"]) if failed else 0,
+        "unrated": int(unrated["n"]) if unrated else 0,
     }
 
 
@@ -268,7 +277,14 @@ async def runs(request: Request) -> HTMLResponse:
 @router.get("/media/{media_id}", response_class=HTMLResponse)
 async def media_detail(request: Request, media_id: int) -> HTMLResponse:
     db = _db(request)
-    media = await db.fetch_one("SELECT * FROM media WHERE id = ?", (media_id,))
+    media = await db.fetch_one(
+        """
+        SELECT m.*, r.rating, r.review, r.favourite, r.abandoned
+        FROM media m LEFT JOIN ratings r ON r.media_id = m.id
+        WHERE m.id = ?
+        """,
+        (media_id,),
+    )
     if media is None:
         raise HTTPException(status_code=404, detail="Unbekanntes Werk")
 
@@ -284,6 +300,56 @@ async def media_detail(request: Request, media_id: int) -> HTMLResponse:
     context = await _shell(request, "/history")
     context |= {"media": dict(media), "loans": [dict(row) for row in rows]}
     return render(request, "pages/media.html", None, context)
+
+
+async def _unrated(db: Database, after: int | None = None) -> tuple[dict[str, Any] | None, int]:
+    """The next returned-but-unrated work, and how many are waiting.
+
+    Recent returns only: being asked about something taken back nine months
+    ago is not a prompt anyone answers usefully.
+    """
+    exclude = "AND m.id != ?" if after is not None else ""
+    args: list[Any] = [after] if after is not None else []
+
+    rows = await db.fetch_all(
+        f"""
+        SELECT m.id, m.title, m.author, m.media_class,
+               a.name AS account, d.eff_lend_date AS lend_date,
+               d.eff_return_date AS return_date, d.days_held AS duration_days
+        FROM v_loan_durations d
+        JOIN media m ON m.id = d.media_id
+        JOIN loans l ON l.id = d.id
+        JOIN accounts a ON a.id = l.account_id
+        LEFT JOIN ratings r ON r.media_id = m.id
+        WHERE d.state = 'returned'
+          AND r.rating IS NULL
+          AND (r.dismissed_at IS NULL)
+          AND d.eff_return_date >= date('now', '-90 day')
+          {exclude}
+        ORDER BY d.eff_return_date DESC
+        """,
+        args,
+    )
+    seen: dict[int, dict[str, Any]] = {}
+    for row in rows:
+        seen.setdefault(row["id"], dict(row))
+    queue = list(seen.values())
+    return (queue[0] if queue else None), len(queue)
+
+
+@router.get("/rate", response_class=HTMLResponse)
+async def rate(request: Request) -> HTMLResponse:
+    media, remaining = await _unrated(_db(request))
+    context = await _shell(request, "/rate")
+    context |= {"media": media, "remaining": remaining}
+    return render(request, "pages/rate.html", None, context)
+
+
+@router.get("/rate/next", response_class=HTMLResponse)
+async def rate_next(request: Request, after: int | None = None) -> HTMLResponse:
+    media, remaining = await _unrated(_db(request), after)
+    context = {"media": media, "remaining": remaining}
+    return render(request, "partials/rate_card.html", "partials/rate_card.html", context)
 
 
 @router.get("/partials/poll-status", response_class=HTMLResponse)

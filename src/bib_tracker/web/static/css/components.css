@@ -422,3 +422,81 @@
   background: var(--surface-3);
   color: var(--text);
 }
+
+/* -- rating ----------------------------------------------------------------- */
+.rating {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.rating__stars {
+  display: inline-flex;
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.star {
+  /* Comfortably tappable even at the small size used in list rows. */
+  display: grid;
+  place-items: center;
+  min-width: 1.6rem;
+  min-height: 1.6rem;
+  color: var(--n-300);
+  cursor: pointer;
+  line-height: 1;
+  transition: color var(--dur) var(--ease);
+}
+
+.star.is-on {
+  color: var(--a-500);
+}
+
+.rating__stars:has(input:focus-visible) {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: var(--r-sm);
+}
+
+.rating--lg .star {
+  min-width: 2.2rem;
+  min-height: 2.2rem;
+  font-size: 1.6rem;
+}
+
+.rating__saved {
+  font-size: var(--fs-xs);
+}
+
+[x-cloak] {
+  display: none !important;
+}
+
+/* -- external ratings ------------------------------------------------------- */
+.ratings-list {
+  display: grid;
+  gap: var(--sp-2);
+}
+
+.ratings-list__row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-3);
+  font-size: var(--fs-sm);
+}
+
+.ratings-list__source {
+  color: var(--text-muted);
+  min-width: 8rem;
+}
+
+.ratings-list__value {
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+}
+
+.ratings-list__count {
+  color: var(--text-faint);
+  font-size: var(--fs-xs);
+}

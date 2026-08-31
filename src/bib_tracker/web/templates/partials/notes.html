@@ -1,0 +1,20 @@
+<form
+  id="notes"
+  hx-post="/api/media/{{ media.id }}/notes"
+  hx-trigger="keyup changed delay:800ms from:textarea, blur from:textarea"
+  hx-target="#notes"
+  hx-swap="outerHTML"
+  x-data="{ saved: false }"
+  x-on:htmx:after-request="saved = true; setTimeout(() => saved = false, 1600)"
+>
+  <label class="sr-only" for="review-{{ media.id }}">Notiz</label>
+  <textarea
+    class="field"
+    id="review-{{ media.id }}"
+    name="review"
+    rows="3"
+    style="width: 100%; padding: var(--sp-2) var(--sp-3); min-height: 5rem"
+    placeholder="Notiz (nur für dich)"
+  >{{ media.review or '' }}</textarea>
+  <span class="faint" x-show="saved" x-cloak role="status">gespeichert</span>
+</form>

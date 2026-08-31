@@ -7,7 +7,7 @@
     <h1>{{ media.title }}</h1>
   </div>
 
-  <div class="card" style="margin-bottom: var(--sp-4)">
+  <div class="card stack" style="margin-bottom: var(--sp-4)">
     <div class="row">
       <span class="badge" data-mt="{{ media.media_class }}">
         <span aria-hidden="true">{{ media.media_class | media_icon }}</span>
@@ -17,6 +17,13 @@
       {% if media.publisher %}<span class="faint">{{ media.publisher }}</span>{% endif %}
       {% if media.isbn13 %}<span class="faint nums">ISBN {{ media.isbn13 }}</span>{% endif %}
     </div>
+
+    <div class="row">
+      <span class="muted">Deine Bewertung</span>
+      <div class="rating--lg">{% include "partials/rating.html" %}</div>
+    </div>
+
+    {% include "partials/notes.html" %}
   </div>
 
   <div class="card">

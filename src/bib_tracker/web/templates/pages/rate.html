@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Bewerten · bib-tracker{% endblock %}
+
+{% block content %}
+  <div class="page-head">
+    <h1>Bewerten</h1>
+    <span class="muted">{{ remaining }} offen</span>
+  </div>
+
+  {#
+    One card at a time with number-key shortcuts: rating a stack of returns is
+    a repetitive job, and a list of twenty widgets invites rating none of them.
+  #}
+  <div
+    id="rate-card"
+    x-data="{ shortcuts: true }"
+    @keydown.window="
+      if (!shortcuts || ['INPUT','TEXTAREA'].includes($event.target.tagName)) return;
+      const n = parseInt($event.key, 10);
+      if (n >= 1 && n <= 5) { $refs.stars?.querySelector(`input[value='${n}']`)?.click(); }
+      if ($event.key === 'n') { $refs.skip?.click(); }
+    "
+  >
+    {% include "partials/rate_card.html" %}
+  </div>
+{% endblock %}

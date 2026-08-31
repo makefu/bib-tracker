@@ -9,12 +9,13 @@ from __future__ import annotations
 from typing import Any
 
 from fastapi import APIRouter, HTTPException, Request
-from fastapi.responses import JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 
 from ...db import queries
 from ...db.connection import Database
 from ...library.reconcile import apply_overrides
 from ...services import PollInProgressError, PollService
+from ..render import render
 
 router = APIRouter(prefix="/api")
 
@@ -185,6 +186,83 @@ async def poll_account(request: Request, name: str) -> JSONResponse:
 async def poll_all(request: Request) -> JSONResponse:
     service = _service(request)
     return JSONResponse({"runs": await service.poll_all(trigger="manual")}, status_code=202)
+
+
+@router.post("/media/{media_id}/rating", response_class=HTMLResponse)
+async def rate_media(request: Request, media_id: int) -> HTMLResponse:
+    """Set or clear your own rating. Returns the widget, for an HTMX swap."""
+    db = _db(request)
+    form = await request.form()
+    raw = form.get("rating")
+    try:
+        value = int(str(raw))
+    except (TypeError, ValueError):
+        raise HTTPException(status_code=400, detail="rating must be a number") from None
+    if value and not 1 <= value <= 5:
+        raise HTTPException(status_code=400, detail="rating must be between 1 and 5")
+
+    media = await db.fetch_one("SELECT id, title FROM media WHERE id = ?", (media_id,))
+    if media is None:
+        raise HTTPException(status_code=404, detail=f"No media {media_id}")
+
+    async with db.write() as w:
+        if value == 0:
+            await w.execute(
+                "UPDATE ratings SET rating = NULL, updated_at = datetime('now') WHERE media_id = ?",
+                (media_id,),
+            )
+        else:
+            await w.execute(
+                """
+                INSERT INTO ratings (media_id, rating) VALUES (?, ?)
+                ON CONFLICT (media_id) DO UPDATE SET
+                    rating = excluded.rating, updated_at = datetime('now')
+                """,
+                (media_id, value),
+            )
+
+    context = {"media": {"id": media_id, "title": media["title"], "rating": value or None}}
+    return render(request, "partials/rating.html", "partials/rating.html", context)
+
+
+@router.post("/media/{media_id}/notes", response_class=HTMLResponse)
+async def set_notes(request: Request, media_id: int) -> HTMLResponse:
+    db = _db(request)
+    form = await request.form()
+    review = str(form.get("review") or "").strip() or None
+
+    async with db.write() as w:
+        await w.execute(
+            """
+            INSERT INTO ratings (media_id, review) VALUES (?, ?)
+            ON CONFLICT (media_id) DO UPDATE SET
+                review = excluded.review, updated_at = datetime('now')
+            """,
+            (media_id, review),
+        )
+
+    return render(request, "partials/notes.html", "partials/notes.html", {"media": {"id": media_id, "review": review}})
+
+
+@router.post("/media/{media_id}/dismiss", response_class=HTMLResponse)
+async def dismiss_media(request: Request, media_id: int) -> HTMLResponse:
+    """Stop asking about this one."""
+    db = _db(request)
+    async with db.write() as w:
+        await w.execute(
+            """
+            INSERT INTO ratings (media_id, dismissed_at) VALUES (?, datetime('now'))
+            ON CONFLICT (media_id) DO UPDATE SET dismissed_at = datetime('now')
+            """,
+            (media_id,),
+        )
+
+    from .pages import _unrated
+
+    media, remaining = await _unrated(db)
+    return render(
+        request, "partials/rate_card.html", "partials/rate_card.html", {"media": media, "remaining": remaining}
+    )
 
 
 @router.get("/accounts")
