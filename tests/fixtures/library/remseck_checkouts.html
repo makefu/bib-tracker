@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<!-- TEMPLATE FILE: opac-user.tt -->
+<html lang="de-DE" class="no-js">
+<head>
+<title>Ihr Benutzerkonto &rsaquo; Mediathek Remseck - Katalog</title>
+</head>
+<body>
+<div id="wrapper">
+  <div id="i18nMenu">
+    <ul id="members">
+      <li><a href="/cgi-bin/koha/opac-user.pl">Ihr Benutzerkonto</a></li>
+    </ul>
+  </div>
+  <div id="opac-user" class="container-fluid">
+    <div id="useraccount" class="row">
+      <div class="col">
+        <h2>Willkommen in Ihrem Benutzerkonto, Max Mustermann</h2>
+
+        <div id="opac-user-checkouts" class="tab-pane active" role="tabpanel">
+
+        <form id="renewselected" action="/cgi-bin/koha/opac-renew.pl" method="post">
+        <legend class="sr-only">Markierte verlängern</legend>
+        <input type="hidden" name="borrowernumber" value="99001234">
+        <input type="hidden" name="from" value="opac_user" />
+          <table id="checkoutst" class="table table-bordered table-striped">
+            <caption>4 Exemplar(e) ausgeliehen</caption>
+            <thead>
+              <tr>
+                <th class="nosort jacketcol">&nbsp;</th>
+                <th class="all anti-the titlecol">Titel</th>
+                <th>Verfasser</th>
+                <th>Medientyp</th>
+                <th class="psort duedatecol">Fällig</th>
+                <th>Bibliothek</th>
+                <th>Signatur</th>
+                <th class="renewcol">Verlängern</th>
+                <th>Gebühren</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="jacketcell">
+                  <a href="/cgi-bin/koha/opac-detail.pl?biblionumber=12345">
+                    <img src="/opac-tmpl/bootstrap/images/no-image.png" alt="" />
+                  </a>
+                </td>
+                <td class="title">
+                  <a href="/cgi-bin/koha/opac-detail.pl?biblionumber=12345" class="title">
+                    <span class="biblio-title">Die unendliche Geschichte</span>
+                  </a>
+                </td>
+                <td class="author">Ende, Michael</td>
+                <td class="itype">Buch</td>
+                <td class="date_due" data-order="2026-04-15 23:59:00">
+                  <span class="tdlabel">Fälligkeitsdatum:</span>15.04.2026
+                </td>
+                <td class="branch">
+                  <span class="tdlabel">Bibliothek:</span>Mediathek im KUBUS
+                </td>
+                <td class="call_no">
+                  <span class="tdlabel">Signatur:</span>End
+                </td>
+                <td class="renew" data-order="1">
+                  <input type="checkbox" name="item" value="500001"/> <a href="/cgi-bin/koha/opac-renew.pl?from=opac_user&amp;item=500001&amp;borrowernumber=99001234">Verlängern</a>
+                  <span class="renewals">( 2 von 3 Verlängerungen verbleiben  )</span>
+                  <span class="usr-msg no-renewal-before">Keine Verlängerung vor 08.04.2026 00:00</span>
+                </td>
+                <td class="fines"></td>
+              </tr>
+              <tr class="overdue">
+                <td class="jacketcell">
+                  <a href="/cgi-bin/koha/opac-detail.pl?biblionumber=12346">
+                    <img src="https://cover.ekz.de/004251192118868.jpg" alt="" />
+                  </a>
+                </td>
+                <td class="title">
+                  <a href="/cgi-bin/koha/opac-detail.pl?biblionumber=12346" class="title">
+                    <span class="biblio-title">Momo</span>
+                  </a>
+                </td>
+                <td class="author">Ende, Michael</td>
+                <td class="itype">Buch</td>
+                <td class="date_due" data-order="2026-03-01 23:59:00">
+                  <span class="tdlabel">Fälligkeitsdatum:</span>01.03.2026
+                </td>
+                <td class="branch">
+                  <span class="tdlabel">Bibliothek:</span>Mediathek im KUBUS
+                </td>
+                <td class="call_no">
+                  <span class="tdlabel">Signatur:</span>End
+                </td>
+                <td class="renew" data-order="3">
+                  <span class="renewals">( 0 von 3 Verlängerungen verbleiben  )</span>
+                  <span class="renewals-disabled">Keine Verlängerung möglich</span>
+                </td>
+                <td class="fines">2,50</td>
+              </tr>
+              <tr>
+                <td class="jacketcell">
+                  <a href="/cgi-bin/koha/opac-detail.pl?biblionumber=12347">
+                    <img src="/opac-tmpl/bootstrap/images/no-image.png" alt="" />
+                  </a>
+                </td>
+                <td class="title">
+                  <a href="/cgi-bin/koha/opac-detail.pl?biblionumber=12347" class="title">
+                    <span class="biblio-title">Tschick</span>
+                  </a>
+                </td>
+                <td class="author">Herrndorf, Wolfgang</td>
+                <td class="itype">Hörbuch</td>
+                <td class="date_due" data-order="2026-04-20 23:59:00">
+                  <span class="tdlabel">Fälligkeitsdatum:</span>20.04.2026
+                </td>
+                <td class="branch">
+                  <span class="tdlabel">Bibliothek:</span>Mediathek im KUBUS
+                </td>
+                <td class="call_no">
+                  <span class="tdlabel">Signatur:</span>Her
+                </td>
+                <td class="renew" data-order="0">
+                  <span class="renewals">( 2 von 2 Verlängerungen verbleiben  )</span>
+                  <span class="usr-msg no-renewal-before">Keine Verlängerung vor 13.04.2026 00:00</span>
+                </td>
+                <td class="fines"></td>
+              </tr>
+              <tr>
+                <td class="jacketcell">
+                  <a href="/cgi-bin/koha/opac-detail.pl?biblionumber=12348">
+                    <img src="/opac-tmpl/bootstrap/images/no-image.png" alt="" />
+                  </a>
+                </td>
+                <td class="title">
+                  <a href="/cgi-bin/koha/opac-detail.pl?biblionumber=12348" class="title">
+                    <span class="biblio-title">Krabat</span>
+                  </a>
+                </td>
+                <td class="author">Preußler, Otfried</td>
+                <td class="itype">Buch</td>
+                <td class="date_due" data-order="2026-05-01 23:59:00">
+                  <span class="tdlabel">Fälligkeitsdatum:</span>01.05.2026
+                </td>
+                <td class="branch">
+                  <span class="tdlabel">Bibliothek:</span>Mediathek im KUBUS
+                </td>
+                <td class="call_no">
+                  <span class="tdlabel">Signatur:</span>Pre
+                </td>
+                <td class="renew" data-order="0">
+                  <span class="renewals">( 3 von 3 Verlängerungen verbleiben  )</span>
+                  <span class="usr-msg no-renewal-before">Keine Verlängerung vor 24.04.2026 00:00</span>
+                </td>
+                <td class="fines"></td>
+              </tr>
+            </tbody>
+          </table>
+        </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

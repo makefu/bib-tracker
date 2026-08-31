@@ -10,7 +10,11 @@
 # the past.
 { pkgs, fixtures }:
 
-pkgs.writers.writePython3Bin "fake-library" { libraries = [ ]; } ''
+pkgs.writers.writePython3Bin "fake-library" {
+  libraries = [ ];
+  # The repo standard is 120 columns, not flake8's 79.
+  flakeIgnore = [ "E501" ];
+} ''
   """Minimal Koha OPAC stand-in backed by recorded fixtures."""
 
   import http.cookies
