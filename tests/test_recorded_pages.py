@@ -247,6 +247,19 @@ async def test_a_koha_subtitle_reaches_the_work_key_separated(account_config) ->
 
 
 @respx.mock
+async def test_the_recorded_media_types_all_classify(account_config) -> None:
+    """An unmapped type falls through to OTHER, which routes a metadata
+    lookup nowhere. Both of Remseck's everyday types were unmapped."""
+    _mock_remseck("remseck_checkouts.html")
+    result = await poll_account(account_config, "hunter2")
+
+    seen = {loan.media_type for loan in result.loans if loan.media_type}
+    assert seen == {"Kinder- und Jugendliteratur", "Spiele"}
+    for loan in result.loans:
+        assert classify(loan.media_type, loan.call_number) is not MediaClass.OTHER
+
+
+@respx.mock
 async def test_the_recorded_adis_media_types_all_classify(stuttgart_config) -> None:
     _mock_stuttgart()
     result = await poll_account(stuttgart_config, "hunter2")

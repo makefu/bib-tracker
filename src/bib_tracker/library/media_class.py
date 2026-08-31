@@ -30,6 +30,8 @@ _MEDIA_TYPES: dict[str, MediaClass] = {
     "roman": MediaClass.BOOK,
     "kinderbuch": MediaClass.BOOK,
     "comic": MediaClass.BOOK,
+    # Remseck's Koha shelves nearly everything printed under this one label.
+    "kinder- und jugendliteratur": MediaClass.BOOK,
     "hörbuch": MediaClass.AUDIOBOOK,
     "hoerbuch": MediaClass.AUDIOBOOK,
     "hörspiel": MediaClass.AUDIOBOOK,
@@ -44,6 +46,7 @@ _MEDIA_TYPES: dict[str, MediaClass] = {
     "video": MediaClass.MOVIE,
     "konventionelles spiel": MediaClass.GAME,
     "spiel": MediaClass.GAME,
+    "spiele": MediaClass.GAME,
     "brettspiel": MediaClass.GAME,
     "gesellschaftsspiel": MediaClass.GAME,
     "konsolenspiel": MediaClass.GAME,
