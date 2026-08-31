@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="/static/css/base.css" />
     <link rel="stylesheet" href="/static/css/layout.css" />
     <link rel="stylesheet" href="/static/css/components.css" />
+    <link rel="stylesheet" href="/static/css/charts.css" />
     <script>
       // Blocking on purpose: applying the stored theme after first paint
       // would flash the wrong one.
@@ -43,6 +44,7 @@
           ('/loans', 'Ausleihen', counts.open_loans),
           ('/history', 'Verlauf', none),
           ('/rate', 'Bewerten', counts.unrated),
+          ('/stats', 'Statistik', none),
           ('/runs', 'Abfragen', counts.failed_runs),
         ] %}
         <nav class="nav" aria-label="Hauptnavigation">

@@ -1,0 +1,164 @@
+{#
+  Charts as server-rendered SVG.
+
+  Not a charting library, for three reasons that all matter here: every panel
+  is an HTMX fragment, and a canvas chart would need destroying and rebuilding
+  on each swap; `fill="var(--mt-book)"` follows the theme toggle with no
+  JavaScript at all; and an <svg role="img"> with a title and a screen-reader
+  table is genuinely readable, where a canvas is an empty box.
+#}
+
+{% macro bars(points, height=180, label='') -%}
+  {% set width = 640 %}
+  {% set gap = 4 %}
+  {% set count = points | length %}
+  {% set bar_width = ((width - gap * count) / count) if count else 0 %}
+  {% set peak = (points | map(attribute='value') | max) if count else 0 %}
+  <figure class="chart" role="img" aria-label="{{ label }}">
+    <svg viewBox="0 0 {{ width }} {{ height }}" preserveAspectRatio="none" class="chart__svg">
+      {% for point in points %}
+        {% set bar_height = (point.value / peak * (height - 24)) if peak else 0 %}
+        <rect
+          x="{{ loop.index0 * (bar_width + gap) }}"
+          y="{{ height - bar_height }}"
+          width="{{ bar_width }}"
+          height="{{ bar_height }}"
+          rx="2"
+          fill="var(--{{ point.token | default('primary') }})"
+        >
+          <title>{{ point.label }}: {{ point.value }}</title>
+        </rect>
+      {% endfor %}
+    </svg>
+    <table class="sr-only">
+      <caption>{{ label }}</caption>
+      <tbody>
+        {% for point in points %}
+          <tr><th scope="row">{{ point.label }}</th><td>{{ point.value }}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </figure>
+{%- endmacro %}
+
+
+{% macro hbars_range(rows, label='') -%}
+  {#
+    A median with its quartile whiskers. Showing the spread rather than just an
+    average is the point: "usually about three weeks, sometimes five" is the
+    honest answer, and a lone mean hides it.
+  #}
+  {% set width = 640 %}
+  {% set row_height = 30 %}
+  {% set peak = (rows | map(attribute='p75') | max) if rows else 0 %}
+  <figure class="chart" role="img" aria-label="{{ label }}">
+    <svg viewBox="0 0 {{ width }} {{ (rows | length) * row_height }}" class="chart__svg">
+      {% for row in rows %}
+        {% set y = loop.index0 * row_height + row_height / 2 %}
+        {% set scale = (width - 130) / peak if peak else 0 %}
+        <text x="0" y="{{ y + 4 }}" class="chart__label">{{ row.media_class | media_label }}</text>
+        <line
+          x1="{{ 110 + row.p25 * scale }}" x2="{{ 110 + row.p75 * scale }}"
+          y1="{{ y }}" y2="{{ y }}"
+          stroke="var(--{{ 'mt-' ~ row.media_class }})" stroke-width="3" opacity="0.35"
+          stroke-linecap="round"
+        />
+        <circle
+          cx="{{ 110 + row.median * scale }}" cy="{{ y }}" r="5"
+          fill="var(--{{ 'mt-' ~ row.media_class }})"
+        >
+          <title>{{ row.media_class | media_label }}: Median {{ row.median | round | int }} Tage
+            ({{ row.p25 | round | int }}–{{ row.p75 | round | int }}), {{ row.count }} Ausleihen</title>
+        </circle>
+        <text x="{{ width - 8 }}" y="{{ y + 4 }}" text-anchor="end" class="chart__value">
+          {{ row.median | round | int }} T
+        </text>
+      {% endfor %}
+    </svg>
+    <table class="sr-only">
+      <caption>{{ label }}</caption>
+      <thead><tr><th>Medienart</th><th>Median</th><th>25 %</th><th>75 %</th><th>Anzahl</th></tr></thead>
+      <tbody>
+        {% for row in rows %}
+          <tr>
+            <th scope="row">{{ row.media_class | media_label }}</th>
+            <td>{{ row.median | round | int }}</td>
+            <td>{{ row.p25 | round | int }}</td>
+            <td>{{ row.p75 | round | int }}</td>
+            <td>{{ row.count }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </figure>
+{%- endmacro %}
+
+
+{% macro split_bar(exact_cents, estimated_cents, label='') -%}
+  {#
+    The estimated portion is drawn hatched, not merely footnoted. If most of a
+    "money saved" figure rests on configured default prices, that has to be
+    visible in the picture itself.
+  #}
+  {% set total = exact_cents + estimated_cents %}
+  {% set width = 640 %}
+  {% set exact_width = (exact_cents / total * width) if total else 0 %}
+  <figure class="chart" role="img" aria-label="{{ label }}">
+    <svg viewBox="0 0 {{ width }} 44" preserveAspectRatio="none" class="chart__svg">
+      <defs>
+        <pattern id="hatch" width="8" height="8" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
+          <rect width="8" height="8" fill="var(--a-300)" opacity="0.35" />
+          <line x1="0" y1="0" x2="0" y2="8" stroke="var(--a-500)" stroke-width="3" />
+        </pattern>
+      </defs>
+      <rect x="0" y="8" width="{{ exact_width }}" height="28" rx="3" fill="var(--a-500)">
+        <title>Bekannter Listenpreis</title>
+      </rect>
+      <rect
+        x="{{ exact_width }}" y="8" width="{{ width - exact_width }}" height="28" rx="3"
+        fill="url(#hatch)"
+      >
+        <title>Geschätzt aus Standardpreisen</title>
+      </rect>
+    </svg>
+  </figure>
+{%- endmacro %}
+
+
+{% macro donut(slices, label='') -%}
+  {% set total = (slices | map(attribute='count') | sum) or 1 %}
+  <figure class="chart chart--donut" role="img" aria-label="{{ label }}">
+    <svg viewBox="0 0 42 42" class="chart__svg chart__svg--square">
+      {% set ns = namespace(offset=25) %}
+      {% for slice in slices %}
+        {% set share = slice.count / total * 100 %}
+        <circle
+          cx="21" cy="21" r="15.9155" fill="transparent"
+          stroke="var(--mt-{{ slice.media_class }})" stroke-width="6"
+          stroke-dasharray="{{ share }} {{ 100 - share }}"
+          stroke-dashoffset="{{ ns.offset }}"
+        >
+          <title>{{ slice.media_class | media_label }}: {{ slice.count }}</title>
+        </circle>
+        {% set ns.offset = ns.offset - share %}
+      {% endfor %}
+    </svg>
+    <table class="chart__legend">
+      <caption class="sr-only">{{ label }}</caption>
+      <tbody>
+        {% for slice in slices %}
+          <tr>
+            <th scope="row">
+              <span class="badge" data-mt="{{ slice.media_class }}">
+                <span aria-hidden="true">{{ slice.media_class | media_icon }}</span>
+                {{ slice.media_class | media_label }}
+              </span>
+            </th>
+            <td class="nums">{{ slice.count }}</td>
+            <td class="nums muted">{{ (slice.share * 100) | round | int }} %</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </figure>
+{%- endmacro %}

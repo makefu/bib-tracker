@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+{% import "macros/charts.html" as charts %}
+{% block title %}Statistik · bib-tracker{% endblock %}
+
+{% block content %}
+  <div class="page-head">
+    <h1>Statistik</h1>
+  </div>
+
+  {# Everything below rests on this, so it comes first rather than in a footnote. #}
+  <div class="notice" style="margin-bottom: var(--sp-5)">
+    <span>
+      Datenbasis: {{ quality.successful }} von {{ quality.runs }} Abfragen erfolgreich
+      {%- if quality.suspect %}, {{ quality.suspect }} zurückgehalten{% endif %}.
+      Bei {{ quality.dates_unknown }} von {{ quality.loans }} Ausleihen ist der Beginn unbekannt,
+      weil sie schon liefen, als die Aufzeichnung begann.
+    </span>
+  </div>
+
+  <div class="grid grid--cards">
+    <section class="card">
+      <div class="card__head">
+        <h2 class="card__title">Gespartes Geld</h2>
+        <span class="card__note confidence" data-level="{{ 'estimate' if money.exact_share < 0.5 else 'medium' }}">
+          {{ (money.exact_share * 100) | round | int }} % mit echtem Preis
+        </span>
+      </div>
+
+      {#
+        Never one merged number. The split is the honest part: most German
+        library holdings have no list price anywhere free, so most of this
+        figure is built on the per-media-type defaults from the config.
+      #}
+      <table class="table" style="margin-bottom: var(--sp-4)">
+        <caption class="sr-only">Aufschlüsselung der Ersparnis</caption>
+        <tbody>
+          <tr>
+            <th scope="row">Gesichert (Listenpreis bekannt)</th>
+            <td class="nums">{{ money.exact_cents | eur }}</td>
+            <td class="nums muted">{{ money.basis.exact }} Titel</td>
+          </tr>
+          <tr>
+            <th scope="row">Geschätzt (Standardpreis)</th>
+            <td class="nums">{{ money.estimated_cents | eur }}</td>
+            <td class="nums muted">{{ money.basis.estimated }} Titel</td>
+          </tr>
+          <tr>
+            <th scope="row"><strong>Gesamt (grob)</strong></th>
+            <td class="nums"><strong>{{ money.total_cents | eur }}</strong></td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+
+      {{ charts.split_bar(money.exact_cents, money.estimated_cents, 'Anteil bekannter und geschätzter Preise') }}
+      <p class="faint" style="margin: var(--sp-2) 0 0">
+        Der schraffierte Teil beruht auf den eingestellten Standardpreisen, nicht
+        auf tatsächlichen Preisen. Ein Preis lässt sich auf jeder Werkseite von
+        Hand eintragen; er hat dann Vorrang.
+      </p>
+    </section>
+
+    <section class="card">
+      <div class="card__head">
+        <h2 class="card__title">Leihdauer</h2>
+        <span class="card__note">
+          {{ durations.counted }} Ausleihen
+          {%- if durations.excluded %} · {{ durations.excluded }} ohne bekannten Beginn{% endif %}
+        </span>
+      </div>
+      {% if durations.by_class %}
+        <p class="muted">
+          Median {{ durations.median_days | round | int }} Tage,
+          mittlere Hälfte {{ durations.p25_days | round | int }}–{{ durations.p75_days | round | int }} Tage.
+        </p>
+        {{ charts.hbars_range(durations.by_class, 'Leihdauer nach Medienart') }}
+      {% else %}
+        <p class="muted">Noch nichts zurückgegeben, dessen Beginn bekannt ist.</p>
+      {% endif %}
+    </section>
+
+    <section class="card">
+      <div class="card__head">
+        <h2 class="card__title">Medienmix</h2>
+      </div>
+      {% if media_mix %}
+        {{ charts.donut(media_mix, 'Anteil der Medienarten') }}
+      {% else %}
+        <p class="muted">Noch keine Ausleihen erfasst.</p>
+      {% endif %}
+    </section>
+
+    <section class="card">
+      <div class="card__head">
+        <h2 class="card__title">Ausleih-Tempo</h2>
+        <span class="card__note">pro Kalenderwoche</span>
+      </div>
+      {% if pace %}
+        {{ charts.bars(pace_points, 200, 'Ausleihen pro Woche') }}
+      {% else %}
+        <p class="muted">Noch zu wenig Verlauf.</p>
+      {% endif %}
+    </section>
+
+    <section class="card">
+      <div class="card__head">
+        <h2 class="card__title">Verlängerungen</h2>
+      </div>
+      <p class="muted">
+        {{ (renewals.rate * 100) | round | int }} % aller Ausleihen wurden mindestens einmal
+        verlängert{% if renewals.maxed_out %}, {{ renewals.maxed_out }} bis zum Anschlag{% endif %}.
+      </p>
+      {% if renewals.to_the_limit %}
+        <table class="table">
+          <caption class="sr-only">Bis zum Maximum verlängert</caption>
+          <tbody>
+            {% for row in renewals.to_the_limit %}
+              <tr>
+                <td><a href="/media/{{ row.media_id }}">{{ row.title }}</a></td>
+                <td class="nums">{{ row.times_renewed }}/{{ row.max_renewals }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% endif %}
+    </section>
+
+    <section class="card">
+      <div class="card__head">
+        <h2 class="card__title">Überfälligkeit</h2>
+      </div>
+      <p class="muted">
+        {{ overdue.overdue }} von {{ overdue.total }} Ausleihen waren überfällig
+        ({{ (overdue.rate * 100) | round | int }} %), zusammen {{ overdue.total_days }} Tage.
+      </p>
+      <p class="faint">
+        Gebührendaten liefert nur Remseck; Stuttgart stellt sie nicht bereit.
+      </p>
+    </section>
+
+    {% if repeats %}
+      <section class="card">
+        <div class="card__head">
+          <h2 class="card__title">Mehrfach ausgeliehen</h2>
+          <span class="card__note">vielleicht kaufen?</span>
+        </div>
+        <table class="table">
+          <caption class="sr-only">Werke, die mehrfach ausgeliehen wurden</caption>
+          <tbody>
+            {% for row in repeats %}
+              <tr>
+                <td><a href="/media/{{ row.media_id }}">{{ row.title }}</a></td>
+                <td class="nums">{{ row.borrows }}×</td>
+                <td class="nums muted">{{ row.total_days }} Tage</td>
+                <td class="nums muted">
+                  {{ row.effective_price_cents | eur }}{% if row.price_basis != 'manual' %}*{% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <p class="faint">* geschätzter Preis</p>
+      </section>
+    {% endif %}
+
+    {% if cost_per_day %}
+      <section class="card">
+        <div class="card__head">
+          <h2 class="card__title">Euro pro Tag</h2>
+          <span class="card__note">Spiele</span>
+        </div>
+        <table class="table">
+          <caption class="sr-only">Kosten pro Tag im Haushalt</caption>
+          <tbody>
+            {% for row in cost_per_day %}
+              <tr>
+                <td><a href="/media/{{ row.media_id }}">{{ row.title }}</a></td>
+                <td class="nums muted">{{ row.total_days }} Tage</td>
+                <td class="nums">{{ row.cents_per_day | eur }}/Tag</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <p class="faint">
+          Tage im Haushalt, nicht Tage gespielt. Der Preis ist meist geschätzt.
+        </p>
+      </section>
+    {% endif %}
+  </div>
+{% endblock %}

@@ -1,0 +1,61 @@
+/* Chart primitives. Colours come from the token set, so charts follow the
+ * theme toggle with no JavaScript. */
+
+.chart {
+  margin: 0;
+}
+
+.chart__svg {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.chart__svg--square {
+  max-width: 12rem;
+}
+
+.chart--donut {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-6);
+  flex-wrap: wrap;
+}
+
+.chart__label,
+.chart__value {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  fill: var(--text-muted);
+}
+
+.chart__value {
+  font-variant-numeric: tabular-nums;
+  fill: var(--text);
+}
+
+.chart__legend {
+  width: auto;
+  font-size: var(--fs-sm);
+}
+
+.chart__legend td,
+.chart__legend th {
+  padding: var(--sp-1) var(--sp-3) var(--sp-1) 0;
+  text-align: left;
+  font-weight: 400;
+}
+
+/* A figure resting on estimates says so where the number is, not only in a
+ * footnote further down the page. */
+.confidence {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+  font-size: var(--fs-xs);
+  color: var(--text-faint);
+}
+
+.confidence[data-level="estimate"] {
+  color: var(--warn-500);
+}

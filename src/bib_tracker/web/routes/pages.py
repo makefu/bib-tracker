@@ -6,12 +6,14 @@ page or just the fragment depending on whether HTMX asked.
 
 from __future__ import annotations
 
+import csv
+import io
 from datetime import date
 from typing import Any
 from urllib.parse import urlencode
 
 from fastapi import APIRouter, HTTPException, Request
-from fastapi.responses import HTMLResponse, Response
+from fastapi.responses import HTMLResponse, JSONResponse, Response
 
 from ...db.connection import Database
 from ...library.media_class import MediaClass
@@ -303,6 +305,20 @@ async def history_add(request: Request) -> HTMLResponse:
     return HTMLResponse(f'<div class="notice">Eingetragen: <a href="/history">{entry.title}</a></div>')
 
 
+@router.get("/stats", response_class=HTMLResponse)
+async def stats_page(request: Request) -> HTMLResponse:
+    from ... import stats as stats_module
+
+    db = _db(request)
+    settings = request.app.state.settings
+    data = await stats_module.overview(db, settings)
+
+    context = await _shell(request, "/stats")
+    context |= data
+    context["pace_points"] = [{"label": row["week"], "value": row["count"], "token": "primary"} for row in data["pace"]]
+    return render(request, "pages/stats.html", None, context)
+
+
 @router.get("/runs", response_class=HTMLResponse)
 async def runs(request: Request) -> HTMLResponse:
     db = _db(request)
@@ -467,6 +483,93 @@ async def cover(request: Request, media_id: int, variant: str) -> Response:
             "Cache-Control": "public, max-age=31536000, immutable",
         },
     )
+
+
+EXPORT_COLUMNS = (
+    "account",
+    "title",
+    "author",
+    "media_class",
+    "state",
+    "lend_date",
+    "lend_date_source",
+    "lend_date_earliest",
+    "lend_date_latest",
+    "return_date",
+    "return_date_source",
+    "return_date_earliest",
+    "return_date_latest",
+    "duration_days",
+    "duration_uncertainty_days",
+    "first_due_date",
+    "last_due_date",
+    "times_renewed",
+    "max_renewals",
+    "was_overdue",
+    "max_overdue_days",
+    "branch",
+    "call_number",
+    "isbn13",
+    "price_cents",
+    "price_basis",
+    "rating",
+)
+
+
+async def _export_rows(db: Database) -> list[dict[str, Any]]:
+    """Everything, with each date's provenance beside it.
+
+    An export that dropped the source columns would turn estimates into facts
+    the moment the file left the application.
+    """
+    rows = await db.fetch_all(
+        """
+        SELECT
+            a.name AS account, m.title, m.author, m.media_class, l.state,
+            COALESCE(o.lend_date, l.lend_date) AS lend_date,
+            CASE WHEN o.lend_date IS NOT NULL THEN 'manual' ELSE l.lend_date_source END
+                AS lend_date_source,
+            l.lend_date_earliest, l.lend_date_latest,
+            COALESCE(o.return_date, l.return_date) AS return_date,
+            CASE WHEN o.return_date IS NOT NULL THEN 'manual' ELSE l.return_date_source END
+                AS return_date_source,
+            l.return_date_earliest, l.return_date_latest,
+            l.duration_days, l.duration_uncertainty_days,
+            l.first_due_date, l.last_due_date, l.times_renewed, l.max_renewals,
+            l.was_overdue, l.max_overdue_days,
+            c.branch, c.call_number, m.isbn13,
+            m.effective_price_cents AS price_cents, m.price_basis, r.rating
+        FROM loans l
+        JOIN media m ON m.id = l.media_id
+        JOIN copies c ON c.id = l.copy_id
+        JOIN accounts a ON a.id = l.account_id
+        LEFT JOIN loan_overrides o ON o.loan_key = l.loan_key
+        LEFT JOIN ratings r ON r.media_id = m.id
+        ORDER BY lend_date DESC, l.id DESC
+        """
+    )
+    return [dict(row) for row in rows]
+
+
+@router.get("/export/history.csv")
+async def export_csv(request: Request) -> Response:
+    rows = await _export_rows(_db(request))
+
+    buffer = io.StringIO()
+    writer = csv.DictWriter(buffer, fieldnames=list(EXPORT_COLUMNS), extrasaction="ignore")
+    writer.writeheader()
+    writer.writerows(rows)
+
+    return Response(
+        buffer.getvalue(),
+        media_type="text/csv; charset=utf-8",
+        headers={"Content-Disposition": 'attachment; filename="bib-tracker-verlauf.csv"'},
+    )
+
+
+@router.get("/export/history.json")
+async def export_json(request: Request) -> JSONResponse:
+    return JSONResponse({"loans": await _export_rows(_db(request))})
 
 
 @router.get("/partials/poll-status", response_class=HTMLResponse)

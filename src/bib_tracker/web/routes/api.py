@@ -295,6 +295,34 @@ async def set_price(request: Request, media_id: int) -> HTMLResponse:
     return render(request, "partials/price.html", "partials/price.html", {"media": dict(updated)})
 
 
+@router.get("/stats")
+async def stats_json(request: Request) -> JSONResponse:
+    """Statistics as JSON. Money always carries its basis, never a bare total."""
+    from ... import stats as stats_module
+
+    db = _db(request)
+    data = await stats_module.overview(db, request.app.state.settings)
+    durations = data["durations"]
+    return JSONResponse(
+        {
+            "money_saved": data["money"],
+            "durations": {
+                "median_days": durations.median_days,
+                "mean_days": durations.mean_days,
+                "p25_days": durations.p25_days,
+                "p75_days": durations.p75_days,
+                "counted": durations.counted,
+                "excluded_unknown_start": durations.excluded,
+                "by_class": durations.by_class,
+            },
+            "media_mix": data["media_mix"],
+            "renewals": data["renewals"],
+            "overdue": data["overdue"],
+            "quality": data["quality"],
+        }
+    )
+
+
 @router.get("/accounts")
 async def list_accounts(request: Request) -> JSONResponse:
     rows = await _db(request).fetch_all(

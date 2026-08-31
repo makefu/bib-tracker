@@ -107,21 +107,35 @@ pkgs.testers.nixosTest {
 
     with subtest("a rating can be given"):
         machine.succeed("curl -fsS -X POST localhost:8099/api/media/1/rating -d 'rating=4' -o /dev/null")
-        machine.succeed("curl -fsS localhost:8099/media/1 | grep -q 'checked'")
+        machine.succeed("curl -fsS -o /tmp/media localhost:8099/media/1")
+        machine.succeed("grep -q 'checked' /tmp/media")
 
     with subtest("the pages render with the scraped data"):
-        for path in ["/", "/loans", "/history", "/runs"]:
-            machine.succeed(f"curl -fsS localhost:8099{path} | grep -q '<!DOCTYPE html>'")
-        machine.succeed("curl -fsS localhost:8099/history | grep -q 'Die unendliche Geschichte'")
-        machine.succeed("curl -fsS localhost:8099/loans | grep -q 'Ende, Michael'")
+        # Fetched to a file rather than piped: grep -q exits on the first
+        # match and curl then dies of EPIPE on anything larger than a buffer.
+        for path in ["/", "/loans", "/history", "/history/add", "/rate", "/stats", "/runs"]:
+            machine.succeed(f"curl -fsS -o /tmp/page localhost:8099{path}")
+            machine.succeed("grep -q '<!DOCTYPE html>' /tmp/page")
+        machine.succeed("curl -fsS -o /tmp/page localhost:8099/history")
+        machine.succeed("grep -q 'Die unendliche Geschichte' /tmp/page")
+        machine.succeed("curl -fsS -o /tmp/page localhost:8099/loans")
+        machine.succeed("grep -q 'Ende, Michael' /tmp/page")
         # An HTMX request must get the fragment, not the whole page again.
-        machine.succeed(
-            "curl -fsS -H 'HX-Request: true' localhost:8099/history"
-            " | grep -q 'id=\"results\"'"
-        )
-        machine.fail(
-            "curl -fsS -H 'HX-Request: true' localhost:8099/history | grep -q '<!DOCTYPE html>'"
-        )
+        machine.succeed("curl -fsS -H 'HX-Request: true' -o /tmp/frag localhost:8099/history")
+        machine.succeed("grep -q 'id=\"results\"' /tmp/frag")
+        machine.fail("grep -q '<!DOCTYPE html>' /tmp/frag")
+
+    with subtest("statistics never present an estimate as a fact"):
+        machine.succeed("curl -fsS localhost:8099/api/stats | grep -q 'money_saved'")
+        machine.succeed("curl -fsS localhost:8099/api/stats | grep -q 'estimated_cents'")
+        machine.succeed("curl -fsS localhost:8099/api/stats | grep -q 'excluded_unknown_start'")
+        machine.succeed("curl -fsS -o /tmp/stats localhost:8099/stats")
+        machine.succeed("grep -q 'Gesch\u00e4tzt' /tmp/stats")
+        # The hatching that makes the estimated share visible in the chart.
+        machine.succeed("grep -q 'url(#hatch)' /tmp/stats")
+
+    with subtest("the export keeps each date's provenance"):
+        machine.succeed("curl -fsS localhost:8099/export/history.csv | head -1 | grep -q lend_date_source")
 
     with subtest("the return became history, with its date bounded"):
         machine.succeed("curl -fsS localhost:8099/api/history | grep -q '\"count\":4'")
