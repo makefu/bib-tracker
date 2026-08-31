@@ -1,0 +1,3 @@
+# Verbatim captures. aDIS sends CRLF and Koha sends LF; both are the wire
+# bytes the parsers have to cope with, so keep git out of the line endings.
+*.html -text

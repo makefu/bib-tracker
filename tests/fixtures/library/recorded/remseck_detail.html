@@ -1,0 +1,2862 @@
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+<!DOCTYPE html>
+<!-- TEMPLATE FILE: opac-detail.tt -->
+
+
+
+
+
+
+
+
+
+<html lang="de-DE" class="no-js">
+<head>
+
+<title>Details zu:  Hase Hibiskus: Zwei möhrenstarke Abenteuer        &rsaquo; Mediathek Remseck - Katalog</title>
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Koha" /> <!-- leave this for stats -->
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="stylesheet" type="text/css" href="/opac-tmpl/bootstrap/lib/jquery/responsive.dataTables.min_22.1132001.css">
+
+<link rel="shortcut icon" href="https://mt-remseck.lmscloud.net/webcustom/images/Favicon_remseck.png" type="image/x-icon" />
+<link rel="apple-touch-icon" href="https://mt-remseck.lmscloud.net/webcustom/images/Favicon_remseck.png" type="image/x-icon" />
+
+ <link href="/opac-tmpl/lib/jquery/jquery-ui-1.13.1.min_22.1132001.css" rel="stylesheet" type="text/css">
+
+
+ 
+ 
+ 
+
+
+ <link rel="stylesheet" type="text/css" href="/opac-tmpl/bootstrap/css/opac_22.1132001.css">
+
+
+
+
+ <link rel="stylesheet" media="print" type="text/css" href="/opac-tmpl/bootstrap/css/print_22.1132001.css">
+
+
+ <style>#logo {
+    background: transparent url(/webcustom/images/LMSCloud-Logo-white.svg) no-repeat scroll 0;
+    padding-top: 15px;
+    margin-left: 5px;
+    width: 120px !important;
+}
+
+#logo a {
+    padding: 15px 0 0;
+}
+
+/* Änderung der Navigationsleistenfarbe */
+#header-region .navbar {
+  background-image: linear-gradient(to bottom, #5c8a8a, #9ebebe);
+  border-color: #9ebebe;
+  background-color: #9ebebe;
+}
+
+#opac-main #select_library {
+    margin-right: 5px;
+}
+
+#opac-main #masthead_search {
+    margin-right: 5px;
+}
+
+
+#blockTop::after {
+    clear: both;
+    content: ".";
+    display: block;
+    height: 0;
+    overflow: hidden;
+    visibility: hidden;
+}
+
+#blockTop {
+    text-align: center;
+    opacity: 1.0;
+    margin-top: 8px;
+    width: 100%;
+    margin-top: 1em;
+    margin-bottom: .5em;
+}
+
+#moresearches li {
+    font-size: larger;
+}
+.breadcrumb {
+    font-size: unset;
+    margin: 0px 0px 10px 0px;
+}
+
+#opacheader {
+    background-color: unset  !important;
+}
+
+#opac-main-search {
+    background: #9ebebe;
+}
+#opac-main-search label {
+color: white;
+}
+
+body {
+    color: black !important;
+    background-attachment: fixed, fixed, fixed, fixed !important;
+}
+
+#moresearches a, a.visited {
+    font-size: medium;
+    color: black;
+}
+
+#moresearches, #news {
+    margin: 1.0em 0;
+}
+
+.main {
+    background-color: #ffffff;;
+}
+
+.opac-form form{
+  margin: 0;
+  margin-right: 10px;
+}
+
+.opac-form input {
+  width: 100%;
+  height:1.8rem;
+  vertical-align:center;
+  background:#FBFBFB;
+  border:1px solid #646464;
+  color:#646464;
+  font-weight:bold;
+  font-size:0.8rem;
+  margin-top:10px;
+}
+
+#brockhaus-form {
+    text-align:center;
+    height:60px;
+    background-color:white;
+    /* border:1px solid #646464; */
+    padding:5px;
+    margin:20px 0 20px 0;
+    display:flex;
+    margin:0;
+    padding-top:8px;
+}
+
+.brockhaus_logo {
+    width:80px;
+    height:55px;
+}
+
+#brockhaus_input {
+    height:1.8rem;
+    vertical-align:center;
+    background:#FBFBFB;
+    margin-top:10px;
+    margin-left: 10px;
+    border:1px solid #646464;
+    color:#646464;
+    font-weight:bold;
+    padding:4px;
+    font-size:0.8rem;
+}
+
+
+@media screen and (max-width: 980px) {
+    #brockhaus-form {
+        width:220px;
+    }
+}
+
+@media screen and (min-width: 981px) {
+    #brockhaus-form {
+        width:100%;
+    }
+    #brockhaus_input {
+        width:100%;
+    }
+}
+
+.ui-tabs .ui-tabs-panel, #opac-main .newsitem {
+    box-shadow: 1px 6px 4px rgba(0,0,0,.12), 2px 3px 6px rgba(0,0,0,.24);
+    -webkit-border-radius:4px;
+    /* box-shadow: 1px 2px 0px rgba(0,0,0,.12), 1px 2px 0px rgba(0,0,0,.15); */
+    /* box-shadow: 0 4px 6px -4px #222; */
+}
+
+.newsitem {
+    margin-bottom: 20px;
+}
+
+.newscontainer {
+    border: none;
+}
+
+.container-news {
+    max-width: 1080px;
+    margin-left: auto;
+    margin-right: auto;
+}</style>
+
+
+
+ <link href="https://mt-remseck.lmscloud.net/cgi-bin/koha/opac-search.pl?format=opensearchdescription" rel="search" title="Suche Mediathek Remseck" type="application/opensearchdescription+xml">
+ <link rel="unapi-server" type="application/xml" title="unAPI" href="https://mt-remseck.lmscloud.net/cgi-bin/koha/unapi" />
+
+
+<script>
+    var Koha = {};
+    function _(s) { return s } // dummy function for gettext
+    const is_logged_in = true
+</script>
+
+ <script src="/opac-tmpl/bootstrap/de-DE/js/locale_data_22.1132001.js"></script>
+
+<script src="/opac-tmpl/bootstrap/js/Gettext_22.1132001.js"></script>
+<script src="/opac-tmpl/bootstrap/js/i18n_22.1132001.js"></script>
+
+<link rel="stylesheet" type="text/css" href="/opac-tmpl/bootstrap/lib/font-awesome/css/font-awesome.min_22.1132001.css">
+
+
+               
+
+
+
+
+
+
+
+
+
+<script type="module" src="/api/v1/contrib/eventmanagement/static/dist/opac-widget.js"></script>
+
+ <link href="/opac-tmpl/lib/emoji-picker/css/emoji_22.1132001.css" rel="stylesheet" type="text/css">
+ 
+ <link rel="stylesheet" type="text/css" href="/opac-tmpl/lib/Chocolat/css/chocolat_22.1132001.css">
+ 
+</head>
+
+
+
+
+
+ 
+
+
+ 
+
+
+
+
+ 
+
+<body ID="opac-detail" class="branch-HST scrollto" >
+
+
+
+
+
+
+
+
+
+               
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<button id="scrolltocontent">Zum Hauptinhalt springen</button>
+<div id="wrapper">
+ <div id="header-region" class="noprint">
+ <nav class="navbar navbar-expand">
+ <div id="logo">
+ <a class="navbar-brand" href="/cgi-bin/koha/opac-main.pl">
+  Mediathek Remseck  </a>
+ </div>
+ 
+ <ul id="cart-list-nav" class="navbar-nav">
+ 
+ <li class="divider-vertical"></li>
+ 
+ <li class="nav-item dropdown">
+ <a aria-expanded="false" aria-haspopup="true" aria-label="Zeige Auswahlliste mit Detailinformationen" class="nav-link dropdown-toggle" data-toggle="dropdown" href="/cgi-bin/koha/opac-shelves.pl" id="listsmenu" role="button" title="Zeige Listen"><i class="fa fa-list fa-icon-black" aria-hidden="true"></i> <span class="listslabel">Listen</span>
+ </a>
+ <div aria-labelledby="listsmenu" role="menu" class="dropdown-menu">
+ 
+ <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=list&amp;public=1" tabindex="-1" role="menuitem"><strong>Öffentliche Listen</strong></a>
+ 
+ 
+ <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=635&amp;sortfield=title" tabindex="-1" role="menuitem">Berufe</a>
+ 
+ 
+ 
+ <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=183&amp;sortfield=title" tabindex="-1" role="menuitem">Aufklärungs-Titel</a>
+ 
+ 
+ 
+ <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=291&amp;sortfield=copyrightdate" tabindex="-1" role="menuitem">#FridayTip</a>
+ 
+ 
+ 
+ <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=412&amp;sortfield=title" tabindex="-1" role="menuitem">Dino-Bilderbücher</a>
+ 
+ 
+ 
+ 
+ <a class="dropdown-item listmenulink" href="/cgi-bin/koha/opac-shelves.pl?op=list&amp;public=1" tabindex="-1" role="menuitem">Alle anzeigen</a>
+ 
+ 
+ 
+ <div class="dropdown-divider"></div>
+ 
+ 
+ <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=list&amp;public=0" tabindex="-1" role="menuitem"><strong>Ihre Listen</strong></a>
+ 
+ 
+ <a class="dropdown-item disabled" href="#" tabindex="-1" role="menuitem">Keine privaten Listen.</a>
+ 
+ <a class="dropdown-item listmenulink" href="/cgi-bin/koha/opac-shelves.pl?op=add_form" tabindex="-1" role="menuitem">Neue Liste</a>
+ 
+ 
+ </div> <!-- / .dropdown-menu -->
+ </li> <!-- / .nav-item.dropdown -->
+ 
+ </ul> <!-- / .navbar-nav -->
+
+ 
+ 
+ <ul id="members" class="navbar-nav">
+ <li class="nav-item dropdown">
+ 
+ 
+ <a href="/cgi-bin/koha/opac-user.pl" class="dropdown-toggle" id="user-menu" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+ <i class="fa fa-user fa-icon-black fa-fw" aria-hidden="true"></i>
+ <span class="userlabel">Willkommen,  <span class="patron-title">Herr</span> Max  Mustermann</span>
+ </a>
+ <a tabindex="-1" role="menuitem" class="logout js-hide" href="/cgi-bin/koha/opac-main.pl?logout.x=1"><i class="fa fa-fw fa-sign-out" aria-hidden="true"></i> Abmelden</a>
+ 
+ 
+
+ 
+ <div aria-labelledby="user-menu" role="menu" class="dropdown-menu dropdown-menu-right">
+ <div id="loggedinuser-menu">
+ <p>
+ <a class="login-link" href="/cgi-bin/koha/opac-user.pl"><span class="loggedinusername" data-borrowernumber="10000001" data-branchcode="HST" data-categorycode="2">Benutzerkonto</span></a>
+ </p>
+ 
+ <p>
+ <a class="login-link" href="/cgi-bin/koha/opac-search-history.pl" role="menuitem" tabindex="-1" title="Suchhistorie anzeigen">Suchhistorie</a>
+ <span class="divider-vertical"></span>
+ <a class="clearsh" href="/cgi-bin/koha/opac-search-history.pl?action=delete" title="Suchhistorie löschen"><i class="fa fa-trash" aria-hidden="true"></i> Löschen</a>
+ </p>
+ 
+ <a tabindex="-1" role="menuitem" class="logout" id="logout" href="/cgi-bin/koha/opac-main.pl?logout.x=1">Abmelden</a>
+ </div>
+ </div>
+ 
+ </li>
+ 
+ </ul>
+ 
+ </nav> <!-- /navbar -->
+
+ 
+ <div class="container-fluid">
+ <div class="row">
+ <div class="col">
+ 
+ 
+ <div id="opacheader">
+ 
+ <div class="de-DE_item">
+ 
+ <div class="de-DE_body"><div class="" id="blockTop">
+    <div class="" id="blockTopInner">
+        <a title="Zur Startseite" href="/" id="wlogo">
+            <img alt="Logo" src="/webcustom/images/custom/OPAC_Banner_remseck.png" target="_blank">
+        </a>
+    </div>
+</div></div>
+ </div>
+ 
+ </div>
+  
+ </div>
+ </div>
+ </div>
+ 
+
+ </div> <!-- / header-region -->
+
+ 
+ <div class="container-fluid">
+ 
+ <div class="row">
+ <div class="col">
+ <div id="opac-main-search" class="mastheadsearch">
+ 
+ <form name="searchform" method="get" action="/cgi-bin/koha/opac-search.pl" id="searchform">
+ <div class="form-row align-items-center">
+ <div class="col-sm-auto order-2 order-sm-2">
+ <select name="idx" id="masthead_search" class="form-control">
+ 
+ <option value="">Bibliothekskatalog</option>
+ 
+ 
+ <option value="ti">Titel</option>
+ 
+ 
+ <option value="au">Verfasser</option>
+ 
+ 
+ <option value="su">Schlagwort</option>
+ 
+ 
+ <option value="nb">ISBN</option>
+ 
+ 
+ <option value="ns">ISSN</option>
+ 
+ 
+ <option value="se">Reihen</option>
+ 
+ 
+ 
+ <option value="callnum">Signatur</option>
+ 
+ 
+ </select>
+ </div> <!-- /.col-sm-auto -->
+
+ <div class="col order-4 order-sm-3">
+ 
+ <input type="text" class="transl1 form-control" id="translControl1" name="q" value="" /><span id="translControl"></span>
+ 
+ </div> <!-- /.col -->
+
+ 
+ <div class="col-sm col-md-3 col-lg-2 order-3 order-sm-4">
+ <select name="limit" id="select_library" class="form-control">
+ <option value="">Alle Bibliotheken</option>
+
+ <optgroup label="Bibliotheken">
+
+ 
+ 
+ 
+ <option value="branch:4">Bücherei Aldingen</option>
+ 
+ 
+ 
+ 
+ <option value="branch:3">Bücherei Hochberg</option>
+ 
+ 
+ 
+ 
+ <option value="branch:2">Bücherei Hochdorf</option>
+ 
+ 
+ 
+ 
+ <option value="branch:1">Bücherei Pattonville</option>
+ 
+ 
+ 
+ 
+ <option value="branch:HST">Mediathek im KUBUS</option>
+ 
+ 
+ 
+ 
+ <option value="branch:eBib">Onleihe</option>
+ 
+ 
+ 
+ 
+ <option value="branch:ARC">Stadtarchiv Remseck</option>
+ 
+ 
+
+ 
+ </optgroup>
+ <optgroup label="Gruppen">
+ 
+ 
+ <option value="multibranchlimit:41">Alle Remsecker Bibliotheken</option>
+ 
+ 
+ </optgroup>
+ 
+ </select> <!-- /#select_library -->
+ </div> <!-- /.col-sm-auto -->
+ 
+
+ <div class="order-5 col-sm-auto">
+ <button aria-label="Suche" class="btn btn-primary" id="searchsubmit" title="Suche" type="submit">
+ <i class="fa fa-search" aria-hidden="true"></i>
+ </button>
+ </div>
+
+ </div> <!-- /.form-row -->
+ <input type="hidden" name="weight_search" value="1">
+ </form>
+ 
+ </div><!-- /#opac-main-search -->
+ </div> <!-- /.col -->
+ </div> <!-- /.row -->
+ 
+
+ <div class="row">
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+  <ul class="nav" id="moresearches">
+ <li class="nav-item"><a href="/cgi-bin/koha/opac-entrypages.pl?interestGroup=9&page=Childto9"><img src="/webcustom/images/Child.png" style="vertical-align: baseline;">
+ Kinderbibliothek</a></li>
+ <li class="nav-item"><a href="/cgi-bin/koha/opac-entrypages.pl?interestGroup=T&page=Childfrom9"><img src="/webcustom/images/Infant.png" style="vertical-align: baseline;">
+ Jugendbibliothek</a></li>
+ <li class="nav-item"><a href="/cgi-bin/koha/opac-entrypages.pl?interestGroup=A&page=Adult"><i class="fa fa-user" style="color:darkred;"></i>
+ Erwachsenenbibliothek</a></li>
+<li class="nav-item"><a href="/cgi-bin/koha/opac-search.pl?q=(su.phrase:(*fridaytip*))"><img src="/webcustom/images/custom/thumbs-up_6072260.png" style="vertical-align: baseline; height: 1em;">#fridaytip</a></li>
+<li class="nav-item"><i class="fa fa-info" aria-hidden="true"></i><a href="/cgi-bin/koha/opac-entrypages.pl?page=News&shownews=1"> Aktuelles</a></li>
+<li class="nav-item"><i class="fa fa-calendar" aria-hidden="true"></i><a href="/cgi-bin/koha/opac-page.pl?code=lmscloud-eventmanagement"> Veranstaltungen</a></li>
+
+<!--
+ <li class="nav-item"><a href="/cgi-bin/koha/opac-page.pl?code=lmscloud-eventmanagement"><i class="fa fa-calendar"></i> Veranstaltungen</a></li>
+-->
+
+ <li class="nav-item"><a href="/cgi-bin/koha/opac-browser-asb.pl"><i class="fa fa-folder-open-o" style="color:darkblue;"></i>
+ Systematisch stöbern</a></li>
+<li class="nav-item"><a href="/cgi-bin/koha/opac-entrypages.pl?interestGroup=T&page=BrockhausT"><i class="fa fa-graduation-cap"style="color:blueviolet"></i> Onlinetraining für Schüler</a></li>
+ <li class="nav-item"><img src="/webcustom/images/Antolin16.png" style="vertical-align: baseline;"></img> <a href="/cgi-bin/koha/opac-antolin.pl">Bücher mit Antolin-Quiz</a></li>
+ <li class="nav-item"><a href="/cgi-bin/koha/opac-search.pl"><i class="fa fa-search-plus" style="color:cadetblue"></i>
+ Erweiterte Suche</a></li>
+<!-- <li class="nav-item"><a href="/cgi-bin/koha/opac-browse.pl"><i class="fa fa-search-plus" style="color:#4caf50"></i> Indexsuche</a></li>-->
+ 
+ 
+ 
+ <!--  -->
+ 
+ 
+ 
+ 
+ 
+ </ul>
+ 
+ </div> <!-- /.row -->
+ </div> <!-- /.container-fluid -->
+ 
+
+ <!-- Login form hidden by default, used for modal window -->
+ <div id="loginModal" class="modal" tabindex="-1" role="dialog" aria-labelledby="modalLoginLabel" aria-hidden="true">
+ <div class="modal-dialog">
+ <div class="modal-content">
+ <div class="modal-header">
+ <h2 class="modal-title" id="modalLoginLabel">Benutzerkonto</h2>
+ <button aria-label="Schließen" class="closebtn" data-dismiss="modal" type="button">
+ <span aria-hidden="true">&times;</span>
+ </button>
+ </div>
+ <form action="/cgi-bin/koha/opac-user.pl" method="post" name="auth" id="modalAuth">
+ <input type="hidden" name="has-search-query" id="has-search-query" value="" />
+ <div class="modal-body">
+ 
+ 
+ 
+ 
+ 
+ <input type="hidden" name="koha_login_context" value="opac" />
+ <fieldset class="brief">
+ <div class="local-login">
+ <label for="muserid">Login:</label><input type="text" id="muserid" name="userid" autocomplete="off" />
+ <label for="mpassword">Passwort:</label><input type="password" id="mpassword" name="password" autocomplete="off" />
+ <fieldset class="action">
+ <input class="btn btn-primary" type="submit" value="Anmelden" />
+ </fieldset>
+ </div>
+ 
+ <div id="nologininstructions-modal" class="nologininstructions">
+ 
+ 
+ <div id="OpacLoginInstructions">
+ 
+ <div class="de-DE_item">
+ 
+ <div class="de-DE_body"><p>Zum Anmelden verwenden Sie bitte die Benutzernummer auf Ihrem Medienpass als Login-Kennung und Ihr Geburtsdatum in der Form XX.XX.XXXX als Passwort.<br />
+
+Bitte machen Sie nach dem ersten Login von der Möglichkeit Gebrauch, <b>Ihr Passwort auf ein von Ihnen gewähltes zu ändern</b>.</p>
+
+<p>Wenn Sie Ihre Zugangsdaten vergessen haben, melden Sie sich bitte persönlich bei uns.</p></div>
+ </div>
+ 
+ </div>
+  
+ </div>
+ 
+ 
+ <div id="forgotpassword-modal" class="forgotpassword">
+ <a href="/cgi-bin/koha/opac-password-recovery.pl">Passwort vergessen?</a>
+ </div>
+ 
+ 
+ </fieldset>
+ 
+ </div>
+ </form> <!-- /#auth -->
+ </div> <!-- /.modal-content -->
+ </div> <!-- /.modal-dialog -->
+ </div> <!-- /#modalAuth -->
+
+
+<div class="main">
+ <nav aria-label="Krümelpfad" class="breadcrumbs" id="breadcrumbs">
+ <ol class="breadcrumb">
+ <li class="breadcrumb-item">
+ <a href="/cgi-bin/koha/opac-main.pl">Start</a>
+ </li>
+ <li class="breadcrumb-item active">
+ <a href="#" aria-current="page"><span>Details zu: </span> <span class="biblio-title">Hase Hibiskus: Zwei möhrenstarke Abenteuer</span></a>
+ </li>
+ </ol>
+ </nav> <!-- /#breadcrumbs -->
+
+ <div class="container-fluid">
+ <div class="row">
+ <div class="col-lg-9">
+ <div id="catalogue_detail_biblio" class="maincontent" data-biblionumber="149469">
+
+ <div class="bookcover">
+ 
+ 
+ <div id="biblio-cover-slider" class="cover-slider cover-slides"><!-- cover-slides shows spinner -->
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ <div class="cover-image" id="ekz-coverimg">
+ <img alt="ekz-Cover of " src="https://cover.ekz.de/9783473460625.jpg" title=""></img>
+ </div>
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+
+ 
+ </div> <!-- /.cover-slider -->
+
+ </div><!-- / .bookcover -->
+
+ <abbr class="unapi-id" title="koha:biblionumber:149469"><!-- unAPI --></abbr>
+ 
+ <span class="Z3988" title="ctx_ver=Z39.88-2004&amp;amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;amp;rft.genre=book&amp;amp;rft.btitle=Hase%20Hibiskus%3A%20Zwei%20m%C3%B6hrenstarke%20Abenteuer&amp;amp;rft.isbn=9783473460625&amp;amp;rft.au=K%C3%B6nig%2C%20Andreas&amp;amp;rft.au=Jakobs%2C%20G%C3%BCnther"></span>
+ 
+
+ <div id="views">
+ <span class="view current-view"><span id="Normalview"><i class="fa fa-file-text-o" aria-hidden="true"></i> Normale Ansicht</span></span>
+ <span class="view">
+ <a id="MARCview" class="btn btn-link" href="/cgi-bin/koha/opac-MARCdetail.pl?biblionumber=149469"><i class="fa fa-list-alt" aria-hidden="true"></i> MARC</a>
+ </span>
+ 
+ <span class="view"><a id="ISBDview" class="btn btn-link" href="/cgi-bin/koha/opac-ISBDdetail.pl?biblionumber=149469"><i class="fa fa-list-ul" aria-hidden="true"></i> ISBD</a></span>
+ 
+ </div>
+
+ 
+
+<div id="bibtip_isxn" style="display:none">9783473460625</div><div id="bibtip_shorttitle" style="display:none">Hase Hibiskus: Zwei möhrenstarke Abenteuer.</div><div id="bibtip_id" style="display:none">149469</div><div class="record" vocab="http://schema.org/" typeof="CreativeWork Produkt" resource="#record">
+<h1 class="title" property="name">Hase Hibiskus: Zwei möhrenstarke Abenteuer </h1>
+<span class="results_summary author h3"><span class="byAuthor">Von: </span><ul class="resource_list"><li><a href="/cgi-bin/koha/opac-search.pl?q=name:%22K%C3%B6nig%2C%20Andreas%22" class="contributors"><span resource="#record"><span property="author" typeof="Person"><span property="name">König, Andreas</span></span></span><span class="relatorcode"> [Verfasser]</span></a></li></ul></span><span class="results_summary author h3">Mitwirkende(r): <ul class="resource_list"><li><a href="/cgi-bin/koha/opac-search.pl?q=name:%22Jakobs%2C%20G%C3%BCnther%22" class="contributors"><span resource="#record"><span property="contributor" typeof="Person"><span property="name">Jakobs, Günther<span class="authordates">, 1978-</span></span></span></span><span class="relatorcode"> [Künstler]</span></a></li></ul></span><span class="results_summary type"><span class="label">Materialtyp: </span><img alt="Antolin Buch" class="materialtype mt_icon_antolin" src="/webcustom/images/Antolin16.png" title="Antolin Buch"> <img src="/opac-tmpl/lib/famfamfam/BK.png" alt="Text" class="materialtype mt_icon_BK">Text</span><span class="results_summary languages"><span class="language"><span class="label">Sprache: </span><span class="lang_code-ger">Deutsch</span><span class="separator"> </span></span><span class="language"><span class="label">Originalsprache: </span><span class="lang_code-ger">Deutsch</span><span class="separator"> </span></span></span><span class="results_summary series"><span class="label">Reihen: </span><a href="/cgi-bin/koha/opac-search.pl?q=se:(SAMi%20-%20dein%20Leseb%C3%A4r)">SAMi - dein Lesebär</a><span class="separator"> | </span><a href="/cgi-bin/koha/opac-search.pl?q=se:(Hase%20Hibiskus)">Hase Hibiskus</a></span><span class="results_summary rda264"><span class="label">Verlag: </span>Ravensburg <a href="/cgi-bin/koha/opac-search.pl?q=Provider:Ravensburger">Ravensburger</a> [2021]</span><span class="results_summary description"><span class="label">Beschreibung: </span><span property="description">58 ungezählte Seiten Noten, farbig 27 cm</span></span><span class="results_summary isbn"><span class="label">ISBN: </span><ul class="resource_list"><li><span property="isbn">9783473460625</span></li></ul></span><span class="results_summary other_title"><span class="label">Weitere Titel: </span><ul class="resource_list"><li><span property="alternateName"> Hase Hibiskus - Zwei möhrenstarke Abenteuer [Weiterer Titel]</span></li></ul></span><span class="results_summary uniform_titles"><span class="label">Einheitssachtitel: </span><ul class="resource_list"><li><span property="alternateName"> Hase Hibiskus </span></li></ul></span><span class="results_summary classification"><span class="label">Themenkreis: </span><a href="/cgi-bin/koha/opac-search.pl?q=sbg:%22Lustiges%22">Lustiges</a></span><span class="results_summary genre"><span class="label">Genre/Form: </span><ul class="resource_list"><li><a href="/cgi-bin/koha/opac-search.pl?q=index-term-genre:%22Bilderbuch%22">Bilderbuch</a></li></ul></span><span class="results_summary classification"><span class="label">Systematik: </span><a href="/cgi-bin/koha/opac-search.pl?q=sys.phrase:%22G1%22">G1</a></span><span class="results_summary summary truncable-txt"><span class="label">Zusammenfassung: </span>Hase Hibiskus fährt mit den Freunden Maxi Maus und Tom Bär in den Urlaub ans Meer. Drei unterschiedliche Freunde haben aber auch unterschiedliche Bedürfnisse. Da muss man sich manchmal zusammenraufen. Zwei lustige Abenteuer mit den drei Freunden. Ab 3.</span><span class="results_summary summary truncable-txt"><span class="label">Rezension: </span>Die beiden "möhrenstarken Abenteuer" von Hase Hibiskus ("Hase Hibiskus und der Möhrenklau" sowie "Hase Hibiskus und die dicksten Freunde der Welt") erschienen 2019 und 2020 und liegen jetzt in einer SAMi-tauglichen Ausgabe als Doppelband vor. Eisbär SAMi wird ans Buch gesteckt, mit dem WLAN verbunden und liest dann die Geschichte vor. Der Sensor in SAMis Tasse erkennt die jeweilige Seite, sodass die Kinder das Vorlesetempo selbst bestimmen können und auch hin- und her blättern können. Musikuntermalung und Geräusche vermitteln ein Hörbucherlebnis.</span>
+</div>
+
+
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+
+
+
+ 
+ <form method="post" action="/cgi-bin/koha/opac-ratings.pl">
+ <legend class="sr-only">Sternchenbewertung</legend>
+ <div class="results_summary ratings" id="rating-149469">
+
+ 
+ 
+
+ 
+ <select id="star_rating" class="star_rating" name="rating" data-biblionumber="149469" data-context="rating-149469" autocomplete="off">
+ 
+ 
+ 
+ 
+ <option value="1">1</option>
+ 
+ 
+ 
+ <option value="2">2</option>
+ 
+ 
+ 
+ <option value="3">3</option>
+ 
+ 
+ 
+ <option value="4">4</option>
+ 
+ 
+ 
+ <option value="5" selected="selected">5</option>
+ 
+ 
+ </select>
+ <img id="rating-loading" class="rating-loading" style="display:none" src="/opac-tmpl/bootstrap/images/spinner-small.gif" alt="" />
+
+ <!-- define some hidden vars for ratings -->
+
+ <input  type="hidden" name='biblionumber'  value="149469" />
+ <input  type="hidden" name='rating_value' id='rating_value' class="rating_value" value="" />
+
+ &nbsp; <input name="rate_button" type="submit" value="Bewerten" />&nbsp;
+
+ 
+ <span id="rating_value_text" class="rating_value_text"></span>
+ <span id="cancel_rating_text" class="cancel_rating_text" style="display: none;"><a href="#" data-context="star_rating"><i class="fa fa-remove" aria-hidden="true"></i> Bewertung löschen</a></span>
+ 
+
+ <span id="rating_text" class="rating_text">Durchschnittliche Bewertung: 5.0 (1 Bewertungen)</span>
+ </div>
+ </form>
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+
+
+ </div> <!-- / #catalogue_detail_biblio -->
+
+   <div id="bibliodescriptions" class="toptabs">
+ 
+ 
+ 
+ <ul class="nav nav-tabs" role="tablist">
+ 
+ 
+ <li class="nav-item" role="presentation">
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ <a href="#holdings_panel" class="nav-link" id="holdings-tab" data-toggle="tab" data-target="#holdings_panel" data-tabname="holdings" aria-controls="holdings_panel" role="tab" aria-selected="false">
+ 
+ 
+ 
+ 
+ 
+ <span>Exemplare</span>
+ 
+ 
+   ( 2 )
+ 
+ </a>
+ </li>
+
+
+ 
+
+ 
+ 
+ <li class="nav-item" role="presentation">
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ <a href="#descriptions_panel" class="nav-link" id="descriptions-tab" data-toggle="tab" data-target="#descriptions_panel" data-tabname="descriptions" aria-controls="descriptions_panel" role="tab" aria-selected="false">
+ 
+ 
+ 
+ 
+ 
+ 
+ <span>Titelinformationen ( 2 )</span>
+ 
+ </a>
+ </li>
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+  
+ </ul>
+ 
+ 
+ <div class="tab-content">
+ 
+  
+
+ 
+ 
+ <div role="tabpanel" class="tab-pane" id="holdings_panel" aria-labelledby="holdings-tab">
+ 
+ 
+ 
+ 
+ <table class="table table-bordered table-striped" id="holdingst">
+ <caption class="sr-only">Exemplare</caption>
+ <thead>
+ <tr>
+
+ 
+ 
+ <th id="item_itemtype" data-colname="item_itemtype" class="itype">Medientyp</th>
+ 
+ 
+ 
+ <th id="item_home_location" data-colname="item_home_location" class="item_location">Heimatbibliothek</th>
+ 
+ 
+ 
+ <th id="item_callnumber" data-colname="item_callnumber" class="call_no">Signatur</th>
+ 
+ <th id="item_materials" data-colname="item_materials" class="materials">Beilagen</th>
+ 
+ 
+ 
+ 
+ <th id="item_status" data-colname="item_status" class="status">Status</th>
+ 
+ <th id="item_datedue" data-colname="item_datedue" class="date_due">Fälligkeitsdatum</th>
+ <th id="item_barcode" data-colname="item_barcode" class="barcode">Barcode</th>
+ 
+ <th id="item_holds" data-colname="item_holds">Vormerkungen</th>
+ 
+ 
+ <th></th>
+ </tr>
+ </thead>
+ <tbody>
+ 
+ <tr vocab="http://schema.org/" typeof="Offer">
+
+ 
+
+ 
+ <td class="itype">
+ 
+ 
+ 
+ <span class="itypetext">Kinder- und Jugendliteratur</span>
+ 
+ </td>
+ 
+ 
+
+ 
+ 
+ 
+ 
+ <td class="location" property="seller" data-order="Bücherei Aldingen">
+ <link property="itemOffered" href="#record" />
+ <link property="businessFunction" href="http://purl.org/goodrelations/v1#LeaseOut">
+
+ 
+ <a href="https://mt-remseck.lmscloud.net" class="library_info" data-info="&lt;p&gt;&lt;span style=&quot;text-decoration: underline;&quot;&gt;&amp;Ouml;ffnungszeiten&lt;br /&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;Mittwoch &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; 15:30 - 18:30 Uhr&lt;/p&gt;
+&lt;p&gt;Donnerstag&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; 15:30 - 18:30 Uhr&lt;br /&gt;&lt;br /&gt;In den Schulferien und an beweglichen Ferientagen der Schulen in Remseck hat die B&amp;uuml;cherei geschlossen.&lt;/p&gt;" data-name="Bücherei Aldingen">
+ <i class="fa fa-info-circle" aria-hidden="true"></i> Bücherei Aldingen
+ </a>
+ 
+
+ 
+ <span class="shelvingloc">Aldingen: SAMi Lesebär</span>
+ 
+
+ </td>
+ 
+
+ 
+
+ 
+
+ <td class="call_no" property="sku">
+ 
+ G SAMi Lesebär
+ 
+ (<a href="#" class="lmscoverflow-shelfbrowser" data-biblionumber="149469" data-itemnumber="668066">Regal durchstöbern<span class="sr-only">(Öffnet sich unterhalb)</span></a>)
+ 
+ 
+ 
+ 
+ 
+ </td>
+ 
+ 
+ <td class="materials"></td>
+ 
+
+ 
+ 
+ 
+ 
+ <td class="status">
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+ <link property="availability" href="http://schema.org/InStock" />
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ <span class="item-status available">Verfügbar </span>
+
+</td>
+ 
+ 
+ 
+ <td class="date_due"></td>
+ 
+
+ <td class="barcode" property="serialNumber">30018588</td>
+ 
+ <td class="holds_count">
+   
+ 
+ </td>
+ 
+ 
+ <td></td>
+ </tr>
+ 
+ <tr vocab="http://schema.org/" typeof="Offer">
+
+ 
+
+ 
+ <td class="itype">
+ 
+ 
+ 
+ <span class="itypetext">Kinder- und Jugendliteratur</span>
+ 
+ </td>
+ 
+ 
+
+ 
+ 
+ 
+ 
+ <td class="location" property="seller" data-order="Mediathek im KUBUS">
+ <link property="itemOffered" href="#record" />
+ <link property="businessFunction" href="http://purl.org/goodrelations/v1#LeaseOut">
+
+ 
+ <a href="https://mt-remseck.lmscloud.net" class="library_info" data-info="&lt;p&gt;&lt;strong&gt;&amp;Ouml;ffnungszeiten:&lt;/strong&gt;&lt;/p&gt;
+&lt;table&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Montag&lt;/td&gt;
+&lt;td&gt;15:00 - 18:00 Uhr&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Dienstag&lt;/td&gt;
+&lt;td&gt;10:00 - 12:00 Uhr&lt;br /&gt;14:00 - 19:00 Uhr&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Donnerstag&lt;/td&gt;
+&lt;td&gt;10:00 - 12:00 Uhr&lt;br /&gt;14:00 - 19:00 Uhr&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Freitag&lt;/td&gt;
+&lt;td&gt;15:00 - 18:00 Uhr&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Samstag&lt;/td&gt;
+&lt;td&gt;10:00 - 13:00 Uhr&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;br /&gt;&lt;strong&gt;&lt;/strong&gt;&lt;/p&gt;" data-name="Mediathek im KUBUS">
+ <i class="fa fa-info-circle" aria-hidden="true"></i> Mediathek im KUBUS
+ </a>
+ 
+
+ 
+ <span class="shelvingloc"></span>
+ 
+
+ </td>
+ 
+
+ 
+
+ 
+
+ <td class="call_no" property="sku">
+ 
+ SaMi Lesebär
+ 
+ (<a href="#" class="lmscoverflow-shelfbrowser" data-biblionumber="149469" data-itemnumber="661875">Regal durchstöbern<span class="sr-only">(Öffnet sich unterhalb)</span></a>)
+ 
+ 
+ 
+ 
+ 
+ </td>
+ 
+ 
+ <td class="materials"></td>
+ 
+
+ 
+ 
+ 
+ 
+ <td class="status">
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+ <link property="availability" href="http://schema.org/OutOfStock" />
+ 
+
+
+
+
+
+ 
+ 
+
+ 
+ 
+ 
+ <span class="item-status checkedout">Ausgeliehen</span>
+ 
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</td>
+ 
+ 
+ 
+ <td class="date_due" data-order="2026-09-29 23:59:00">29.09.2026</td>
+ 
+
+ <td class="barcode" property="serialNumber">20011162</td>
+ 
+ <td class="holds_count">
+   
+ 
+ </td>
+ 
+ 
+ <td></td>
+ </tr>
+ 
+ </tbody>
+ </table>
+ 
+ 
+ <div id="shelfbrowser">
+ <div id="lmscoverflow"></div>
+ </div>
+ 
+
+
+ 
+ 
+ 
+ <div id="bib_holds">
+ 
+ <span>Anzahl Vormerkungen: 0</span>
+ 
+ 
+ </div>
+ 
+
+ 
+ 
+ 
+
+ 
+ 
+
+ 
+ </div>
+
+
+ 
+
+ 
+ 
+ 
+ <div role="tabpanel" class="tab-pane" id="descriptions_panel" aria-labelledby="descriptions-tab">
+ 
+ 
+ <div class="content_set">
+
+ 
+
+ 
+ <div id="marcnotes">
+ 
+ <p>
+ 
+ Hase Hibiskus fährt mit den Freunden Maxi Maus und Tom Bär in den Urlaub ans Meer. Drei unterschiedliche Freunde haben aber auch unterschiedliche Bedürfnisse. Da muss man sich manchmal zusammenraufen. Zwei lustige Abenteuer mit den drei Freunden. Ab 3.
+ 
+ </p>
+ 
+ <p>
+ 
+ Die beiden &quot;möhrenstarken Abenteuer&quot; von Hase Hibiskus (&quot;Hase Hibiskus und der Möhrenklau&quot; sowie &quot;Hase Hibiskus und die dicksten Freunde der Welt&quot;) erschienen 2019 und 2020 und liegen jetzt in einer SAMi-tauglichen Ausgabe als Doppelband vor. Eisbär SAMi wird ans Buch gesteckt, mit dem WLAN verbunden und liest dann die Geschichte vor. Der Sensor in SAMis Tasse erkennt die jeweilige Seite, sodass die Kinder das Vorlesetempo selbst bestimmen können und auch hin- und her blättern können. Musikuntermalung und Geräusche vermitteln ein Hörbucherlebnis.
+ 
+ </p>
+ 
+ </div>
+ 
+
+ </div> <!-- /.content_set -->
+ 
+ </div>
+
+ 
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+ </div>
+
+ 
+ </div>
+
+
+ 
+
+ <span class="results_summary">
+ <div id="bibtip_reclist" style="display:none"></div>
+ </span>
+
+ </div> <!-- /.col-lg-10 -->
+
+ <div class="col-lg-3">
+ <div id="ulactioncontainer">
+
+ 
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ul id="action">
+ 
+ 
+ 
+ 
+ <li><a class="reserve btn btn-link btn-lg" href="/cgi-bin/koha/opac-reserve.pl?biblionumber=149469"><i class="fa fa-fw fa-bookmark" aria-hidden="true"></i> Vormerken</a></li>
+ 
+ 
+ 
+ 
+
+ 
+
+ 
+
+ <li><a class="print-large btn btn-link btn-lg" href="#"><i class="fa fa-fw fa-print" aria-hidden="true"></i> Druck</a></li>
+
+ 
+ 
+ 
+
+ 
+ 
+ <li><a class="addtoshelf btn btn-link btn-lg" href="/cgi-bin/koha/opac-addbybiblionumber.pl?biblionumber=149469"><i class="fa fa-fw fa-list" aria-hidden="true"></i> In Ihren Listen speichern</a></li>
+ 
+ 
+
+ 
+
+ 
+ <li><a class="suggest_for_purchase btn btn-link btn-lg" href="/cgi-bin/koha/opac-suggestions.pl?op=add&biblionumber=149469"><i class="fa fa-fw fa-gift" aria-hidden="true"></i> Zur Anschaffung vorschlagen</a></li>
+ 
+
+ 
+
+
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ <li>
+ <div id="antolinquiz_menu">
+ <div class="dropdown">
+ <a id="open_antolinquiz_menu" class="btn btn-link btn-lg dropdown-toggle" data-toggle="dropdown" href="#"><img alt="Antolin Buch" aria-hidden="true" class="antolin_menu_icon" src="/webcustom/images/Antolin16.png" title="Antolin Buch" /> Antolin Quiz <b class="caret"></b></a>
+ <div class="dropdown-menu dropdown-menu-right" aria-labelledby="format">
+ 
+ 
+ <a class="dropdown-item" href="https://www.antolin.de/all/bookdetail.jsp?book_id=210355" title="https://www.antolin.de/all/bookdetail.jsp?book_id=210355" target="_blank">
+ 
+ Antolin: Zwei möhrenstarke Abenteuer (hier: Hase Hibiskus und der Möhrenklau)</a>
+ 
+ 
+ 
+ 
+ 
+ 
+ <a class="dropdown-item" href="https://www.antolin.de/all/bookdetail.jsp?book_id=210931" title="https://www.antolin.de/all/bookdetail.jsp?book_id=210931" target="_blank">
+ 
+ Antolin: Zwei möhrenstarke Abenteuer (hier: Hase Hibiskus und die dicksten Freunde der Welt)</a>
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ </div>
+ </div>
+ </div>
+ </li>
+ 
+ 
+
+
+ 
+ 
+ 
+ 
+ 
+ 
+ <li>
+ <div id="wikipedia_menu">
+ <div class="dropdown">
+ <a id="format" class="btn btn-link btn-lg dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-fw fa-wikipedia-w" aria-hidden="true"></i> Wikipedia-Artikel <b class="caret"></b></a>
+ <div class="dropdown-menu dropdown-menu-right" aria-labelledby="format">
+ 
+ 
+ <a class="dropdown-item" href="https://de.wikipedia.org/wiki/Hase_Hibiskus" title="https://de.wikipedia.org/wiki/Hase_Hibiskus" target="_blank">
+ 
+ Hase Hibiskus</a>
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ <a class="dropdown-item" href="https://de.wikipedia.org/wiki/G%C3%BCnther_Jakobs" title="https://de.wikipedia.org/wiki/Günther_Jakobs" target="_blank">
+ 
+ Günther Jakobs</a>
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ <a class="dropdown-item" href="https://de.wikipedia.org/wiki/Andreas_K%C3%B6nig" title="https://de.wikipedia.org/wiki/Andreas_König" target="_blank">
+ 
+ Andreas König</a>
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ <a class="dropdown-item" href="https://de.wikipedia.org/wiki/Zwei" title="https://de.wikipedia.org/wiki/Zwei" target="_blank">
+ 
+ Zwei</a>
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ <a class="dropdown-item" href="https://de.wikipedia.org/wiki/Abenteuer" title="https://de.wikipedia.org/wiki/Abenteuer" target="_blank">
+ 
+ Abenteuer</a>
+ 
+ 
+ 
+ 
+ 
+ 
+ </div>
+ </div>
+ </div>
+ </li>
+ 
+ 
+ 
+ 
+ <li>
+ <div id="bookshop_menu">
+ <div class="dropdown"> 
+ <a id="open_bookshop_menu" class="btn btn-link btn-lg dropdown-toggle" class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-fw fa-eur" aria-hidden="true"></i> Kaufen statt Leihen<b class="caret"></b></a>
+ <div class="dropdown-menu dropdown-menu-right" aria-labelledby="format">
+ <a class="dropdown-item" href="https://www.buchhandel.de/buch/9783473460625" title="Kaufen bei buchhandel.de">Bei buchhandel.de</a>
+
+<a class="dropdown-item" href="http://www.buch.de/shop/home/suche/?sq=3473460621" title="Kaufen bei Buch.de">Bei Buch.de</a>
+
+<a class="dropdown-item" href="http://www.ebook.de/de/quickSearch?searchString=3473460621" title="Kaufen bei eBook.de">Bei eBook.de</a>
+
+<a class="dropdown-item" href="http://www.amazon.de/gp/product/3473460621" title="Kaufen bei Amazon">Bei Amazon</a>
+
+<a class="dropdown-item" href="http://www.thalia.de/shop/buecher/suche/?sq=3473460621" title="Kaufen bei Thalia">Bei Thalia</a>
+
+ </div>
+ </div>
+ </div>
+ </li>
+ 
+
+ 
+ 
+ <li>
+ <div id="export">
+ <div class="dropdown">
+ <a id="format" class="btn btn-link btn-lg dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-fw fa-download" aria-hidden="true"></i> Datensatz speichern <b class="caret"></b></a>
+ <div class="dropdown-menu dropdown-menu-right" aria-labelledby="format">
+ 
+ 
+ <a class="dropdown-item" href="/cgi-bin/koha/opac-export.pl?op=export&amp;bib=149469&amp;format=bibtex">
+ <span>BIBTEX</span>
+ 
+ </a>
+ 
+ 
+ 
+ <a class="dropdown-item" href="/cgi-bin/koha/opac-export.pl?op=export&amp;bib=149469&amp;format=isbd">
+ <span>ISBD</span>
+ 
+ </a>
+ 
+ 
+ 
+ <a class="dropdown-item" href="/cgi-bin/koha/opac-export.pl?op=export&amp;bib=149469&amp;format=marcxml">
+ <span>MARCXML</span>
+ 
+ </a>
+ 
+ 
+ 
+ <a class="dropdown-item" href="/cgi-bin/koha/opac-export.pl?op=export&amp;bib=149469&amp;format=marcstd">
+ <span>MARC (Unicode/UTF-8, Standard)</span>
+ 
+ </a>
+ 
+ 
+ </div> <!-- /.dropdown-menu -->
+ </div> <!-- /.dropdown -->
+ </div> <!-- /#export -->
+ </li>
+ 
+
+ 
+ <li>
+ <div id="moresearches_menu">
+ <div class="dropdown">
+ <a id="furthersearches" class="btn btn-link btn-lg dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+ <i class="fa fa-fw fa-search" aria-hidden="true"></i> Weitere Suchen </a>
+ <div class="dropdown-menu dropdown-menu-right" aria-labelledby="furthersearches">
+ <div class="dropdown-header">Suche nach diesem Titel in:</div>
+ <a href="https://worldcat.org/search?q=Hase%20Hibiskus%3A%20Zwei%20m%C3%B6hrenstarke%20Abenteuer" target="_blank">Andere Bibliotheken (WorldCat)</a>
+<a href="https://scholar.google.com/scholar?q=Hase%20Hibiskus%3A%20Zwei%20m%C3%B6hrenstarke%20Abenteuer" target="_blank">Google Scholar</a>
+<a href="https://www.bookfinder.com/search/?author=K%C3%B6nig%2C%20Andreas&title=Hase%20Hibiskus%3A%20Zwei%20m%C3%B6hrenstarke%20Abenteuer&st=xl&ac=qr" target="_blank">Online-Buchhandel (Bookfinder.com)</a>
+ </div>
+ </div>
+ </div>
+ </li>
+ 
+</ul>
+
+<!-- Dublin Core Modal Form -->
+<div class="modal" id="exportModal_" tabindex="-1" role="dialog" aria-labelledby="exportModalLabel" aria-hidden="true">
+ <div class="modal-dialog">
+ <div class="modal-content">
+ <div class="modal-header">
+ <h3 class="modal-title" id="exportModalLabel">Exportiere als Dublin Core...</h3>
+ <button type="button" class="closebtn" data-dismiss="modal" aria-hidden="true">&times;</button>
+ </div>
+ <form method="get" action="/cgi-bin/koha/opac-export.pl">
+ <div class="modal-body">
+ <fieldset id="dc_fieldset">
+ <input id="input-simple" type="radio" name="format" value="rdfdc">
+ <label class="label_dc" for="input-simple">Einfaches DC-RDF</label>
+ <br>
+ <input id="input-oai" type="radio" name="format" value="oaidc" checked>
+ <label class="label_dc" for="input-oai">OAI-DC</label>
+ <br>
+ <input id="input-srw" type="radio" name="format" value="srwdc">
+ <label class="label_dc" for="input-srw">SRW-DC</label>
+ <br>
+ <input type="hidden" name="op" value="export">
+ <input type="hidden" name="bib" value="149469">
+ </fieldset>
+ </div>
+ <div class="modal-footer">
+ <button type="submit" class="btn btn-primary">Export</button>
+ <button class="btn btn-link btn-lg" data-dismiss="modal" aria-hidden="true">Abbrechen</button>
+ </div>
+ </form>
+ </div> <!-- /.modal-content -->
+ </div> <!-- /.modal-dialog -->
+</div> <!-- /.modal -->
+
+
+ 
+
+ 
+
+ 
+ <div id="social_networks" class="clearfix">
+ <span>Teilen</span>
+ 
+ 
+  <div><a href="mailto:?subject=Hase%20Hibiskus:%20Zwei%20m%C3%B6hrenstarke%20Abenteuer&body=Hase%20Hibiskus:%20Zwei%20m%C3%B6hrenstarke%20Abenteuer%20(https://mt-remseck.lmscloud.net/cgi-bin/koha/opac-detail.pl?biblionumber=149469)" id="email" title="Teilen über E-Mail"><i class="fa fa-envelope-o" aria-hidden="true"></i></a></div>
+  
+  <div><a href="https://www.facebook.com/sharer.php?u=https://mt-remseck.lmscloud.net/cgi-bin/koha/opac-detail.pl?biblionumber=149469&t=Hase%20Hibiskus:%20Zwei%20m%C3%B6hrenstarke%20Abenteuer" id="facebook" title="Teilen über Facebook"><i class="fa fa-facebook" aria-hidden="true"></i></a></div>
+  
+  <div><a href="https://www.linkedin.com/shareArticle?mini=true&url=https://mt-remseck.lmscloud.net/cgi-bin/koha/opac-detail.pl?biblionumber=149469&title=Hase%20Hibiskus:%20Zwei%20m%C3%B6hrenstarke%20Abenteuer" id="linkedin" title="Teilen über LinkedIn"><i class="fa fa-linkedin" aria-hidden="true"></i></a></div>
+  
+  <div><a class="twitter-share-button" data-count="none" data-lang="de-DE" href="https://twitter.com/share?url=https://mt-remseck.lmscloud.net/cgi-bin/koha/opac-detail.pl?biblionumber=149469&text=Hase%20Hibiskus%3A%20Zwei%20m%C3%B6hrenstarke%20Abenteuer" id="twitter" title="Auf Twitter teilen"><i class="fa fa-twitter" aria-hidden="true"></i></a></div>
+  
+ </div> <!-- /#social_networks -->
+ 
+ </div> <!-- / .ulactioncontainer -->
+ </div> <!-- / .col-lg-3 -->
+ </div> <!-- / .row -->
+ <div class="row">
+ 
+
+ 
+
+ 
+ </div> <!-- / .row -->
+ </div> <!-- / .container-fluid -->
+</div> <!-- / .main -->
+
+
+
+<!-- Library Info Modal -->
+<div class="modal" id="libraryInfoModal" tabindex="-1" aria-labelledby="libraryInfoModalLabel" aria-hidden="true">
+ <div class="modal-dialog">
+ <div class="modal-content">
+ <div class="modal-header">
+ <h5 class="modal-title" id="libraryInfoModalLabel"></h5>
+ <button aria-label="Schließen" class="closebtn" data-dismiss="modal" type="button">
+ <span aria-hidden="true">&times;</span>
+ </button>
+ </div>
+ <div class="modal-body">
+ <div id="libraryInfo"></div>
+ </div>
+ <div class="modal-footer">
+ <a id="libraryInfoLink" href="" class="btn btn-primary">Webseite</a>
+ <button type="button" class="btn btn-secondary" data-dismiss="modal">Schließen</button>
+ </div>
+ </div> <!-- /.modal-content -->
+ </div> <!-- /.modal-dialog -->
+</div> <!-- /.modal -->
+
+
+
+
+
+
+
+               
+
+
+
+
+
+
+
+
+
+
+ 
+ 
+
+ 
+ <div class="container-fluid">
+ <div class="row">
+ <div class="col">
+ <div id="report-koha-url">
+ <div class="row justify-content-between">
+ 
+ 
+ <div class="col">
+ <div id="koha_url" class="clearfix noprint">
+ <p>Powered by 
+ <a class="koha_url" rel="nofollow" href="http://koha-community.org">Koha</a>
+ </p>
+ </div> <!-- /#koha_url -->
+ </div> <!-- /.col -->
+ 
+ </div> <!-- /.row.justify-content-between -->
+ </div> <!-- /#report-koha-url -->
+ </div> <!-- /.col -->
+ </div> <!-- /.row -->
+ </div> <!-- /.container-fluid -->
+ 
+ </div> <!-- / #wrapper in masthead.inc -->
+
+ 
+ 
+ 
+
+
+<!-- JavaScript includes -->
+<script src="/opac-tmpl/bootstrap/lib/jquery/jquery-3.6.0.min_22.1132001.js"></script>
+<script src="/opac-tmpl/bootstrap/lib/jquery/jquery-migrate-3.3.2.min_22.1132001.js"></script>
+<script src="/opac-tmpl/lib/jquery/jquery-ui-1.13.1.min_22.1132001.js"></script>
+<script src="/opac-tmpl/bootstrap/lib/bootstrap/js/bootstrap.bundle.min_22.1132001.js"></script>
+<script src="/opac-tmpl/bootstrap/lib/fontfaceobserver.min_22.1132001.js"></script>
+<script src="/opac-tmpl/bootstrap/lib/enquire.min_22.1132001.js"></script>
+<script src="/opac-tmpl/bootstrap/js/global_22.1132001.js"></script>
+
+
+<script>
+
+    var MSG_CONFIRM_AGAIN = _("Vorsicht: Dies kann nicht rückgängig gemacht werden. Bitte bestätigen Sie nochmals")
+    var MSG_DELETE_SEARCH_HISTORY = _("Sind Sie sicher, dass Sie Ihre Suchhistorie löschen möchten?");
+    var MSG_NO_SUGGESTION_SELECTED = _("Kein Anschaffungsvorschlag ausgewählt");
+    var MSG_SEARCHING = _("Suche in %s...");
+    var MSG_ERROR_SEARCHING_COLLECTION = _("Fehler bei der Suche im %s-Bestand");
+    var MSG_NO_RESULTS_FOUND_IN_COLLECTION = _("Es wurden keine Ergebnisse im %s-Bestand der Bibliothek gefunden");
+    var MSG_RESULTS_FOUND_IN_COLLECTION = _("%s Ergebnisse im %s-Bestand der Bibliothek gefunden");
+    var MSG_BY = _("von");
+    var MSG_TYPE = _("Typ");
+    var MSG_NEXT = _("Weiter");
+    var MSG_PREVIOUS = _("Zurück");
+    var MSG_CHECKOUTS = _("Ausleihen");
+    var MSG_NO_CHECKOUTS = _("Keine Ausleihen");
+    var MSG_CHECK_OUT = _("Ausleihe");
+    var MSG_CHECK_OUT_CONFIRM = _("Sind Sie sicher, dass Sie dieses Exemplar ausleihen möchten?");
+    var MSG_CHECKED_OUT_UNTIL = _("Ausgeliehen bis %s");
+    var MSG_CHECK_IN = _("Rückgabe");
+    var MSG_CHECK_IN_CONFIRM = _("Sind Sie sicher, dass Sie dieses Exemplar zurückgeben möchten?");
+    var MSG_NO_CHECKOUTS = _("Keine Ausleihen");
+    var MSG_DOWNLOAD = _("Download");
+    var MSG_HOLDS = _("Vormerkungen");
+    var MSG_NO_HOLDS = _("Keine Vormerkungen");
+    var MSG_PLACE_HOLD = _("Vormerken");
+    var MSG_CANCEL_HOLD = _("Abbrechen");
+    var MSG_CANCEL_HOLD_CONFIRM = _("Sind Sie sicher, dass Sie diese Vormerkung stornieren möchten?");
+    var MSG_ON_HOLD = _("Vorgemerkt");
+
+    
+    
+    
+
+    
+    $(".print-large").on("click",function(){
+        window.print();
+        return false;
+    });
+    $(".addtoshelf").on("click",function(e){
+        e.preventDefault();
+        Dopop( this.href );
+    });
+    $("body").on("click", ".addtocart", function(e){
+        e.preventDefault();
+        var biblionumber = $(this).data("biblionumber");
+        addRecord( biblionumber );
+    });
+    $("body").on("click", ".cartRemove", function(e){
+        e.preventDefault();
+        var biblionumber = $(this).data("biblionumber");
+        delSingleRecord( biblionumber );
+    });
+    $(".clearsh").on("click", function(e){
+        if (! confirmDelete(MSG_DELETE_SEARCH_HISTORY) ) {
+            e.preventDefault();
+        }
+    });
+
+</script>
+
+
+ <script src="/opac-tmpl/bootstrap/js/basket_22.1132001.js"></script>
+
+
+
+
+
+
+
+ <script src="/opac-tmpl/bootstrap/js/localcovers_22.1132001.js"></script>
+ <script>
+
+    var NO_LOCAL_JACKET = _("Kein Coverbild verfügbar");
+
+    </script>
+
+
+
+
+
+
+<script src="/opac-tmpl/lib/js-cookie/js.cookie-3.0.1.min_22.1132001.js"></script>
+<script>
+$(document).ready(function() {
+    if($('#searchsubmit').length) {
+        $(document).on("click", '#searchsubmit', function(e) {
+            Cookies.remove("form_serialized", { path: '/'});
+            Cookies.remove("form_serialized_limits", { path: '/'});
+            Cookies.remove("search_path_code", { path: '/'});
+        });
+    }
+    
+    
+    $( "#translControl1" ).autocomplete({
+        source: function(request, response) {
+            if ( request.term.match(/[:=]/) ) {
+                response([]);
+                return;
+            }
+            var index = '';
+            if ( $('#masthead_search') ) {
+                index = $( "#masthead_search" ).val();
+                if ( index ) {
+                    index = index.replace(/,.*$/,'');
+                    switch (index) {
+                        case 'kw': index = ''; break;
+                        case 'nb':
+                        case 'ns': response([]); return; break;
+                    }
+                }
+            }
+            $.ajax({
+                url: "/cgi-bin/koha/svc/catsearch-autocomplete",
+                dataType: "json",
+                data: {
+                    text : request.term,
+                    field : index,
+                    count : 20
+                },
+                success: function(data) {
+                    response( data.suggestions );
+                }
+            });
+        },
+        minLength: 3,
+        delay: 300,
+        select: function( event, ui ) {
+            $('#translControl1').val(ui.item.value);
+            $("#searchform").submit();    
+        }
+    });
+    
+});
+</script>
+
+ 
+
+<script src="/opac-tmpl/lib/jquery/plugins/jquery.dataTables.min_22.1132001.js"></script>
+<script src="/opac-tmpl/lib/jquery/plugins/dataTables.responsive.min_22.1132001.js"></script>
+<script>
+    var MSG_DT_FIRST = _("Erste");
+    var MSG_DT_LAST = _("Letzte");
+    var MSG_DT_NEXT = _("Weiter");
+    var MSG_DT_PREVIOUS = _("Zurück");
+    var MSG_DT_EMPTY_TABLE = _("Keine Daten verfügbar");
+    var MSG_DT_INFO = _("Zeige _START_ bis _END_ von _TOTAL_");
+    var MSG_DT_INFO_EMPTY = _("Keine Einträge anzuzeigen");
+    var MSG_DT_INFO_FILTERED = _("(Auswahl von _MAX_ Einträgen)");
+    var MSG_DT_LENGTH_MENU = _("Zeige _MENU_ Einträge");
+    var MSG_DT_LOADING_RECORDS = _("Lädt...");
+    var MSG_DT_PROCESSING = _("Lädt...");
+    var MSG_DT_SEARCH = _("Suche:");
+    var MSG_DT_ZERO_RECORDS = _("Keine übereinstimmenden Datensätze gefunden");
+    var MSG_DT_COPY_TO_CLIPBOARD = _("In Zwischenablage kopieren");
+    var MSG_DT_COPY_KEYS = _("Drücken Sie <i>Strg</i> oder <i>⌘</i> + <i>C</i> um die Daten aus der Tabelle<br>in Ihre Zwischenablage zu kopieren.<br><br>Um Abzubrechen, klicken Sie diese Nachricht an oder drücken Sie Escape.");
+    var MSG_DT_COPIED_ROWS = _("%d Zeilen in Zwischenablage kopiert");
+    var MSG_DT_COPIED_ONE_ROW = _("Eine Zeile in Zwischenablage kopiert");
+    var MSG_CLEAR_FILTER = _("Filter löschen");
+    var MSG_DT_ALL = _("Alle");
+    var CONFIG_EXCLUDE_ARTICLES_FROM_SORT = _("ein eine einer eines einem einen der die das");
+</script>
+<script src="/opac-tmpl/bootstrap/js/datatables_buttons_shim_22.1132001.js"></script>
+<script src="/opac-tmpl/bootstrap/js/datatables_22.1132001.js"></script>
+
+ 
+
+<script src="/opac-tmpl/bootstrap/js/datatables_buttons_shim_22.1132001.js"></script>
+<script>
+function KohaTable(selector, dt_parameters, columns_settings) {
+    var id = 0;
+    var hidden_ids = [];
+    var included_ids = [];
+    $(columns_settings).each( function() {
+        var named_id = $( 'thead th[data-colname="' + this.columnname + '"]', selector ).index( selector+' th' );
+
+        var used_id = dt_parameters.bKohaColumnsUseNames ? named_id : id;
+        if ( used_id == -1 ) return;
+
+        if ( this['is_hidden'] == "1" ) {
+            hidden_ids.push( used_id );
+        }
+        if ( this['cannot_be_toggled'] == "0" ) {
+            included_ids.push( used_id );
+        }
+        id++;
+    });
+
+    // By default we include all visible columns in exports and print unless they have the "noExport" class
+    var exportColumns = ":visible:not(.noExport)";
+    if( dt_parameters.hasOwnProperty("exportColumns") ){
+        // A custom buttons configuration has been passed from the page
+        exportColumns = dt_parameters["exportColumns"];
+    }
+    // Data which has the "noExport" class should not appear in print or export
+    var export_format = {
+        body: function ( data, row, column, node ) {
+            var newnode = $(node);
+
+            if ( newnode.find(".noExport").length > 0 ) {
+                newnode = newnode.clone();
+                newnode.find(".noExport").remove();
+            }
+
+            return newnode.text().replace( /\n/g, ' ' ).trim();
+        }
+    }
+
+    const export_format_spreadsheet = ButtonsShim.export_format_spreadsheet;
+
+    // Add a "Clear filter" button to table filter form field
+    dt_parameters[ "buttons" ] = [
+        {
+            fade: 100,
+            className: "dt_button_clear_filter",
+            titleAttr: _("Filter löschen"),
+            enabled: false,
+            text: '<i class="fa fa-lg fa-remove" aria-hidden="true"></i> <span class="dt-button-text">' + _("Filter löschen") + '</span>',
+            action: function ( e, dt, node, config ) {
+                dt.search( "" ).draw("page");
+                node.addClass("disabled");
+            }
+        },
+        {
+            extend: 'csvHtml5',
+            text: _("CSV"),
+            exportOptions: {
+                columns: exportColumns,
+                format: export_format_spreadsheet
+            },
+        },
+        {
+            extend: 'copyHtml5',
+            text: _("Kopieren"),
+            exportOptions: {
+                columns: exportColumns,
+                format: export_format
+            },
+        },
+        {
+            extend: 'print',
+            text: _("Druck"),
+            exportOptions: {
+                columns: exportColumns,
+                format: export_format
+            },
+        }
+    ];
+
+    if( included_ids.length > 0 ){
+        dt_parameters[ "buttons" ].push(
+            {
+                extend: 'colvis',
+                fade: 100,
+                columns: included_ids,
+                className: "columns_controls",
+                titleAttr: _("Tabellenkonfiguration"),
+                text: '<i class="fa fa-lg fa-gear" aria-hidden="true"></i> <span class="dt-button-text">' + _("Spalten") + '</span>',
+                exportOptions: {
+                    columns: exportColumns
+                }
+            }
+        );
+    }
+
+    var table = $(selector);
+    var new_parameters = {}
+    $.extend(true, new_parameters, dataTablesDefaults, dt_parameters);
+    var default_column_defs = [
+        { "aTargets": ["string-sort"], "sType": "string" },
+        { "aTargets": ["anti-the"], "sType": "anti-the" },
+        { "aTargets": ["NoSort"], "bSortable": false, "bSearchable": false }
+    ];
+    if (new_parameters["aoColumnDefs"] === undefined) {
+        new_parameters["aoColumnDefs"] = default_column_defs;
+    } else {
+        $.extend(true, new_parameters, default_column_defs);
+    }
+
+    table.dataTable(new_parameters);
+    table.DataTable().on("column-visibility.dt", function () {
+        if (typeof columnsInit == 'function') {
+            // This function can be created separately and used to trigger
+            // an event after the DataTable has loaded AND column visibility
+            // has been updated according to the table's configuration
+            columnsInit();
+        }
+    }).columns(hidden_ids).visible(false);
+
+    $(".dt_button_clear_filter, .columns_controls, .export_controls").tooltip();
+
+    return table;
+}
+
+</script>
+
+ 
+
+<script>
+    var GB_ROOT_DIR = "/opac-tmpl/bootstrap/lib/greybox/";
+</script>
+<script src="/opac-tmpl/bootstrap/lib/greybox/AJS_22.1132001.js"></script>
+<script src="/opac-tmpl/bootstrap/lib/greybox/AJS_fx_22.1132001.js"></script>
+<script src="/opac-tmpl/bootstrap/lib/greybox/gb_scripts_22.1132001.js"></script>
+<link rel="stylesheet" type="text/css" href="/opac-tmpl/bootstrap/lib/greybox/gb_styles_22.1132001.css">
+
+ 
+ <script src="/opac-tmpl/lib/jquery/plugins/jquery.barrating.min_22.1132001.js"></script>
+ <script src="/opac-tmpl/bootstrap/js/ratings_22.1132001.js"></script>
+ 
+
+ <script src="/opac-tmpl/lib/jquery/plugins/jquery.highlight-5_22.1132001.js"></script>
+ 
+
+ <script src="/opac-tmpl/lib/Chocolat/js/chocolat_22.1132001.js"></script>
+
+ 
+ <script src="/opac-tmpl/lib/emoji-picker/js/emoji-picker-all.min_22.1132001.js"></script>
+ 
+ 
+ <script>
+function accessDivibibResource(action,divibibID) {
+    $.ajax({
+        url: "/cgi-bin/koha/opac-divibib-access.pl",
+        type: "POST",
+        cache: false,
+        data: { 'divibibID' : divibibID, 'action' : action },
+        dataType: "json",
+        success: function(data) {
+            console.log(data);
+            for (var i=0; i < data.titles.length; i++) {
+                if ( data.titles[i].resultOk == 1 ) {
+                    var win = window.open(data.titles[i].result.URL, '_blank');
+                    win.focus();
+                } else {
+                    var title = _("Zugriff auf den Onleihe Titel nicht möglich");
+                    var message = _("Der Zugriff auf den Onleihe-Titel ist nicht möglich. Bitte prüfen Sie Ihr Benutzerkonto und kontaktieren Sie die Bibliothek.");
+                    if ( data.titles[i].resultError ) {
+                        message += '<br>';
+                        message += _(" Rückmeldung des Onleihe-Portals: ");
+                        message += data.titles[i].resultError;
+                    }
+                    showDivibibInavailabilityMessage(title, message);
+                }
+            }
+        },
+        error: function (data1, data2, data3) {
+            console.log("Error accessing divibib item: ", data1, data2, data3);
+        }
+    });
+    return false;
+}
+
+// show the divibib access inavailabiliy message
+function showDivibibInavailabilityMessage(title,message) {   
+    var actionCloseText = _("Schließen"); 
+    var popupTemplate =
+    '<div class="modal" id="divibibInavailability_dialog" tabindex="-1" role="dialog" aria-labelledby="divibibInavailability_label" aria-hidden="true">' +
+    '  <div class="modal-dialog">' +
+    '    <div class="modal-content">' +
+    '      <div class="modal-header">' +
+    '        <button type="button" class="divibibInavailability_close closebtn" data-dismiss="modal" aria-hidden="true">&times;</button>' +
+    '        <h3 id="divibibInavailability_title">' + title + '</h3>' +
+    '      </div>' +
+    '      <div class="modal-body">' +
+    '      <p><div id="divibibInavailability_message">' + message + '</div><p>' +
+    '      <div class="modal-footer">' +
+    '        <button type="button" class="btn btn-small divibibInavailability_close" data-dismiss="modal">' + actionCloseText + '</button>' +
+    '      </div>' +
+    '    </div>' +
+    '  </div>' +
+    '</div>';
+
+    $(popupTemplate).modal();
+    $(popupTemplate).show();
+}
+
+function checkDivibibAvalability(idList) {
+    var checkIDs;
+    if ( $.isArray(idList) ) {
+        checkIDs = idList.join(" ");
+    }
+    else {
+        checkIDs = idList;
+    }
+    if ( idList.length == 0 ) {
+        return;
+    }
+    var version3orLater = false;
+    var onleiheVersion = "3";
+    if ( onleiheVersion.length > 0 ) {
+        var firstChar = onleiheVersion.charAt(0);
+        if ( firstChar <='9' && firstChar >='0') {
+            if ( firstChar >= '3' ) {
+                version3orLater = true;
+            }
+        }
+    }
+
+    $.ajax({
+        url: "/cgi-bin/koha/opac-divibib-availability.pl",
+        type: "POST",
+        cache: false,
+        data: { divibibID : checkIDs },
+        dataType: "json",
+        success: function(data) {
+            for (var i=0; i < data.titles.length; i++) {
+                var statusDisplay;
+                if ( data.titles[i].resultOk == 1 ) {
+                    var loggedIn=false;
+                    
+                        
+                        loggedIn=true;
+                        
+                    
+                    // check whether the item can be loaned
+                    if ( data.titles[i].result.Available > 0 ) {
+                        
+                        var accessURL = "https://www.onleihe.de/lb/frontend/mediaInfo,0-0-{TITLEID}-200-0-0-0-0-0-0-0.html";
+                        accessURL = accessURL.replace('{TITLEID}',data.titles[i].result.ItemId);
+                        statusDisplay = '<a class="external-offer-link" href="' 
+                                        + accessURL 
+                                        + '" alt="' 
+                                        + _("Zur Onleihe") 
+                                        + '" target="_blank"><b><span class="available">' 
+                                        + _("Titel digital verfügbar. Hier klicken zum Ausleihen.") 
+                                        + '</span></b></a>';
+                        
+                        if ( loggedIn ) {
+                            statusDisplay = '<a class="external-offer-link" href="#" onclick="accessDivibibResource(' 
+                                            + "'loan','" + data.titles[i].result.ItemId 
+                                            + "'); return false;"
+                                            + '">'
+                                            + '<b><span class="available">' 
+                                            + _("Verfügbar zum Online-Download.") 
+                                            + '</span></b></a>';
+                        }
+                    }
+                    // check whether the item can be reserved
+                    else if ( data.titles[i].result.Reservable > 0 ) {
+                        // get available date
+                        var availableFrom = data.titles[i].result.DateAvailable.split("-");
+                        // split date fields to year month and day
+                        // and insert the formatted javascriptdate
+                        var formattedDate = availableFrom[2] + "." + availableFrom[1] + "." + availableFrom[0];
+                        
+                        var accessURL = 'https://www.onleihe.de/lb/frontend/mediaInfo,0-0-{TITLEID}-200-0-0-0-0-0-0-0.html';
+                        accessURL = accessURL.replace('{TITLEID}',data.titles[i].result.ItemId);
+                        statusDisplay = '<a class="external-offer-link" href="' 
+                                        + accessURL 
+                                        + '" alt="' 
+                                        + _("Zur Onleihe") 
+                                        + '" target="_blank"><b><span class="available">' 
+                                        + _("Online verfügbar ab dem ")
+                                        + formattedDate 
+                                        + '. '
+                                        + _("Hier klicken zum Reservieren.") 
+                                        + '</span></b></a>';
+                        
+                        if ( loggedIn ) {
+                            statusDisplay = '<a class="external-offer-link" href="#" onclick="accessDivibibResource(' 
+                                            + "'reservation','" 
+                                            + data.titles[i].result.ItemId 
+                                            + "'); return false;" 
+                                            + '">' 
+                                            + '<b><span class="available">'
+                                            + _("Titel digital verfügbar ab dem ")
+                                            + formattedDate 
+                                            + ". "
+                                            + _("Hier klicken zum Reservieren.")
+                                            + '</span></b></a>';
+                        }
+                    }
+                    else {
+                        statusDisplay = '<b>' 
+                                        + _("Im Moment nicht verfügbar.") 
+                                        + '</b>';
+                    }
+                }
+                else {
+                    statusDisplay = '<b>' 
+                                    + _("Im Moment nicht verfügbar.") 
+                                    + '</b>';
+                }
+                $("#Onleihe-"+data.titles[i].result.ItemId).html(statusDisplay);
+                // console.log(data.titles[i]);
+            }
+        },
+        error: function (data1, data2, data3) {
+            var statusDisplay = _("Fehler bei der Abfrage der Vefügbarkeit des Titels der elektronischen Bibliothek.");
+            for (var i=0; i < this.data.divibibID.length; i++) {
+                var id = this.data.divibibID[i];
+                $("#Onleihe-"+id).html(statusDisplay);
+            }
+            console.log("Error retrieving divibib availability information: ", data1, data2, data3);
+        }
+    });
+}
+</script>
+
+ 
+
+
+ 
+ <script src="/opac-tmpl/bootstrap/js/additional-fields_22.1132001.js"></script>
+ <script>
+        window.emojiPicker = new EmojiPicker({
+        emojiable_selector: '[data-emojiable=true]',
+        assetsPath: '/opac-tmpl/lib/emoji-picker/img/',
+        popupButtonClasses: 'fa fa-smile-o'
+        });
+        window.emojiPicker.discover();
+
+        var OPACPopupAuthorsSearch = "";
+        
+            var q_array = new Array();  // holds search terms if available
+
+            function highlightOff() {
+                $("#catalogue_detail_biblio").removeHighlight();
+                $(".highlight_toggle").toggle();
+            }
+            function highlightOn() {
+                var x;
+                for (x in q_array) {
+                    if ( q_array[x].length > 0 ) {
+                        q_array[x] = q_array[x].replace(/\w*:([\w])/, "$1");
+                        q_array[x] = q_array[x].toLowerCase();
+                        var myStopwords = "a|an|and|or|not|und|oder|nicht|der|die|das|ein|einer|eine|the|".toLowerCase().split('|');
+                        if( $.inArray(q_array[x], myStopwords) == -1 ) {
+                            $(".title").highlight(q_array[x]);
+                            $(".author").highlight(q_array[x]);
+                            $(".results_summary").highlight(q_array[x]);
+                        }
+                    }
+                }
+                $(".highlight_toggle").toggle();
+            }
+        
+
+        function verify_cover_images() {
+            // Loop over each container in the template which contains covers
+            $(".cover-slider").each(function( index ){
+                var lightbox_descriptions = [];
+                var first_shown = 0;
+                $(this).find(".cover-image").each( function( index ){
+                    var div = $(this);
+                    // Find the image in the container
+                    var img = div.find("img")[0];
+                    if( img && $(img).length > 0 ){
+                        var description = "";
+                        if( img.naturalHeight == 0 && div.attr("id") != "googlejacket-coverimg" && div.hasClass('coce-coverimg') ){
+                            // No image loaded in the container. Remove the slide
+                            div.remove();
+                        } else {
+                            // All slides start hidden. If this is the first one, show it.
+                            if( first_shown == 0 ){
+                                div.show();
+                                first_shown = 1;
+                            }
+                            // Check if Amazon image is present
+                            if ( div.attr("id") == "amazon-bookcoverimg"  ) {
+                                w = img.width;
+                                h = img.height;
+                                if ((w == 1) || (h == 1)) {
+                                    // Amazon returned single-pixel placeholder
+                                    // Remove the container
+                                    div.remove();
+                                } else {
+                                    lightbox_descriptions.push(_("Amazon-Cover (<a href='%s'>Original anzeigen</a>)").format($(img).data('link')));
+                                }
+                            } else if( div.attr("id") == "custom-coverimg" ){
+                                if ( (img.complete != null) && (!img.complete) || img.naturalHeight == 0 ) {
+                                    // No image was loaded via the CustomCoverImages system preference
+                                    // Remove the container
+                                    div.remove();
+                                } else {
+                                    lightbox_descriptions.push(_("Benutzerdefiniertes Cover"));
+                                }
+                            } else if( div.attr("id") == "syndetics-coverimg" ){
+                                lightbox_descriptions.push(_("Cover von Syndetics"))
+                            } else if( div.attr("id") == "googlejacket-coverimg" ){
+                                lightbox_descriptions.push(_("Bild von Google Books (<a href='%s'>hier das Originalbild</a>)").format($(img).data('link')));
+                            } else if( div.attr("id") == "openlibrary-coverimg" ){
+                                lightbox_descriptions.push(_("Cover von Open Library (<a href='%s'>Original anzeigen</a>)").format($(img).data('link')));
+                            } else if( div.hasClass("coce-coverimg" ) ){
+                                // Identify which service's image is being loaded by Coce
+                                var coce_description;
+                                if( $(img).attr("src").indexOf('amazon.com') >= 0 ){
+                                    coce_description = _("Cove-Cover von Amazon.com");
+                                } else if( $(img).attr("src").indexOf('google.com') >= 0 ){
+                                    coce_description = _("Cove-Cover von Google Books");
+                                } else if( $(img).attr("src").indexOf('openlibrary.org') >= 0 ){
+                                    coce_description = _("Coce-Cover von Open Library");
+                                }
+                                div.find(".hint").html(coce_description);
+                                lightbox_descriptions.push(coce_description);
+                            } else if ( div.attr("id") == "bakertaylor-coverimg" ){
+                                lightbox_descriptions.push(_("Cover von Baker &amp; Taylor"));
+                            } else if ( div.attr("class") == "cover-image local-coverimg" ) {
+                                lightbox_descriptions.push(_("Lokales Cover"));
+                            } else {
+                                lightbox_descriptions.push(_("Cover-Quelle unbekannt"));
+                            }
+                        }
+                    } else {
+                        div.remove();
+                    }
+                });
+
+                // Lightbox for cover images
+                Chocolat(this.querySelectorAll('.cover-image a'), {
+                    description: function(){
+                        return lightbox_descriptions[this.settings.currentImageIndex];
+                    }
+                });
+
+            });
+
+            $(".cover-slider").each(function(){
+                var coverSlide = this;
+                var coverImages = $(this).find(".cover-image");
+                if( coverImages.length > 1 ){
+                    coverImages.each(function( index ){
+                        // If more that one image is present, add a navigation link
+                        // for activating the slide
+                        var covernav = $("<a href=\"#\" data-num=\"" + index + "\" class=\"cover-nav\"></a>");
+                        if( index == 0 ){
+                            // Set the first navigation link as active
+                            $(covernav).addClass("nav-active");
+                        }
+                        $(covernav).html("<i class=\"fa fa-circle\"></i>");
+                        $(coverSlide).append( covernav );
+                    });
+                }
+
+                if( $(coverSlide).find(".cover-image:visible,.cover-image[style='display: block;']").length < 1 ){
+                    $(coverSlide).remove();
+                } else {
+                    // This is a suboptimal workaround; we should do this via load, but
+                    // the image code is scattered all over now. We come here now after
+                    // window load and wait_for_images (so load completed).
+                    var check_complete = 1;
+                    $(coverSlide).find("img").each( function() {
+                        if( !this.complete || this.naturalHeight == 0 ) check_complete = 0;
+                    });
+                    if( check_complete ) $(coverSlide).removeClass('cover-slides');
+                }
+            });
+
+            $(".cover-slider").on("click",".cover-nav", function(e){
+                e.preventDefault();
+                var cover_slider = $(this).parent();
+                // Adding click handler for cover image navigation links
+                var num = $(this).data("num");
+                $(cover_slider).find(".cover-nav").removeClass("nav-active");
+                $(this).addClass("nav-active");
+                $(cover_slider).find(".cover-image").hide();
+                $(cover_slider).find(".cover-image").eq( num ).show();
+            });
+
+            $("#editions img").each(function(i){
+                if ( this.src.indexOf('amazon.com') >= 0 ) {
+                    w = this.width;
+                    h = this.height;
+                    if ((w == 1) || (h == 1)) {
+                        this.src = 'https://images-na.ssl-images-amazon.com/images/G/01/x-site/icons/no-img-sm.gif';
+                    } else if ( (this.complete != null) && (!this.complete) || this.naturalHeight == 0 ) {
+                        this.src = 'https://images-na.ssl-images-amazon.com/images/G/01/x-site/icons/no-img-sm.gif';
+                    }
+                }
+            });
+        } /* /verify_images */
+
+        let counter_wait = 0;
+        function wait_for_images(cb){
+
+            var loaded = 1;
+            counter_wait++;
+
+            
+
+            
+
+            
+
+            if (!loaded && counter_wait < 50) {// Do not wait more than 5 seconds
+                window.setTimeout(function(){wait_for_images(cb);}, 100);
+            } else {
+                if (counter_wait >= 50 ) {
+                    console.log("Could not retrieve the images")
+                }
+                cb();
+            }
+        }
+
+        $(window).load(function() {
+            wait_for_images(verify_cover_images);
+        });
+
+        $(document).ready(function() {
+
+            
+
+                            showBsTab("bibliodescriptions", "holdings");
+            
+            let urlParams = new URLSearchParams(window.location.search);
+            if ( urlParams.has('tab') ) {
+                let tab = urlParams.get('tab');
+                if ( tab == 'comment' ) {
+                    showBsTab("bibliodescriptions", "comments");
+                }
+            }
+
+            
+
+            var columns_settings = [{"is_hidden":0,"columnname":"item_cover","cannot_be_modified":0,"cannot_be_toggled":0},{"columnname":"item_itemtype","cannot_be_toggled":0,"cannot_be_modified":0,"is_hidden":0},{"is_hidden":0,"columnname":"item_current_location","cannot_be_modified":0,"cannot_be_toggled":0},{"is_hidden":0,"cannot_be_modified":0,"columnname":"item_home_location","cannot_be_toggled":0},{"is_hidden":1,"cannot_be_modified":0,"columnname":"item_shelving_location","cannot_be_toggled":0},{"is_hidden":0,"cannot_be_modified":0,"columnname":"item_ccode","cannot_be_toggled":0},{"is_hidden":0,"columnname":"item_callnumber","cannot_be_toggled":0,"cannot_be_modified":0},{"columnname":"item_materials","cannot_be_toggled":0,"cannot_be_modified":0,"is_hidden":0},{"cannot_be_toggled":0,"columnname":"item_enumchron","cannot_be_modified":0,"is_hidden":0},{"cannot_be_toggled":0,"columnname":"item_url","cannot_be_modified":0,"is_hidden":1},{"is_hidden":1,"cannot_be_modified":0,"columnname":"item_copy","cannot_be_toggled":0},{"cannot_be_toggled":0,"columnname":"item_status","cannot_be_modified":0,"is_hidden":0},{"columnname":"item_notes","cannot_be_modified":0,"cannot_be_toggled":0,"is_hidden":0},{"cannot_be_toggled":0,"columnname":"item_datedue","cannot_be_modified":0,"is_hidden":0},{"cannot_be_modified":0,"columnname":"item_barcode","cannot_be_toggled":0,"is_hidden":0},{"is_hidden":1,"cannot_be_modified":0,"columnname":"item_holds","cannot_be_toggled":0},{"columnname":"item_priority","cannot_be_toggled":0,"cannot_be_modified":0,"is_hidden":0},{"cannot_be_toggled":0,"columnname":"item_coursereserves","cannot_be_modified":0,"is_hidden":1}];
+
+            
+            
+            KohaTable("#holdingst", {
+                dom: '<"clearfix">t',
+                "aoColumnDefs": [
+                    { "className": "dtr-control", "orderable": false, "targets": -1 },
+                    { "responsivePriority":  1, "targets": ["cover"] },
+                    { "responsivePriority":  2, "targets": ["itype"] },
+                    { "responsivePriority":  3, "targets": ["status"] },
+                    { "responsivePriority":  4, "targets": ["call_no"] },
+                    { "responsivePriority":  5, "targets": ["item_location"] },
+                    { "responsivePriority":  6, "targets": ["date_due"] },
+                    { "responsivePriority":  7, "targets": ["barcode"] },
+                    { "responsivePriority":  8, "targets": ["vol_info"] },
+                    { "responsivePriority":  9, "targets": ["materials"] },
+                    { "responsivePriority":  10, "targets": ["collection"] },
+                    { "responsivePriority":  11, "targets": ["url"] },
+                    { "responsivePriority":  12, "targets": ["notes"] },
+                    { "responsivePriority":  13, "targets": ["copynumber"] }
+                ],
+                "bKohaColumnsUseNames": true,
+                "autoWidth": false,
+                "responsive": {
+                    "details": { "type": 'column', "target": -1, display: $.fn.dataTable.Responsive.display.childRowImmediate }
+                }
+            }, columns_settings);
+
+            KohaTable("#otherholdingst", {
+                dom: '<"clearfix">t',
+                "aoColumnDefs": [
+                    { "className": "dtr-control", "orderable": false, "targets": -1 },
+                    { "responsivePriority":  1, "targets": ["cover"] },
+                    { "responsivePriority":  2, "targets": ["itype"] },
+                    { "responsivePriority":  3, "targets": ["status"] },
+                    { "responsivePriority":  4, "targets": ["call_no"] },
+                    { "responsivePriority":  5, "targets": ["item_location"] },
+                    { "responsivePriority":  6, "targets": ["date_due"] },
+                    { "responsivePriority":  7, "targets": ["barcode"] },
+                    { "responsivePriority":  8, "targets": ["vol_info"] },
+                    { "responsivePriority":  9, "targets": ["materials"] },
+                    { "responsivePriority":  10, "targets": ["collection"] },
+                    { "responsivePriority":  11, "targets": ["url"] },
+                    { "responsivePriority":  12, "targets": ["notes"] },
+                    { "responsivePriority":  13, "targets": ["copynumber"] }
+                ],
+                "bKohaColumnsUseNames": true,
+                "autoWidth": false,
+                "responsive": {
+                    "details": { "type": 'column', "target": -1, display: $.fn.dataTable.Responsive.display.childRowImmediate }
+                }
+            }, columns_settings);
+
+            var serial_column_settings = [{"is_hidden":0,"columnname":"serial_serialseq","cannot_be_modified":0,"cannot_be_toggled":0},{"cannot_be_modified":0,"columnname":"serial_publisheddate","cannot_be_toggled":0,"is_hidden":1},{"is_hidden":0,"columnname":"serial_planneddate","cannot_be_modified":0,"cannot_be_toggled":0},{"is_hidden":0,"cannot_be_modified":0,"columnname":"serial_status","cannot_be_toggled":0},{"is_hidden":0,"columnname":"serial_notes","cannot_be_toggled":0,"cannot_be_modified":0}];
+
+            KohaTable("#subscriptionst", {
+                dom: '<"clearfix">t',
+                "sorting": [[ 1, "desc" ]],
+                "autoWidth": false,
+                "bKohaColumnsUseNames": true,
+                "responsive": {
+                    "details": { "type": 'column', "target": -1 }
+                },
+                "aoColumnDefs": [
+                    { "className": "dtr-control", "orderable": false, "targets": -1 }
+                ],
+            }, serial_column_settings);
+
+            var booking_column_settings = [{"is_hidden":0,"cannot_be_modified":0,"columnname":"booking_patron","cannot_be_toggled":0},{"is_hidden":0,"columnname":"booking_item","cannot_be_modified":0,"cannot_be_toggled":0},{"is_hidden":0,"cannot_be_toggled":0,"columnname":"booking_pickup_library","cannot_be_modified":0},{"is_hidden":0,"cannot_be_toggled":0,"columnname":"booking_start_date","cannot_be_modified":0},{"is_hidden":0,"cannot_be_toggled":0,"columnname":"booking_end_date","cannot_be_modified":0},{"is_hidden":0,"cannot_be_modified":0,"columnname":"booking_status","cannot_be_toggled":0},{"is_hidden":0,"cannot_be_modified":0,"columnname":"booking_creation_date","cannot_be_toggled":0},{"columnname":"booking_modification_date","cannot_be_toggled":0,"cannot_be_modified":0,"is_hidden":0},{"is_hidden":0,"cannot_be_modified":0,"columnname":"booking_additional_fields","cannot_be_toggled":0},{"is_hidden":0,"cannot_be_modified":0,"columnname":"booking_actions","cannot_be_toggled":0}];
+
+            KohaTable("#bookingst", {
+                dom: '<"clearfix">t<"bottom"ip>',
+                sorting: [[3, "asc"], [4, "asc"]], // Sorted by start_date
+                autoWidth: false,
+                bKohaColumnsUseNames: true,
+                paging: true,
+                pageLength: 20,
+                responsive: {
+                    details: { type: "column", target: -1 },
+                },
+                columnDefs: [
+                    { className: "dtr-control", orderable: false, targets: -1 },
+                ],
+                drawCallback: function() {
+                    /* Apply Bootstrap pagination classes */
+                    $(this).closest('.dataTables_wrapper').find('.dataTables_paginate').addClass('pagination');
+                    $('.paginate_button').each(function() {
+                        $(this).addClass('page-link');
+                        if (!$(this).parent().hasClass('page-item')) {
+                            $(this).wrap('<li class="page-item"></li>');
+                        }
+                        if ($(this).hasClass('current')) {
+                            $(this).parent().addClass('active');
+                        }
+                        if ($(this).hasClass('disabled')) {
+                            $(this).parent().addClass('disabled');
+                        }
+                    });
+                }
+            }, booking_column_settings);
+
+            var dTables = $("#holdingst,#subscriptionst,#otherholdingst,#bookingst");
+            let bookingsTabInitialized = false;
+            $('a[data-toggle="tab"]').on('shown.bs.tab', function (event) {
+                dTables.DataTable().responsive.recalc();
+
+                /* When the bookings tab is clicked, we initialize the vis-timeline after
+                 * the rerender of the bookings table, to prevent the timeline from rerendering
+                 * based on layout shifts through the table's recalculation. */
+                if (event.target.closest('a').id === "bookings-tab") {
+                    if (bookingsTabInitialized) return;
+
+                    // Fetch checkouts data via AJAX
+                    $.ajax({
+                        url: '/api/v1/public/biblios/149469/checkouts?_per_page=-1',
+                        dataType: 'json',
+                        type: 'GET',
+                        success: function(checkouts) {
+                            window.BookingsTimeline({
+                                loggedInUser: "10000001",
+                                bookings: [] || [],
+                                bookableItems: [] || [],
+                                checkouts: checkouts
+                            }).init();
+                        },
+                        error: function() {
+                            // If checkouts fetch fails, initialize timeline without checkouts
+                            window.BookingsTimeline({
+                                loggedInUser: "10000001",
+                                bookings: [] || [],
+                                bookableItems: [] || [],
+                                checkouts: []
+                            }).init();
+                        }
+                    });
+                    $("#cancellation-reason").comboBox({
+                        displayProperty: 'name',
+                        placeholder: _("Wählen oder geben Sie einen Grund ein"),
+                    });
+
+                    bookingsTabInitialized = true;
+                }
+            } );
+
+            
+
+            
+            
+                var default_order_index = 0;
+            
+
+            
+
+            
+
+            
+
+            
+
+            
+
+            $(".edit_comment").on("click", function(e){
+                e.preventDefault();
+                Dopop( this.href );
+            });
+        });
+
+        $(document).ready(function() {
+            if( OPACPopupAuthorsSearch == "1" ){
+                var terms = {
+                    contributors : {
+                        "label" : "author",
+                        "keyword_search" : "au:",
+                    },
+                    subject : {
+                        "label" : "subject",
+                        "keyword_search" : "su:",
+                    }
+                }
+                $(".contributors,.subject").on("click", function(e){
+                    e.preventDefault();
+                    var term = $(this).attr("class");
+                    var selected_term = $(this).text();
+                    var term_links = $("." + term );
+                    if( term_links.length > 1 ){
+                        term_links.each(function( index ){
+                            var authid = "";
+                            var preselected = false;
+                            var search_label = $(this).text().trim();
+                            if( $(this).text() == selected_term ){ preselected = true }
+                            if( $(this).hasClass("authority_link") ){
+                                authid = $(this).data("authid");
+                                search_string = "an:" + authid;
+                            } else {
+                                search_string = terms[term]["keyword_search"] + encodeURIComponent( search_label );
+                            }
+                            var termLink = $("<li>")
+                                .append( $("<input>", { type: "checkbox", class: "select_term", value: search_string, id: terms[term]["label"] + index } ).prop("checked", preselected ) )
+                                .append("&nbsp;")
+                                .append( $("<label>", { for: terms[term]["label"] + index, text: search_label } ) )
+                            $("#termsList").append( termLink );
+                            $("#multiSearch").modal("show");
+                        });
+                    } else {
+                        location.href = $(this).attr("href");
+                    }
+                });
+
+                $("#multiSearch").on("hide.bs.modal", function(){
+                    $("#termsList").html("");
+                });
+
+                $(".check_all").on("click", function(e){
+                    e.preventDefault();
+                    $(".select_term").each(function(){
+                        $(this).prop("checked", true );
+                    });
+                });
+
+                $(".check_none").on("click", function(e){
+                    e.preventDefault();
+                    $(".select_term").each(function(){
+                        $(this).prop("checked", false );
+                    });
+                });
+
+                $("#validMultiSearch").on("click", function(e){
+                    e.preventDefault();
+                    multiSearchRequest();
+                });
+            } /* if( OPACPopupAuthorsSearch == "1" ) */
+
+            $(".library_info").on("click", function(e){
+                e.preventDefault();
+                var library_name = $(this).data("name");
+                var opac_info = $(this).data("info");
+                var url = $(this).attr("href");
+                if( 1 ) {
+                    $("#libraryInfoModalLabel").html( library_name );
+                    $("#libraryInfo").html( opac_info );
+                    if( url ){
+                        $("#libraryInfoLink").attr("href", url );
+                        $("#libraryInfoLink").show();
+                    } else {
+                        $("#libraryInfoLink").hide();
+                    }
+                    $("#libraryInfoModal").modal("show");
+                } else { // FIXME Temporary disabled: see BZ 29144
+                    $.ajax({
+                        url: "/api/v1/public/libraries/" + branchcode,
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(result) {
+                            $("#libraryInfoModalLabel").html( result.name );
+                            $("#libraryInfo").html( opac_info );
+                            if( result.url ){
+                                $("#libraryInfoLink").attr("href", result.url );
+                                $("#libraryInfoLink").show();
+                            } else {
+                                $("#libraryInfoLink").hide();
+                            }
+                            $("#libraryInfoModal").modal("show");
+                        },
+                        error: function(xhr, status, error) {
+                            if( url ){
+                                location.href = url;
+                            }
+                        }
+                    });
+                }
+            });
+            $("#libraryInfoModal").on("hide.bs.modal", function(){
+                $("#libraryInfoModalLabel, #libraryInfo").html("");
+                $("#libraryInfoLink").attr("href", "");
+            });
+        });
+
+        function showBsTab( container, panelid ){
+            if( $( "#" + panelid + "_panel" ).length == 1 ){
+                $("#" + container + " a[href='#" + panelid + "_panel']").tab("show");
+            } else {
+                $("#" + container + " a:first").tab("show");
+            }
+        }
+
+        function multiSearchRequest(){
+            var values = [];
+            $(".select_term").each(function(){
+                if( $(this).prop("checked") ){
+                    values.push( $(this).val() );
+                }
+            });
+
+            if (values.length > 0) {
+                var request = "/cgi-bin/koha/opac-search.pl?q=" + values.join(' and ');
+                location.href = request;
+            }
+
+        }
+    </script>
+
+ <script src="/opac-tmpl/bootstrap/js/LMSEllipsis_22.1132001.js"></script>
+ <script>
+        // init LMSEllipis
+        document.addEventListener('DOMContentLoaded', () => {
+            const lmse = new LMSEllipsis({
+                identifier: 'truncable-txt',
+                ellipsis: ' ... ',
+                watch: false,
+                lines: 2,
+                explanations: { collapsed: _("Mehr lesen »"), expanded: _("« Weniger lesen")}
+            })
+            lmse.truncate();
+        })
+    </script>
+
+ <script src="/opac-tmpl/bootstrap/js/LMSCoverFlow_22.1132001.js"></script>
+ <script>
+        const { createLcfInstance, ShelfBrowser, externalSources } = LMSCoverFlow;
+        const args = {
+            header: {
+                header_browsing : _("Regale von {starting_homebranch} durchstöbern"),
+                header_location : _("Standort: {starting_location}"),
+                header_collection : _("Sammlung: {starting_ccode}"),
+                header_close : _("Regalbrowser ausblenden"),
+            },
+        };
+
+        
+            externalSources.info = 'ekz';
+
+        
+        ShelfBrowser(args);
+    </script>
+ 
+ 
+ 
+ <script type="text/javascript">
+    //<![CDATA[
+        var BibtipCatalog = "lmscloud_mt_remseck";
+    //]]>
+    </script>
+ 
+ <script src="https://static.lmscloud.net/js/bibtip_lmscloud_v215.js" type="text/javascript"></script>
+ 
+
+ 
+
+
+ <script>
+        $( document ).ready(function() {
+  $("span.title_resp_stmt").hide();
+
+  $('#wrapper').after(
+      $('<div>').attr('class','navbar-fixed-bottom navbar-static-bottom noprint').append(
+          $('<div>').attr('class','navbar-inner').attr('style','background: #f0f3f3; margin-top:20px; margin-left:30px; margin-right:30px; padding-top: 3px').append(
+              $('<ul>').attr('class','nav pull-right').attr('id','formalPageLinks').append(
+                  $('<li>').attr('class','active').append(
+                      $('<p>').attr('class','lang navbar-text').append(
+                          $('<a>').attr('href','https://www.stadt-remseck.de/impressum').append(
+                              $('<strong>').append("Impressum").attr('style','margin-right:2em')
+                          )
+                      )
+                  )
+              ).append(
+                  $('<li>').attr('class','active').append(
+                      $('<p>').attr('class','lang navbar-text').append(
+                          $('<a>').attr('href','https://www.stadt-remseck.de/datenschutz').append(
+                              $('<strong>').append("Datenschutzerklärung").attr('style','margin-right:2em')
+                          )
+                      )
+                  )
+              )
+          )
+      )
+  );
+  $('#i18nMenu').hide();
+});
+
+
+    </script>
+
+
+    <script>window.__LMS_EVENT_MANAGEMENT_PAGE_URL__ = "/cgi-bin/koha/opac-page.pl?page_id=227";</script>
+    <script type="text/javascript" src="/api/v1/contrib/eventmanagement/static/js/opac-widget-inject.js"></script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+

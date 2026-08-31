@@ -86,6 +86,15 @@ def library_fixture(name: str) -> str:
     return (FIXTURES / "library" / name).read_text(encoding="utf-8")
 
 
+def recorded_fixture(name: str) -> str:
+    """A page as one of the live OPACs actually served it.
+
+    Recorded and anonymised in ha_stadtbibliothek and copied here; refresh
+    both with `nix run .#record-fixtures` in that repository.
+    """
+    return (FIXTURES / "library" / "recorded" / name).read_text(encoding="utf-8")
+
+
 @pytest.fixture
 async def api(settings, account_config, tmp_path):
     """An app with one account, pointed at a respx-mocked OPAC."""

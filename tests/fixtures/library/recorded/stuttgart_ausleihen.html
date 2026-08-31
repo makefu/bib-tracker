@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="de"><head>
+	<style>
+		@import url(css/aDISStandard.css);
+	</style>
+	<script src="js/aDISMain.min.js"></script>
+	<script src="js/fckeditor/fckeditor.js"></script>
+	<title> Meine Ausleihen - Stadtbibliothek Stuttgart </title>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,shrink-to-fit=no">
+<meta name="description" content="OPAC der Stadtbibliothek Stuttgart">
+<!--
+(c) Software: aDIS/BMS und aDIS/Archiv von aStec angewandte Systemtechnik - www.astec.de
+STU, OPACOS de V8.62/40
+//-->
+<script src="/aDISWeb_kopac86/js/scripts-head.js"></script>
+<link rel="stylesheet" href="/aDISWeb_kopac86/css/kopac_style.css"><link rel="stylesheet" media="screen, projection" href="css/POOLM02QPRODXYZ@_00000001_00000001.css"/><link rel="stylesheet" media="screen, projection" href="css/POOLM02QPRODXYZ@_00000002_00000002.css"/>
+<!--[if lt IE 9]><script src="/aDISWeb_kopac86/js/html5shiv-printshiv.min.js"></script><script src="/aDISWeb_kopac86/js/css3-mediaqueries.js"></script><![endif]-->
+<link rel="shortcut icon" type="image/x-icon" href="/aDISWeb_stu/images/favicon.ico">
+</head>
+<body class="opac01 opacos">
+<script><!--
+
+
+
+
+
+
+aDIS.sendBackRequest = function(e) {
+  if(e.state != null && e.state.action)
+    location.href="/aDISWeb/app;jsessionid=0123456789ABCDEF0123456789ABCDEF?service=direct/1/POOLM02QPRODXYZ@_00000015_00000015/$BrowserBack";
+}
+
+
+
+
+
+
+
+function startIdleTimer() {
+  if (typeof idleId != 'undefined')
+    clearTimeout(idleId)
+  idleId = window.setTimeout("to('"+ idleLink + "')", idleTime);
+}			
+function to(link) {
+  location.href=link;
+}
+
+
+
+
+
+function setupaDISHandlers()  {
+  aDIS.addListener("mousedown",document, aDIS.docOnEvent);
+  aDIS.addListener("keydown",document, aDIS.docOnEvent);
+  aDIS.addListener("keyup",document, aDIS.docOnEvent);
+  aDIS.addListener("click",document, aDIS.docOnEvent); 
+
+  aDIS.initFormElements();
+  aDIS.initIframes();
+  aDIS.initScrollPos();
+}
+
+
+
+
+
+
+
+function aDISTimeoutCounter() {
+  this.alertModalEl = null;
+  this.alertModalElWrapper = null;
+  this.alertHiddenInterval = 0;
+  this.sessionEndDate = null;
+  this.activeElementBefore = null;
+    
+  this.init = function(mins, alertInterval, modalAt) {
+    if(mins == 0) return;
+    this.label = document.getElementById("adis-timeoutcounter-label");
+    if(this.label == null) return;
+    this.labelWrapper = document.querySelector("p.adis-timeout-counter");
+    if(this.labelWrapper == null) return;
+
+    this.time = {mins:0, secs:0, initTo:0, alertAt: 0, modalAt:0};
+    this.time.initTo = this.time.mins = mins;
+    
+    if(alertInterval > 0){
+      if(this.time.mins < 10)
+        alertInterval = 1;
+      if((this.time.mins - alertInterval) < 0)
+        return;
+      this.time.alertAt = this.time.mins - this.alertInterval;
+    }
+    
+    this.timer=setInterval(this.run.bind(this), 1000); //1000 = 1 second
+      
+    if(modalAt != 0){
+      var but = document.getElementById("adis-timeoutcounter-reloader");
+      if(but != null) 
+        but.addEventListener("click", this.reset.bind(this));
+      this.alertModalElWrapper = document.getElementById("adis-timeout-alert-modal-wrapper");
+      this.alertModalEl = document.getElementById("adis-timeout-alert-modal");
+      this.time.modalAt = modalAt;  
+    }
+
+    this.labelUpdateShow();
+  };
+  
+  this.reset = function(){
+    var response = aDISAjax.makeReq("GET", {"url" : "/aDISWeb/app;jsessionid=0123456789ABCDEF0123456789ABCDEF?service=aDISTimeoutRefresh/POOLM02QPRODXYZ@_00000015_00000015/$TimeoutCounter&requestCount=4"});
+    if (response.success) {
+      this.time.mins =  this.time.initTo;
+      this.time.alertAt =  this.time.mins - this.alertHiddenInterval;
+      this.time.secs = 0;
+
+      var dt = new Date();
+      dt = dt.setMinutes(dt.getMinutes() + this.time.mins);
+      this.sessionEndDate = new Date(dt);
+    }
+    this.modalHide();
+    this.labelUpdateShow();
+  };
+  
+  this.modalShow = function(){
+    if(this.alertModalElWrapper == null) return;
+    this.alertModalElWrapper.classList.remove("adis-hidden");
+    this.alertModalElWrapper.style.display = 'block';
+    if(this.alertModalEl == null) return;
+    this.alertModalEl.classList.remove("adis-alert-inactive");
+    //hide adis-timeoutcounter-label
+    this.labelWrapper.classList.add("adis-hidden");
+    //set focus to modal button and rememeber focus element it was before
+    if(document.getElementById("adis-timeoutcounter-reloader") == null) return;
+    this.activeElementBefore = document.activeElement;
+    document.getElementById("adis-timeoutcounter-reloader").focus();
+  };
+  
+  this.modalHide = function(){
+    if(this.alertModalElWrapper == null) return;
+    if(this.alertModalElWrapper.classList.contains("adis-hidden"))
+      return;
+    this.alertModalElWrapper.classList.add("adis-hidden");
+    this.alertModalElWrapper.style.display = 'none';
+    if(this.alertModalEl == null) return;
+    this.alertModalEl.classList.add("adis-alert-inactive");
+    //show adis-timeoutcounter-label
+    this.labelWrapper.classList.remove("adis-hidden");
+    //set focus to element it was before modal
+    if(this.activeElementBefore == null) return;
+    this.activeElementBefore.focus();
+    this.activeElementBefore = null;
+  };
+
+  this.labelUpdateShow = function() {
+    var dt = new Date();
+    dt = dt.setMinutes(dt.getMinutes() + this.time.initTo);
+    this.sessionEndDate = new Date(dt);
+    this.label.innerHTML = this.addZero(this.sessionEndDate.getHours()) + ":" + this.addZero(this.sessionEndDate.getMinutes()) + " Uhr";
+    this.labelWrapper.classList.remove("adis-hidden");
+    document.getElementById("adis-timeout-modal-endtime").innerHTML = this.addZero(this.sessionEndDate.getHours()) + ":" + this.addZero(this.sessionEndDate.getMinutes()) + " Uhr";
+  };
+
+  this.addZero = function(i) {
+    if (i < 10) {i = "0" + i}
+    return i;
+  };
+   
+  this.run = function() {
+    if(this.time.secs > 0){
+      if(this.time.secs == 1){
+        if(this.time.modalAt > 0 && this.time.modalAt == this.time.mins)
+          this.modalShow();
+        if( this.time.alertAt >= 0 && this.time.alertAt == this.time.mins){ 
+          this.time.alertAt = (this.time.alertAt < 10)? --this.time.alertAt : this.time.alertAt-this.alertHiddenInterval;
+        }    
+      }
+      --this.time.secs;
+    }
+    else{
+      --this.time.mins;
+      if(this.time.mins >= 0){
+        this.time.secs = 59;
+      }
+      else{
+        clearInterval(this.timer);
+        this.modalHide();
+        return;
+      }
+    }
+  };
+    
+};
+aDISTimeoutCounter.prototype = {
+  constuctor : aDISTimeoutCounter
+};
+ 
+
+
+
+aDIS.onLoad = function (e)
+{
+
+
+
+if (history.pushState && history.state == null) {
+  history.pushState({ action : 1 }, "", null);
+  history.pushState({ action : 2 }, "", null);
+}       
+
+window.onpopstate = function (e){  
+  aDIS.sendBackRequest(e);
+}
+
+
+
+
+  idleTime=1800000;
+  idleLink="/aDISWeb/app;jsessionid=0123456789ABCDEF0123456789ABCDEF?service=direct/1/POOLM02QPRODXYZ@_00000015_00000015/$Timeout";
+  startIdleTimer();
+
+
+  if (!e) var e = window.event;
+  document.forms[0].scriptEnabled.value=true;
+  if (self.specialOnLoad != undefined)
+    specialOnLoad(e);
+  setupaDISHandlers();
+  aDIS.getDimensions();
+
+
+timeOutCounter = new aDISTimeoutCounter(); //global var
+timeOutCounter.init(30, 5, 2);
+
+}
+
+aDIS.addListener('load', window, aDIS.onLoad);
+
+
+// --></script> <div class="aDISMaske"><form method="post" name="Form0" action="/aDISWeb/app;jsessionid=0123456789ABCDEF0123456789ABCDEF" onsubmit="return formOnSubmit();">
+<input type="hidden" name="service" value="direct/1/POOLM02QPRODXYZ@_00000015_00000015/$Form.form"/>
+<input type="hidden" name="sp" value="S0"/>
+<input type="hidden" name="Form0" value="focus,keyCode,stz,source,selected,requestCount,scriptEnabled,scrollPos,scrDim,winDim,imgDim,S1W5_AUTHFU_1,$ScriptButton,$FormConditional,textButton,$FormConditional$0,$FormConditional$1,textButton$0,$FormConditional$2,textButton$1,$FormConditional$3,$FormConditional$4,$FormConditional$5,$FormConditional$6,textButton$2,cellCheck,cellCheck$0,cellCheck$1,cellCheck$2,cellCheck$3,cellCheck$4,cellCheck$5,cellCheck$6,cellCheck$7,cellCheck$8,cellCheck$9,$FormConditional$7,$FormConditional$8,textButton$3,$FormConditional$9,textButton$4,$FormConditional$10,$FormConditional$11,$FormConditional$12,$FormConditional$13,textButton$5"/>
+<input type="hidden" name="focus" value=""/>
+<input type="hidden" name="keyCode" value="0"/>
+<input type="hidden" name="stz" value=""/>
+<input type="hidden" name="source" value=""/>
+<input type="hidden" name="selected" value=""/>
+<input type="hidden" name="requestCount" value="3"/>
+<input type="hidden" name="scriptEnabled" value="T"/>
+<input type="hidden" name="scrollPos" value="0"/>
+<input type="hidden" name="scrDim" value=""/>
+<input type="hidden" name="winDim" value=""/>
+<input type="hidden" name="imgDim" value=""/>
+<input type="hidden" name="$FormConditional" value="T"/>
+<input type="hidden" name="$FormConditional$0" value="F"/>
+<input type="hidden" name="$FormConditional$1" value="T"/>
+<input type="hidden" name="$FormConditional$2" value="T"/>
+<input type="hidden" name="$FormConditional$3" value="F"/>
+<input type="hidden" name="$FormConditional$4" value="F"/>
+<input type="hidden" name="$FormConditional$5" value="F"/>
+<input type="hidden" name="$FormConditional$6" value="T"/>
+<input type="hidden" name="$FormConditional$7" value="F"/>
+<input type="hidden" name="$FormConditional$8" value="T"/>
+<input type="hidden" name="$FormConditional$9" value="T"/>
+<input type="hidden" name="$FormConditional$10" value="F"/>
+<input type="hidden" name="$FormConditional$11" value="F"/>
+<input type="hidden" name="$FormConditional$12" value="F"/>
+<input type="hidden" name="$FormConditional$13" value="T"/>
+				 <div id="wrapper">
+    <div id="wrapper-inside">
+       <nav id="sprunglinks" aria-label="Sprunglinks">
+        <ul>
+          <li><a class="sprung" href="#main">Hauptinhalt</a></li>
+        </ul>
+      </nav>
+<!-- BEGIN Sticky-Wrapper -->
+<div class="sticky-wrapper">
+    <header id="header">
+        <div class="inside">
+           <div id="mhead-meta" class="block">
+            <div id="mhead-meta-inside">
+               <nav id="mnav" class="mod_navigation block" aria-label="An-/Abmelden am Bibliothekssystem">
+                <ul>
+                  <li class="nav-login"><!-- An-/Abmelde-Button als input --><input type="button" name="S1W5_AUTHFU_1" value="Abmelden" onclick="setHiddenField('S1W5_AUTHFU_1', 'S1W5_AUTHFU_1_hidden', 'L2');"/><input type="hidden" name="S1W5_AUTHFU_1_hidden" value=""/> </li>
+                  <li class="nav-konto"><a href="javascript:top.htmlOnLink('*SBK')" title="Mein Konto"><span>Mein Konto</span></a></li>
+                  <li class="nav-logout"><a href="javascript:top.htmlOnLink('*SE')" title="Sitzung beenden"><span>Sitzung beenden</span></a></li>
+                </ul>
+              </nav>
+              <nav id="lnav" class="mod_navigation block" aria-label="Service-Men&uuml;">
+                <ul>
+                  <li class="nav-kontakt"><a href="javascript:top.htmlOnLink('*SW335')" title="Kontakt"><span>Kontakt</span></a></li>
+                  <li class="nav-leichte-sprache"><a href="javascript:top.htmlOnLink('*SW140')"></a></li>
+                  <li class="nav-gebaerdensprache"><a href="javascript:top.htmlOnLink('*SW338')"></a></li>
+                </ul>
+              </nav>
+             </div>
+          </div>
+           <div id="mhead" class="block">
+            <div id="mhead-inside">
+               <div id="logo">
+                <a href="javascript:top.htmlOnLink('*SW4')" title="Startseite der Stadtbibliothek" aria-label="Startseite der Stadtbibliothek">
+                  <img class="img-standard" src="/aDISWeb_stu/images/logo.svg" width="147" height="168" alt="Logo">
+                  <img class="img-fixed" src="/aDISWeb_stu/images/logo-fixed.svg" alt="Logo" width="73" height="84">
+                </a>
+              </div>
+               <div id="slogan-wrapper">
+                <div id="spruch"><a href="javascript:top.htmlOnLink('*SW42')"><span>Stadtbibliothek Stuttgart</span></a></div>
+              </div>
+               <nav id="fontsizer" aria-label="Schriftgr&ouml;&szlig;e">
+                <ul>
+                  <li><a href="#" id="small" data-set-font-size="small"><span class="schrift">Schrift</span> <span class="schriftgroesse">klein</span></a></li>
+                  <li><a href="#" id="normal" data-set-font-size="medium" class="selected"><span class="schrift">Schrift</span> <span class="schriftgroesse">normal</span></a></li>
+                  <li><a href="#" id="big" data-set-font-size="large"><span class="schrift">Schrift</span> <span class="schriftgroesse">gro&szlig;</span></a></li>
+                </ul>
+              </nav>
+             </div>
+          </div>
+           <div class="nav-wrapper">
+            <nav id="hnav" class="mod_navigation block" aria-label="Hauptnavigation">
+              <button id="main-menu-state" type="button" data-menu-state="hidden">
+                <span class="main-menu-btn-icon" aria-hidden="true"></span>
+                <span class="main-menu-btn-text">Navigation</span>
+              </button>
+              <ul class="cssmenu_ul sm sm-style" id="main-menu">
+<li class="cssmenu_button"><a href="/aDISWeb/app;jsessionid=0123456789ABCDEF0123456789ABCDEF?service=direct/1/POOLM02QPRODXYZ@_00000015_00000015/$InternalLink.directlink&amp;sp=S%24%24GFBO_41&amp;sp=SW41&amp;requestCount=3" data-fld="$$GFBO_41" title="">Bibliotheken</a></li>
+<li class="cssmenu_ul"><a href="#">Bestand</a>
+<ul class="menufts">
+<li class="cssmenu_button"><a href="/aDISWeb/app;jsessionid=0123456789ABCDEF0123456789ABCDEF?service=direct/1/POOLM02QPRODXYZ@_00000015_00000015/$InternalLink$0.directlink&amp;sp=S%24%24GFBO_42&amp;sp=SW301&amp;requestCount=3" data-fld="$$GFBO_42" title="">Neuerwerbungen</a></li>
+<li class="cssmenu_button"><a href="/aDISWeb/app;jsessionid=0123456789ABCDEF0123456789ABCDEF?service=direct/1/POOLM02QPRODXYZ@_00000015_00000015/$InternalLink$1.directlink&amp;sp=S%24%24GFBO_43&amp;sp=SW303&amp;requestCount=3" data-fld="$$GFBO_43" title="">Themenwelten</a></li>
+<li class="cssmenu_button"><a href="/aDISWeb/app;jsessionid=0123456789ABCDEF0123456789ABCDEF?service=direct/1/POOLM02QPRODXYZ@_00000015_00000015/$InternalLink$2.directlink&amp;sp=S%24%24GFBO_44&amp;sp=SW304&amp;requestCount=3" data-fld="$$GFBO_44" title="">Wir empfehlen</a></li>
+</ul></li>
+<li class="cssmenu_button"><a href="/aDISWeb/app;jsessionid=0123456789ABCDEF0123456789ABCDEF?service=direct/1/POOLM02QPRODXYZ@_00000015_00000015/$InternalLink$3.directlink&amp;sp=S%24%24GFBO_45&amp;sp=SW5&amp;requestCount=3" data-fld="$$GFBO_45" title="">eBibliothek</a></li>
+<li class="cssmenu_button"><a href="/aDISWeb/app;jsessionid=0123456789ABCDEF0123456789ABCDEF?service=direct/1/POOLM02QPRODXYZ@_00000015_00000015/$InternalLink$4.directlink&amp;sp=S%24%24GFBO_46&amp;sp=SW8&amp;requestCount=3" data-fld="$$GFBO_46" title="">Veranstaltungen</a></li>
+<li class="cssmenu_ul"><a href="#">Service</a>
+<ul class="menufts">
+<li class="cssmenu_button"><a href="/aDISWeb/app;jsessionid=0123456789ABCDEF0123456789ABCDEF?service=direct/1/POOLM02QPRODXYZ@_00000015_00000015/$InternalLink$5.directlink&amp;sp=S%24%24GFBO_47&amp;sp=SW335&amp;requestCount=3" data-fld="$$GFBO_47" title="">Kontakt</a></li>
+<li class="cssmenu_button"><a href="/aDISWeb/app;jsessionid=0123456789ABCDEF0123456789ABCDEF?service=direct/1/POOLM02QPRODXYZ@_00000015_00000015/$InternalLink$6.directlink&amp;sp=S%24%24GFBO_48&amp;sp=SW333&amp;requestCount=3" data-fld="$$GFBO_48" title="">Über uns</a></li>
+<li class="cssmenu_button"><a href="/aDISWeb/app;jsessionid=0123456789ABCDEF0123456789ABCDEF?service=direct/1/POOLM02QPRODXYZ@_00000015_00000015/$InternalLink$7.directlink&amp;sp=S%24%24GFBO_49&amp;sp=SW201&amp;requestCount=3" data-fld="$$GFBO_49" title="">Nutzung, Gebühren, Ausleihe</a></li>
+<li class="cssmenu_button"><a href="/aDISWeb/app;jsessionid=0123456789ABCDEF0123456789ABCDEF?service=direct/1/POOLM02QPRODXYZ@_00000015_00000015/$InternalLink$8.directlink&amp;sp=S%24%24GFBO_50&amp;sp=SW202&amp;requestCount=3" data-fld="$$GFBO_50" title="">Leseplätze</a></li>
+<li class="cssmenu_button"><a href="/aDISWeb/app;jsessionid=0123456789ABCDEF0123456789ABCDEF?service=direct/1/POOLM02QPRODXYZ@_00000015_00000015/$InternalLink$9.directlink&amp;sp=S%24%24GFBO_51&amp;sp=SW203&amp;requestCount=3" data-fld="$$GFBO_51" title="">Newsletter</a></li>
+<li class="cssmenu_button"><a href="/aDISWeb/app;jsessionid=0123456789ABCDEF0123456789ABCDEF?service=direct/1/POOLM02QPRODXYZ@_00000015_00000015/$InternalLink$10.directlink&amp;sp=S%24%24GFBO_52&amp;sp=SW204&amp;requestCount=3" data-fld="$$GFBO_52" title="">WLAN</a></li>
+<li class="cssmenu_button"><a href="/aDISWeb/app;jsessionid=0123456789ABCDEF0123456789ABCDEF?service=direct/1/POOLM02QPRODXYZ@_00000015_00000015/$InternalLink$11.directlink&amp;sp=S%24%24GFBO_53&amp;sp=SW205&amp;requestCount=3" data-fld="$$GFBO_53" title="">Auskunft und Beratung</a></li>
+<li class="cssmenu_button"><a href="/aDISWeb/app;jsessionid=0123456789ABCDEF0123456789ABCDEF?service=direct/1/POOLM02QPRODXYZ@_00000015_00000015/$InternalLink$12.directlink&amp;sp=S%24%24GFBO_54&amp;sp=SW206&amp;requestCount=3" data-fld="$$GFBO_54" title="">Downloads</a></li>
+<li class="cssmenu_button"><a href="/aDISWeb/app;jsessionid=0123456789ABCDEF0123456789ABCDEF?service=direct/1/POOLM02QPRODXYZ@_00000015_00000015/$InternalLink$13.directlink&amp;sp=S%24%24GFBO_55&amp;sp=SW207&amp;requestCount=3" data-fld="$$GFBO_55" title="">Barrierefreiheit</a></li>
+<li class="cssmenu_button"><a href="/aDISWeb/app;jsessionid=0123456789ABCDEF0123456789ABCDEF?service=direct/1/POOLM02QPRODXYZ@_00000015_00000015/$InternalLink$14.directlink&amp;sp=S%24%24GFBO_56&amp;sp=SW208&amp;requestCount=3" data-fld="$$GFBO_56" title="">Führungen</a></li>
+<li class="cssmenu_button"><a href="/aDISWeb/app;jsessionid=0123456789ABCDEF0123456789ABCDEF?service=direct/1/POOLM02QPRODXYZ@_00000015_00000015/$InternalLink$15.directlink&amp;sp=S%24%24GFBO_57&amp;sp=SW209&amp;requestCount=3" data-fld="$$GFBO_57" title="">Für Institutionen</a></li>
+</ul></li>
+<li class="cssmenu_button"><a href="/aDISWeb/app;jsessionid=0123456789ABCDEF0123456789ABCDEF?service=direct/1/POOLM02QPRODXYZ@_00000015_00000015/$InternalLink$16.directlink&amp;sp=S%24%24GFBO_58&amp;sp=SW7&amp;requestCount=3" data-fld="$$GFBO_58" title="">Kinder</a></li>
+<li class="cssmenu_button"><a href="/aDISWeb/app;jsessionid=0123456789ABCDEF0123456789ABCDEF?service=direct/1/POOLM02QPRODXYZ@_00000015_00000015/$InternalLink$17.directlink&amp;sp=S%24%24GFBO_59&amp;sp=SW9&amp;requestCount=3" data-fld="$$GFBO_59" title="">Jugendliche</a></li>
+<li class="cssmenu_button"><button type="button" name="$ScriptButton" onclick="setHiddenField('$ScriptButton', '$ScriptButton_hidden', 'BK');" rawLabel="true">Mein Konto</button><input type="hidden" name="$ScriptButton_hidden" value=""/></li>
+</ul>
+            </nav>
+          </div>
+        </div>
+    </header>
+     <div class="search-wrapper">
+      <div id="search">
+        &nbsp;
+      </div>
+    </div>
+  </div>
+
+<!-- END Sticky-Wrapper -->
+<div id="container" class="container-wrapper">
+      <div id="container-inside">
+        <main id="main" aria-label="Hauptbereich">
+          <div class="inside"><div id="adis-timeout-counter">
+	<p class="adis-timeout-counter">
+		<span id="adis-timeoutcounter-text">Sitzungsende bei Inaktivit&#228;t: </span>
+        <span id="adis-timeoutcounter-label" class="timeoutcounter-label"></span>
+	</p>	<div id="adis-timeout-alert-modal" class="adis-modal adis-alert-inactive" role="dialog" aria-live="assertive" aria-modal="true" aria-labelledby="adis-timeout-alert-heading" aria-describedby="adis-alert-text">
+			<div id="adis-timeout-alert-modal-wrapper" class="adis-hidden">
+				<h1 id="adis-timeout-alert-heading">Bevorstehendes Sitzungsende!</h1>
+				<p id="adis-alert-text">
+					<span id="intro">Ihre Sitzung wird bei Inaktivit&#228;t beendet um: </span><span id="adis-timeout-modal-endtime"></span>
+					<button id="adis-timeoutcounter-reloader" class="adis-img-button adis-timeout-counter-reloader" type="button">Sitzung verl&#228;ngern	</button>
+				</p>
+			</div>
+		</div>
+</div>
+<!-- START aDISPage Styling -->
+            <div class="aDISPage">
+              <div class="grid-wrapper">
+                <div class="grid-row">
+
+<!-- START: KOPFBEREICH -->
+                  <div class="grid-col col-12 col-sm-12 col-md-9 col-lg-9 col-xl-9">
+                    <div class="grid-inside">
+                      <h1>
+                        <span class="invisible">Aktuelle Seite: </span><span class="txtinsert">Mein Konto - Ausleihen</span> </h1>
+                    </div>
+                  </div>
+
+<!-- START Druckbutton -->
+                  <div class="grid-col col-12 col-sm-12 col-md-3 col-lg-3 col-xl-3 adis-printv">
+                    <div class="grid-inside">
+                      <div class="wissen">
+                        <p id="druckversion"><input type="submit" name="textButton" value="Druckversion" data-fld="$$GFBO_88"/> </p>
+                        </div>
+                      </div>
+                    </div>
+
+<!-- START: HAUPTBEREICH-Spalte -->
+                  <div class="grid-col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 arena-all">
+                    <div class="grid-inside">
+                       <div id="OPACLI" style="   width:99%;" class="aDISListe"><div class="html_div" style="width:99%; height:100%;">Hier sehen Sie Ihre aktuellen Ausleihen und die fälligen Leihfristen.<br> Für einen Verlängerungsversuch klicken Sie auf "Verlängern" und danach wieder auf "zur Übersicht" .<br> <b>Prüfen Sie dort zwingend, ob die gewünschten Leihfristen verlängert werden konnten.<br/>Konto - Ausleihen für Herrn Mustermann, Max - Abholcode: Mu1234
+                       <div id="R04">
+  <p class="widget-submit block"> <input type="submit" name="textButton$0" value="Alle verl&#228;ngern" data-fld="$$GFBO_3" class="imp-button verlaengern"/><input type="submit" name="textButton$1" value="Markierte Medien verl&#228;ngern" data-fld="$$GFBO_4" class="imp-button verlaengern"/><input type="submit" name="textButton$2" value="Zur &#220;bersicht" data-fld="$$GFBO_11" class="uebersicht"/> </p>
+</div>
+<div id="R05">
+<div style="   width:99%; ">	<div class="rTable_div"><table colDisable="[true, true, true, true, true]" width="100%" colCase="[, , , , ]" class="rTable_table">	<colgroup><col width="04%"></col><col width="11%"></col><col width="22%"></col><col width="34%"></col><col width="29%"></col>	</colgroup>	<thead class="rTable_thead">
+				<tr><th scope="col" class="rTable_th"><span class="invisible">Markieren</span></th><th scope="col" class="rTable_th">Fällig am</th><th scope="col" class="rTable_th">Bibliothek</th><th scope="col" class="rTable_th">Titel</th><th scope="col" class="rTable_th">Hinweis</th>	</tr>	
+			</thead>
+			<tbody><tr class="rTable_tr_even"><td class="rTable_td_check"><input type="checkbox" name="cellCheck" data-fld="###CHK_1" id="cellCheck"/><label for="cellCheck"><span class="invisible">Markieren</span></label></td><td class="rTable_td_text">14.09.2026</td><td class="rTable_td_text">Stadtbibliothek am Mailänder Platz</td><td class="rTable_td_text">Wolli Trolly - Komme was WOLLE, ich SCHAF (F) das! / Isabella Halbeisen<br/>1<br/>16796244</td><td class="rTable_td_text">verlängerbar - Stand 31.08.2026<br/>2 Verlängerungen</td></tr><tr class="rTable_tr_odd"><td class="rTable_td_check"><input type="checkbox" name="cellCheck$0" data-fld="###CHK_2" id="cellCheck_0"/><label for="cellCheck_0"><span class="invisible">Markieren</span></label></td><td class="rTable_td_text">14.09.2026</td><td class="rTable_td_text">Stadtbibliothek am Mailänder Platz</td><td class="rTable_td_text">¬Der¬ Koboldmaki und der große Sturm / Michaela Küpper ; Karoline Jakubik<br/>1<br/>16614860</td><td class="rTable_td_text">verlängerbar - Stand 31.08.2026<br/>2 Verlängerungen</td></tr><tr class="rTable_tr_even"><td class="rTable_td_check"><input type="checkbox" name="cellCheck$1" data-fld="###CHK_3" id="cellCheck_1"/><label for="cellCheck_1"><span class="invisible">Markieren</span></label></td><td class="rTable_td_text">14.09.2026</td><td class="rTable_td_text">Stadtbibliothek am Mailänder Platz</td><td class="rTable_td_text">[Konventionelles Spiel]<br/> Medical Mysteries - Miami Flatline / Nicholas Cravotta, Rebecca Bleau<br/>Yc Med<br/>16798037</td><td class="rTable_td_text">verlängerbar - Stand 31.08.2026<br/>5 Verlängerungen</td></tr><tr class="rTable_tr_odd"><td class="rTable_td_check"><input type="checkbox" name="cellCheck$2" data-fld="###CHK_4" id="cellCheck_2"/><label for="cellCheck_2"><span class="invisible">Markieren</span></label></td><td class="rTable_td_text">14.09.2026</td><td class="rTable_td_text">Stadtbibliothek am Mailänder Platz</td><td class="rTable_td_text">Mama, bist du's? / Liz Wong ; aus dem Englischen von Ingmarie Flimm<br/>1<br/>16365806</td><td class="rTable_td_text">verlängerbar - Stand 31.08.2026<br/>2 Verlängerungen</td></tr><tr class="rTable_tr_even"><td class="rTable_td_check"><input type="checkbox" name="cellCheck$3" data-fld="###CHK_5" id="cellCheck_3"/><label for="cellCheck_3"><span class="invisible">Markieren</span></label></td><td class="rTable_td_text">14.09.2026</td><td class="rTable_td_text">Freiberg</td><td class="rTable_td_text">¬Das¬ große Buch von Kasimir / Lars Klinting ; deutsch von Angelika Kutsch<br/>4.1 Klin<br/>16589365</td><td class="rTable_td_text">verlängerbar - Stand 31.08.2026<br/>3 Verlängerungen</td></tr><tr class="rTable_tr_odd"><td class="rTable_td_check"><input type="checkbox" name="cellCheck$4" data-fld="###CHK_6" id="cellCheck_4"/><label for="cellCheck_4"><span class="invisible">Markieren</span></label></td><td class="rTable_td_text">14.09.2026</td><td class="rTable_td_text">Stadtbibliothek am Mailänder Platz</td><td class="rTable_td_text">[Konventionelles Spiel]<br/> Unlock! : Die Noside-Show / Yohan Servais<br/>Ycm Unl<br/>15706619</td><td class="rTable_td_text">verlängerbar - Stand 31.08.2026<br/>2 Verlängerungen</td></tr><tr class="rTable_tr_even"><td class="rTable_td_check"><input type="checkbox" name="cellCheck$5" data-fld="###CHK_7" id="cellCheck_5"/><label for="cellCheck_5"><span class="invisible">Markieren</span></label></td><td class="rTable_td_text">14.09.2026</td><td class="rTable_td_text">Stadtbibliothek am Mailänder Platz</td><td class="rTable_td_text">[Konventionelles Spiel]<br/> Unlock! Legendary Adventures : Robin Hood: Tot oder lebendig / Autorin: Marion du Faouet ; Illustrator: Cyrille Bertin, Arnaud Demaegd<br/>Ycm Unl<br/>16499886</td><td class="rTable_td_text">verlängerbar - Stand 31.08.2026<br/>2 Verlängerungen</td></tr><tr class="rTable_tr_odd"><td class="rTable_td_check"><input type="checkbox" name="cellCheck$6" data-fld="###CHK_8" id="cellCheck_6"/><label for="cellCheck_6"><span class="invisible">Markieren</span></label></td><td class="rTable_td_text">14.09.2026</td><td class="rTable_td_text">Freiberg</td><td class="rTable_td_text">[Konventionelles Spiel]<br/> Kraken-Alarm / Spielidee: Oliver Igelhaut. Ill.: Michael Menzel<br/>Spiel<br/>15363079</td><td class="rTable_td_text">verlängerbar - Stand 31.08.2026<br/>3 Verlängerungen</td></tr><tr class="rTable_tr_even"><td class="rTable_td_check"><input type="checkbox" name="cellCheck$7" data-fld="###CHK_9" id="cellCheck_7"/><label for="cellCheck_7"><span class="invisible">Markieren</span></label></td><td class="rTable_td_text">15.09.2026</td><td class="rTable_td_text">Zuffenhausen</td><td class="rTable_td_text">[CD]<br/> Wer lebt im Garten? [CD] / Gesprochen von Niklas Heinecke und Lea Sprick. Text: Patricia Mennen. Hörspielbearb.: Anna Bergner. Musik: Ulrich Maske<br/>JU Garten<br/>15633842</td><td class="rTable_td_text">verlängerbar - Stand 31.08.2026<br/>4 Verlängerungen</td></tr><tr class="rTable_tr_odd"><td class="rTable_td_check"><input type="checkbox" name="cellCheck$8" data-fld="###CHK_10" id="cellCheck_8"/><label for="cellCheck_8"><span class="invisible">Markieren</span></label></td><td class="rTable_td_text">15.09.2026</td><td class="rTable_td_text">Zuffenhausen</td><td class="rTable_td_text">[CD]<br/> ¬An¬ und aus, wie geht das? [CD] / Text: Frauke Nahrgang. Gesprochen von Niklas Heinecke und Lea Sprick. Hörspielbearb. und Regie: Anna Bergner ... Musik: Ulrich Maske ...<br/>JW Technik<br/>15828940</td><td class="rTable_td_text">verlängerbar - Stand 31.08.2026<br/>4 Verlängerungen</td></tr><tr class="rTable_tr_even"><td class="rTable_td_check"><input type="checkbox" name="cellCheck$9" data-fld="###CHK_11" id="cellCheck_9"/><label for="cellCheck_9"><span class="invisible">Markieren</span></label></td><td class="rTable_td_text">15.09.2026</td><td class="rTable_td_text">Zuffenhausen</td><td class="rTable_td_text">[CD]<br/> ¬An¬ Teich und Fluss [CD] / Text: Patricia Mennen. Hörspielbearb. und Regie: Inga Reuters ... Musik: Ulrich Maske. Gesprochen von Marion Elskis und Lea Sprick<br/>JU Tiere<br/>15490663</td><td class="rTable_td_text">verlängerbar - Stand 31.08.2026<br/>4 Verlängerungen</td></tr>	</tbody></table>	</div></div>
+</div>
+<div id="R06">
+  <p class="widget-submit block">  <input type="submit" name="textButton$3" value="Alle verl&#228;ngern" data-fld="$$GFBO_13" class="imp-button verlaengern"/> <input type="submit" name="textButton$4" value="Markierte Medien verl&#228;ngern" data-fld="$$GFBO_14" class="imp-button verlaengern"/>    <input type="submit" name="textButton$5" value="Zur &#220;bersicht" data-fld="$$GFBO_21" class="uebersicht"/> </p>
+</div>
+                     </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+<!-- STOP aDISPage Styling -->
+          </div>
+        </main>
+      </div>
+    </div>
+
+<!-- STOP Container -->
+    <footer id="footer">
+      <div class="inside">
+         <div class="grid-wrapper">
+          <div class="grid-row">
+            <div class="grid-col col-12 col-md-6 col-lg-6 col-xl-6">
+              <nav id="legal" class="mod_navigation block" aria-label="Rechtliche Links">
+                <ul>
+                  <li><a href="https://stadtbibliothek-stuttgart.de/content/info/impressum.html" target="_blank" rel="noopener" aria-label="Impressum (neues Browser-Fenster)">Impressum</a></li>
+                  <li><a href="https://stadtbibliothek-stuttgart.de/content/info/datenschutz.html" target="_blank" rel="noopener" aria-label="Datenschutz (neues Browser-Fenster)">Datenschutz</a></li>
+                  <li><a href="https://stadtbibliothek-stuttgart.de/content/info/gebuehren.html" target="_blank" rel="noopener" aria-label="Benutzungs- und Geb&uuml;hrenverordnung (neues Browser-Fenster)">Benutzungs- und Geb&uuml;hrenordnung</a></li>
+
+<!-- <li><a href="https://[ Bitte eintragen ]" target="_blank" rel="noopener" aria-label="Hinweis zur Barrierefreiheit (neues Browser-Fenster)">Barrierefreiheit</a></li> -->
+                </ul>
+              </nav>
+            </div>
+             <div class="grid-col col-12 col-md-6 col-lg-6 col-xl-6">
+              <p id="goingup" class="block">
+                <a href="#wrapper">Seitenanfang</a>
+              </p>
+            </div>
+             <div class="grid-col col-12 col-md-6 col-lg-4 col-xl-4">
+              <nav id="social" class="mod_navigation block" aria-label="Die Bibliothek in den soziale Medien">
+                <ul>
+                  <li class="nav-facebook"><a href="https://www.facebook.com/Stadtbibliothek.Stuttgart" target="_blank" rel="noopener" aria-label="Die Bibliothek auf facebook (neues Browser-Fenster)"><img src="/aDISWeb_stu/images/icons/facebook.svg" width="26" height="26" alt="facebook" title="facebook"></a></li>
+                  <li class="nav-youtube"><a href="https://www.youtube.com/c/StadtbibliothekStuttgartYT" target="_blank" rel="noopener" aria-label="Die Bibliothek auf YouTube (neues Browser-Fenster)"><img src="/aDISWeb_stu/images/icons/youtube.svg" width="26" height="26" alt="YouTube" title="YouTube"></a></li>
+                  <li class="nav-instagram"><a href="https://www.instagram.com/stadtbibliothekstuttgart/" target="_blank" rel="noopener" aria-label="Die Bibliothek auf Instagram(neues Browser-Fenster)"><img src="/aDISWeb_stu/images/icons/instagram.svg" width="26" height="26" alt="Instagram" title="Instagram"></a></li>
+                  <li class="nav-mastodon"><a href="https://xn--baw-joa.social/@stadtbibliothekstuttgart" target="_blank" rel="noopener" aria-label="Die Bibliothek auf Mastodon (neues Browser-Fenster)"><img src="/aDISWeb_stu/images/icons/mastodon.svg" width="26" height="26" alt="Mastodon" title="Mastodon"></a></li>
+                </ul>
+              </nav>
+            </div>
+             <div class="grid-col col-12 col-md-6 col-lg-4 col-xl-4">
+              <p id="roessle">
+                <a href="https://www.stuttgart.de" target="_blank" rel="noopener"><img src="/aDISWeb_stu/images/roessle.svg" width="135" height="35" alt="Stuttgart.de" title="Stuttgart.de"></a>
+              </p>
+            </div>
+             <div class="grid-col col-12 col-md-12 col-lg-4 col-xl-4">
+              <p id="credits">
+                <a href="https://www.astec.de" target="_blank" rel="noopener" aria-label="Barrierefreie Bibliotheksoftware der astec eG (neues Browser-Fenster)">Barrierefreie Bibliothekssoftware der |a|S|tec| eG</a>
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="clear"></div>
+      </div>
+    </footer>
+  </div>
+</div>
+<script src="/aDISWeb_kopac86/js/scripts-main.js"></script></form> </div></body>
+</html>

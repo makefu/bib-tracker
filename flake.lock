@@ -7,11 +7,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1788209962,
-        "narHash": "sha256-8mUj6uP1uDlRYY/Hp0TqkGrq2M4HXDX9C18i8ZtoGGM=",
+        "lastModified": 1788213493,
+        "narHash": "sha256-iSo34eSQzPDtzQSYg7VbPrYF/BamNtQsOZWkTTJ7L30=",
         "ref": "main",
-        "rev": "4919e4d0e9768ee72c5d53efa507436c51051bdb",
-        "revCount": 74,
+        "rev": "951192c3b4e028fd08f342d8bbe2d017ef9d6b4f",
+        "revCount": 76,
         "type": "git",
         "url": "file:///home/makefu/r/ha_stadtbibliothek"
       },

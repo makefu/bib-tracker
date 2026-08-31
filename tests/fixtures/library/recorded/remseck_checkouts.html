@@ -1,0 +1,4068 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ <!-- 1 => OPAC -->
+
+<!DOCTYPE html>
+<!-- TEMPLATE FILE: opac-user.tt -->
+
+
+
+
+
+
+
+
+
+<html lang="de-DE" class="no-js">
+<head>
+
+<title>Benutzerkonto &rsaquo; Mediathek Remseck - Katalog</title>
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Koha" /> <!-- leave this for stats -->
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link type="text/css" rel="stylesheet" href="/opac-tmpl/bootstrap/lib/jquery/responsive.dataTables.min_22.1132001.css">
+
+<link rel="shortcut icon" href="https://mt-remseck.lmscloud.net/webcustom/images/Favicon_remseck.png" type="image/x-icon" />
+<link rel="apple-touch-icon" href="https://mt-remseck.lmscloud.net/webcustom/images/Favicon_remseck.png" type="image/x-icon" />
+
+ <link rel="stylesheet" type="text/css" href="/opac-tmpl/lib/jquery/jquery-ui-1.13.1.min_22.1132001.css">
+
+
+ 
+ 
+ 
+
+
+ <link href="/opac-tmpl/bootstrap/css/opac_22.1132001.css" rel="stylesheet" type="text/css">
+
+
+
+
+ <link href="/opac-tmpl/bootstrap/css/print_22.1132001.css" type="text/css" rel="stylesheet" media="print">
+
+
+ <style>#logo {
+    background: transparent url(/webcustom/images/LMSCloud-Logo-white.svg) no-repeat scroll 0;
+    padding-top: 15px;
+    margin-left: 5px;
+    width: 120px !important;
+}
+
+#logo a {
+    padding: 15px 0 0;
+}
+
+/* Änderung der Navigationsleistenfarbe */
+#header-region .navbar {
+  background-image: linear-gradient(to bottom, #5c8a8a, #9ebebe);
+  border-color: #9ebebe;
+  background-color: #9ebebe;
+}
+
+#opac-main #select_library {
+    margin-right: 5px;
+}
+
+#opac-main #masthead_search {
+    margin-right: 5px;
+}
+
+
+#blockTop::after {
+    clear: both;
+    content: ".";
+    display: block;
+    height: 0;
+    overflow: hidden;
+    visibility: hidden;
+}
+
+#blockTop {
+    text-align: center;
+    opacity: 1.0;
+    margin-top: 8px;
+    width: 100%;
+    margin-top: 1em;
+    margin-bottom: .5em;
+}
+
+#moresearches li {
+    font-size: larger;
+}
+.breadcrumb {
+    font-size: unset;
+    margin: 0px 0px 10px 0px;
+}
+
+#opacheader {
+    background-color: unset  !important;
+}
+
+#opac-main-search {
+    background: #9ebebe;
+}
+#opac-main-search label {
+color: white;
+}
+
+body {
+    color: black !important;
+    background-attachment: fixed, fixed, fixed, fixed !important;
+}
+
+#moresearches a, a.visited {
+    font-size: medium;
+    color: black;
+}
+
+#moresearches, #news {
+    margin: 1.0em 0;
+}
+
+.main {
+    background-color: #ffffff;;
+}
+
+.opac-form form{
+  margin: 0;
+  margin-right: 10px;
+}
+
+.opac-form input {
+  width: 100%;
+  height:1.8rem;
+  vertical-align:center;
+  background:#FBFBFB;
+  border:1px solid #646464;
+  color:#646464;
+  font-weight:bold;
+  font-size:0.8rem;
+  margin-top:10px;
+}
+
+#brockhaus-form {
+    text-align:center;
+    height:60px;
+    background-color:white;
+    /* border:1px solid #646464; */
+    padding:5px;
+    margin:20px 0 20px 0;
+    display:flex;
+    margin:0;
+    padding-top:8px;
+}
+
+.brockhaus_logo {
+    width:80px;
+    height:55px;
+}
+
+#brockhaus_input {
+    height:1.8rem;
+    vertical-align:center;
+    background:#FBFBFB;
+    margin-top:10px;
+    margin-left: 10px;
+    border:1px solid #646464;
+    color:#646464;
+    font-weight:bold;
+    padding:4px;
+    font-size:0.8rem;
+}
+
+
+@media screen and (max-width: 980px) {
+    #brockhaus-form {
+        width:220px;
+    }
+}
+
+@media screen and (min-width: 981px) {
+    #brockhaus-form {
+        width:100%;
+    }
+    #brockhaus_input {
+        width:100%;
+    }
+}
+
+.ui-tabs .ui-tabs-panel, #opac-main .newsitem {
+    box-shadow: 1px 6px 4px rgba(0,0,0,.12), 2px 3px 6px rgba(0,0,0,.24);
+    -webkit-border-radius:4px;
+    /* box-shadow: 1px 2px 0px rgba(0,0,0,.12), 1px 2px 0px rgba(0,0,0,.15); */
+    /* box-shadow: 0 4px 6px -4px #222; */
+}
+
+.newsitem {
+    margin-bottom: 20px;
+}
+
+.newscontainer {
+    border: none;
+}
+
+.container-news {
+    max-width: 1080px;
+    margin-left: auto;
+    margin-right: auto;
+}</style>
+
+
+
+ <link href="https://mt-remseck.lmscloud.net/cgi-bin/koha/opac-search.pl?format=opensearchdescription" rel="search" title="Suche Mediathek Remseck" type="application/opensearchdescription+xml">
+ <link rel="unapi-server" type="application/xml" title="unAPI" href="https://mt-remseck.lmscloud.net/cgi-bin/koha/unapi" />
+
+
+<script>
+    var Koha = {};
+    function _(s) { return s } // dummy function for gettext
+    const is_logged_in = true
+</script>
+
+ <script src="/opac-tmpl/bootstrap/de-DE/js/locale_data_22.1132001.js"></script>
+
+<script src="/opac-tmpl/bootstrap/js/Gettext_22.1132001.js"></script>
+<script src="/opac-tmpl/bootstrap/js/i18n_22.1132001.js"></script>
+
+<link href="/opac-tmpl/bootstrap/lib/font-awesome/css/font-awesome.min_22.1132001.css" type="text/css" rel="stylesheet">
+
+
+               
+
+
+
+
+
+
+
+
+
+<script type="module" src="/api/v1/contrib/eventmanagement/static/dist/opac-widget.js"></script>
+
+<link href="/opac-tmpl/bootstrap/css/overdrive_22.1132001.css" rel="stylesheet" type="text/css">
+
+</head>
+
+
+
+
+ 
+
+
+ 
+
+
+
+
+ 
+
+<body ID="opac-user" class="branch-HST scrollto" >
+
+
+
+
+
+
+
+
+
+               
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<button id="scrolltocontent">Zum Hauptinhalt springen</button>
+<div id="wrapper">
+ <div id="header-region" class="noprint">
+ <nav class="navbar navbar-expand">
+ <div id="logo">
+ <a class="navbar-brand" href="/cgi-bin/koha/opac-main.pl">
+  Mediathek Remseck  </a>
+ </div>
+ 
+ <ul id="cart-list-nav" class="navbar-nav">
+ 
+ <li class="divider-vertical"></li>
+ 
+ <li class="nav-item dropdown">
+ <a aria-expanded="false" aria-haspopup="true" aria-label="Zeige Auswahlliste mit Detailinformationen" class="nav-link dropdown-toggle" data-toggle="dropdown" href="/cgi-bin/koha/opac-shelves.pl" id="listsmenu" role="button" title="Zeige Listen"><i class="fa fa-list fa-icon-black" aria-hidden="true"></i> <span class="listslabel">Listen</span>
+ </a>
+ <div aria-labelledby="listsmenu" role="menu" class="dropdown-menu">
+ 
+ <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=list&amp;public=1" tabindex="-1" role="menuitem"><strong>Öffentliche Listen</strong></a>
+ 
+ 
+ <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=635&amp;sortfield=title" tabindex="-1" role="menuitem">Berufe</a>
+ 
+ 
+ 
+ <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=183&amp;sortfield=title" tabindex="-1" role="menuitem">Aufklärungs-Titel</a>
+ 
+ 
+ 
+ <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=291&amp;sortfield=copyrightdate" tabindex="-1" role="menuitem">#FridayTip</a>
+ 
+ 
+ 
+ <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=412&amp;sortfield=title" tabindex="-1" role="menuitem">Dino-Bilderbücher</a>
+ 
+ 
+ 
+ 
+ <a class="dropdown-item listmenulink" href="/cgi-bin/koha/opac-shelves.pl?op=list&amp;public=1" tabindex="-1" role="menuitem">Alle anzeigen</a>
+ 
+ 
+ 
+ <div class="dropdown-divider"></div>
+ 
+ 
+ <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=list&amp;public=0" tabindex="-1" role="menuitem"><strong>Ihre Listen</strong></a>
+ 
+ 
+ <a class="dropdown-item disabled" href="#" tabindex="-1" role="menuitem">Keine privaten Listen.</a>
+ 
+ <a class="dropdown-item listmenulink" href="/cgi-bin/koha/opac-shelves.pl?op=add_form" tabindex="-1" role="menuitem">Neue Liste</a>
+ 
+ 
+ </div> <!-- / .dropdown-menu -->
+ </li> <!-- / .nav-item.dropdown -->
+ 
+ </ul> <!-- / .navbar-nav -->
+
+ 
+ 
+ <ul id="members" class="navbar-nav">
+ <li class="nav-item dropdown">
+ 
+ 
+ <a href="/cgi-bin/koha/opac-user.pl" class="dropdown-toggle" id="user-menu" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+ <i class="fa fa-user fa-icon-black fa-fw" aria-hidden="true"></i>
+ <span class="userlabel">Willkommen,  <span class="patron-title">Herr</span> Max  Mustermann</span>
+ </a>
+ <a tabindex="-1" role="menuitem" class="logout js-hide" href="/cgi-bin/koha/opac-main.pl?logout.x=1"><i class="fa fa-fw fa-sign-out" aria-hidden="true"></i> Abmelden</a>
+ 
+ 
+
+ 
+ <div aria-labelledby="user-menu" role="menu" class="dropdown-menu dropdown-menu-right">
+ <div id="loggedinuser-menu">
+ <p>
+ <a class="login-link" href="/cgi-bin/koha/opac-user.pl"><span class="loggedinusername" data-borrowernumber="10000001" data-branchcode="HST" data-categorycode="2">Benutzerkonto</span></a>
+ </p>
+ 
+ <p>
+ <a class="login-link" href="/cgi-bin/koha/opac-search-history.pl" role="menuitem" tabindex="-1" title="Suchhistorie anzeigen">Suchhistorie</a>
+ <span class="divider-vertical"></span>
+ <a class="clearsh" href="/cgi-bin/koha/opac-search-history.pl?action=delete" title="Suchhistorie löschen"><i class="fa fa-trash" aria-hidden="true"></i> Löschen</a>
+ </p>
+ 
+ <a tabindex="-1" role="menuitem" class="logout" id="logout" href="/cgi-bin/koha/opac-main.pl?logout.x=1">Abmelden</a>
+ </div>
+ </div>
+ 
+ </li>
+ 
+ </ul>
+ 
+ </nav> <!-- /navbar -->
+
+ 
+ <div class="container-fluid">
+ <div class="row">
+ <div class="col">
+ 
+ 
+ <div id="opacheader">
+ 
+ <div class="de-DE_item">
+ 
+ <div class="de-DE_body"><div class="" id="blockTop">
+    <div class="" id="blockTopInner">
+        <a title="Zur Startseite" href="/" id="wlogo">
+            <img alt="Logo" src="/webcustom/images/custom/OPAC_Banner_remseck.png" target="_blank">
+        </a>
+    </div>
+</div></div>
+ </div>
+ 
+ </div>
+  
+ </div>
+ </div>
+ </div>
+ 
+
+ </div> <!-- / header-region -->
+
+ 
+ <div class="container-fluid">
+ 
+ <div class="row">
+ <div class="col">
+ <div id="opac-main-search" class="mastheadsearch">
+ 
+ <form name="searchform" method="get" action="/cgi-bin/koha/opac-search.pl" id="searchform">
+ <div class="form-row align-items-center">
+ <div class="col-sm-auto order-2 order-sm-2">
+ <select name="idx" id="masthead_search" class="form-control">
+ 
+ <option value="">Bibliothekskatalog</option>
+ 
+ 
+ <option value="ti">Titel</option>
+ 
+ 
+ <option value="au">Verfasser</option>
+ 
+ 
+ <option value="su">Schlagwort</option>
+ 
+ 
+ <option value="nb">ISBN</option>
+ 
+ 
+ <option value="ns">ISSN</option>
+ 
+ 
+ <option value="se">Reihen</option>
+ 
+ 
+ 
+ <option value="callnum">Signatur</option>
+ 
+ 
+ </select>
+ </div> <!-- /.col-sm-auto -->
+
+ <div class="col order-4 order-sm-3">
+ 
+ <input type="text" class="transl1 form-control" id="translControl1" name="q" value="" /><span id="translControl"></span>
+ 
+ </div> <!-- /.col -->
+
+ 
+ <div class="col-sm col-md-3 col-lg-2 order-3 order-sm-4">
+ <select name="limit" id="select_library" class="form-control">
+ <option value="">Alle Bibliotheken</option>
+
+ <optgroup label="Bibliotheken">
+
+ 
+ 
+ 
+ <option value="branch:4">Bücherei Aldingen</option>
+ 
+ 
+ 
+ 
+ <option value="branch:3">Bücherei Hochberg</option>
+ 
+ 
+ 
+ 
+ <option value="branch:2">Bücherei Hochdorf</option>
+ 
+ 
+ 
+ 
+ <option value="branch:1">Bücherei Pattonville</option>
+ 
+ 
+ 
+ 
+ <option value="branch:HST">Mediathek im KUBUS</option>
+ 
+ 
+ 
+ 
+ <option value="branch:eBib">Onleihe</option>
+ 
+ 
+ 
+ 
+ <option value="branch:ARC">Stadtarchiv Remseck</option>
+ 
+ 
+
+ 
+ </optgroup>
+ <optgroup label="Gruppen">
+ 
+ 
+ <option value="multibranchlimit:41">Alle Remsecker Bibliotheken</option>
+ 
+ 
+ </optgroup>
+ 
+ </select> <!-- /#select_library -->
+ </div> <!-- /.col-sm-auto -->
+ 
+
+ <div class="order-5 col-sm-auto">
+ <button aria-label="Suche" class="btn btn-primary" id="searchsubmit" title="Suche" type="submit">
+ <i class="fa fa-search" aria-hidden="true"></i>
+ </button>
+ </div>
+
+ </div> <!-- /.form-row -->
+ <input type="hidden" name="weight_search" value="1">
+ </form>
+ 
+ </div><!-- /#opac-main-search -->
+ </div> <!-- /.col -->
+ </div> <!-- /.row -->
+ 
+
+ <div class="row">
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+  <ul class="nav" id="moresearches">
+ <li class="nav-item"><a href="/cgi-bin/koha/opac-entrypages.pl?interestGroup=9&page=Childto9"><img src="/webcustom/images/Child.png" style="vertical-align: baseline;">
+ Kinderbibliothek</a></li>
+ <li class="nav-item"><a href="/cgi-bin/koha/opac-entrypages.pl?interestGroup=T&page=Childfrom9"><img src="/webcustom/images/Infant.png" style="vertical-align: baseline;">
+ Jugendbibliothek</a></li>
+ <li class="nav-item"><a href="/cgi-bin/koha/opac-entrypages.pl?interestGroup=A&page=Adult"><i class="fa fa-user" style="color:darkred;"></i>
+ Erwachsenenbibliothek</a></li>
+<li class="nav-item"><a href="/cgi-bin/koha/opac-search.pl?q=(su.phrase:(*fridaytip*))"><img src="/webcustom/images/custom/thumbs-up_6072260.png" style="vertical-align: baseline; height: 1em;">#fridaytip</a></li>
+<li class="nav-item"><i class="fa fa-info" aria-hidden="true"></i><a href="/cgi-bin/koha/opac-entrypages.pl?page=News&shownews=1"> Aktuelles</a></li>
+<li class="nav-item"><i class="fa fa-calendar" aria-hidden="true"></i><a href="/cgi-bin/koha/opac-page.pl?code=lmscloud-eventmanagement"> Veranstaltungen</a></li>
+
+<!--
+ <li class="nav-item"><a href="/cgi-bin/koha/opac-page.pl?code=lmscloud-eventmanagement"><i class="fa fa-calendar"></i> Veranstaltungen</a></li>
+-->
+
+ <li class="nav-item"><a href="/cgi-bin/koha/opac-browser-asb.pl"><i class="fa fa-folder-open-o" style="color:darkblue;"></i>
+ Systematisch stöbern</a></li>
+<li class="nav-item"><a href="/cgi-bin/koha/opac-entrypages.pl?interestGroup=T&page=BrockhausT"><i class="fa fa-graduation-cap"style="color:blueviolet"></i> Onlinetraining für Schüler</a></li>
+ <li class="nav-item"><img src="/webcustom/images/Antolin16.png" style="vertical-align: baseline;"></img> <a href="/cgi-bin/koha/opac-antolin.pl">Bücher mit Antolin-Quiz</a></li>
+ <li class="nav-item"><a href="/cgi-bin/koha/opac-search.pl"><i class="fa fa-search-plus" style="color:cadetblue"></i>
+ Erweiterte Suche</a></li>
+<!-- <li class="nav-item"><a href="/cgi-bin/koha/opac-browse.pl"><i class="fa fa-search-plus" style="color:#4caf50"></i> Indexsuche</a></li>-->
+ 
+ 
+ 
+ <!--  -->
+ 
+ 
+ 
+ 
+ 
+ </ul>
+ 
+ </div> <!-- /.row -->
+ </div> <!-- /.container-fluid -->
+ 
+
+ <!-- Login form hidden by default, used for modal window -->
+ <div id="loginModal" class="modal" tabindex="-1" role="dialog" aria-labelledby="modalLoginLabel" aria-hidden="true">
+ <div class="modal-dialog">
+ <div class="modal-content">
+ <div class="modal-header">
+ <h2 class="modal-title" id="modalLoginLabel">Benutzerkonto</h2>
+ <button aria-label="Schließen" class="closebtn" data-dismiss="modal" type="button">
+ <span aria-hidden="true">&times;</span>
+ </button>
+ </div>
+ <form action="/cgi-bin/koha/opac-user.pl" method="post" name="auth" id="modalAuth">
+ <input type="hidden" name="has-search-query" id="has-search-query" value="" />
+ <div class="modal-body">
+ 
+ 
+ 
+ 
+ 
+ <input type="hidden" name="koha_login_context" value="opac" />
+ <fieldset class="brief">
+ <div class="local-login">
+ <label for="muserid">Login:</label><input type="text" id="muserid" name="userid" autocomplete="off" />
+ <label for="mpassword">Passwort:</label><input type="password" id="mpassword" name="password" autocomplete="off" />
+ <fieldset class="action">
+ <input class="btn btn-primary" type="submit" value="Anmelden" />
+ </fieldset>
+ </div>
+ 
+ <div id="nologininstructions-modal" class="nologininstructions">
+ 
+ 
+ <div id="OpacLoginInstructions">
+ 
+ <div class="de-DE_item">
+ 
+ <div class="de-DE_body"><p>Zum Anmelden verwenden Sie bitte die Benutzernummer auf Ihrem Medienpass als Login-Kennung und Ihr Geburtsdatum in der Form XX.XX.XXXX als Passwort.<br />
+
+Bitte machen Sie nach dem ersten Login von der Möglichkeit Gebrauch, <b>Ihr Passwort auf ein von Ihnen gewähltes zu ändern</b>.</p>
+
+<p>Wenn Sie Ihre Zugangsdaten vergessen haben, melden Sie sich bitte persönlich bei uns.</p></div>
+ </div>
+ 
+ </div>
+  
+ </div>
+ 
+ 
+ <div id="forgotpassword-modal" class="forgotpassword">
+ <a href="/cgi-bin/koha/opac-password-recovery.pl">Passwort vergessen?</a>
+ </div>
+ 
+ 
+ </fieldset>
+ 
+ </div>
+ </form> <!-- /#auth -->
+ </div> <!-- /.modal-content -->
+ </div> <!-- /.modal-dialog -->
+ </div> <!-- /#modalAuth -->
+
+
+
+ 
+
+
+
+
+<div class="main">
+ <nav aria-label="Krümelpfad" class="breadcrumbs" id="breadcrumbs">
+ <ol class="breadcrumb">
+ <li class="breadcrumb-item">
+ <a href="/cgi-bin/koha/opac-main.pl">Start</a>
+ </li>
+ <li class="breadcrumb-item">
+ <a href="/cgi-bin/koha/opac-user.pl"> <span class="patron-title">Herr</span> Max  Mustermann</a>
+ </li>
+ <li class="breadcrumb-item active">
+ <a href="#" aria-current="page">Kontoübersicht</a>
+ </li>
+ </ol>
+ </nav> <!-- /#breadcrumbs -->
+
+ <div class="container-fluid">
+ <div class="row">
+ <div class="col col-lg-2 order-2 order-lg-1">
+ <div id="navigation">
+ 
+
+
+
+
+
+ 
+ <div id="usermenu">
+
+ <div id="menu">
+ <ul>
+ 
+ <li class="active">
+ 
+ <a href="/cgi-bin/koha/opac-user.pl">Zusammenfassung</a></li>
+
+ 
+ 
+ <li>
+ 
+ <a href="/cgi-bin/koha/opac-user-recommendations.pl">Empfehlungen</a></li>
+ 
+
+ 
+ 
+ <li>
+ 
+ <a href="/cgi-bin/koha/opac-account.pl">Gebühren</a></li>
+ 
+
+ 
+ <li>
+ 
+ <a href="/cgi-bin/koha/opac-memberentry.pl">Persönliche Daten</a></li>
+
+ 
+
+ 
+
+ 
+ 
+ <li>
+ 
+ <a href="/cgi-bin/koha/opac-passwd.pl">Passwort ändern</a></li>
+ 
+
+ 
+
+ 
+ 
+ <li>
+ 
+ <a href="/cgi-bin/koha/opac-search-history.pl">Suchhistorie</a></li>
+ 
+
+ 
+ 
+ <li>
+ 
+ <a href="/cgi-bin/koha/opac-readingrecord.pl">Ausleihverlauf</a></li>
+ 
+ 
+
+ 
+ 
+ <li>
+ 
+ <a href="/cgi-bin/koha/opac-holdshistory.pl">Vormerkhistorie</a></li>
+ 
+
+ 
+
+ 
+ 
+ <li>
+ 
+ <a href="/cgi-bin/koha/opac-suggestions.pl">Anschaffungsvorschläge</a></li>
+ 
+
+ 
+ 
+ 
+ <li>
+ 
+ <a href="/cgi-bin/koha/opac-messaging.pl">Benachrichtigungen</a></li>
+ 
+ 
+
+ 
+ 
+ <li>
+ 
+ <a href="/cgi-bin/koha/opac-shelves.pl?op=list">Listen</a></li>
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ </ul>
+ </div>
+
+</div>
+
+
+
+
+ </div>
+ </div>
+ <div class="col-md-12 col-lg-10 order-1 order-lg-2">
+ <div id="userdetails" class="maincontent">
+
+ <h1>Kontoübersicht</h1>
+
+ 
+
+
+ <p>Willkommen,  <span class="patron-title">Herr</span> Max  Mustermann <br />
+ <a href="/cgi-bin/koha/opac-main.pl?logout.x=1">Klicken Sie hier, wenn Sie nicht  <span class="patron-title">Herr</span> Max  Mustermann sind</a></p>
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ <div class="alert alert-info" id="notesaved" style="display:none;"></div>
+ 
+
+ 
+
+ <div id="opac-user-views" class="toptabs">
+ <ul class="nav nav-tabs" role="tablist">
+ <li class="nav-item" role="presentation">
+ <a class="nav-link active" id="opac-user-checkouts-tab" data-toggle="tab" role="tab" aria-controls="opac-user-checkouts" aria-selected="true"  href="#opac-user-checkouts">Ausgeliehen (27)</a>
+ </li>
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+ 
+ 
+ </ul>
+ <div class="tab-content">
+ <div id="opac-user-overdrive" class="tab-pane" role="tabpanel" aria-labelledby="opac-user-overdrive-tab">
+ </div>
+ <div id="opac-user-checkouts" class="tab-pane active" role="tabpanel" aria-labelledby="opac-user-checkouts-tab">
+ 
+ <form id="renewselected" action="/cgi-bin/koha/opac-renew.pl" method="post">
+ <legend class="sr-only">Markierte verlängern</legend>
+ <input type="hidden" name="borrowernumber" value="10000001">
+ <input type="hidden" name="from" value="opac_user" />
+ <table id="checkoutst" class="table table-bordered table-striped">
+ <caption>27 Exemplar(e) ausgeliehen</caption>
+ <thead>
+ <tr>
+ <th class="nosort jacketcol">&nbsp;</th>
+ <th class="all anti-the titlecol">Titel</th>
+ <th>Verfasser</th>
+ <th>Medientyp</th>
+ <th class="psort duedatecol">Fällig</th>
+ 
+ <th>Bibliothek</th>
+ 
+ 
+ 
+ <th>Signatur</th>
+ 
+ 
+ <th class="renewcol">Verlängern</th>
+ 
+ 
+ <th>Gebühren</th>
+ 
+ 
+ 
+ <th></th>
+ </tr>
+ </thead>
+ <tbody>
+ 
+ <tr>
+ 
+ <td class="jacketcell">
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ <img alt="Buchcover" class="ekzcover" src="https://cover.ekz.de/9783473460625.jpg" title="149469" />
+ 
+ </td>
+ 
+
+ <td class="title">
+  <a href="/cgi-bin/koha/opac-detail.pl?biblionumber=149469" class="title"> <span class="biblio-title">Hase Hibiskus: Zwei möhrenstarke Abenteuer</span> </a>
+ 
+
+ 
+
+ 
+
+ 
+ </td>
+
+ <td class="author">König, Andreas</td>
+ 
+ <td class="itype">
+ 
+  Kinder- und Jugendliteratur
+ 
+ </td>
+ 
+ <td class="date_due" data-order="2026-09-29 23:59:00">
+ <span class="tdlabel">Fälligkeitsdatum:</span>
+ 29.09.2026
+ </td>
+ 
+ 
+ <td class="branch">
+ <span class="tdlabel">Bibliothek:</span>
+ Mediathek im KUBUS
+ </td>
+ 
+ 
+ 
+ <td class="call_no">
+ <span class="tdlabel">Signatur:</span>
+ SaMi Lesebär
+ </td>
+ 
+ 
+ 
+ <td class="renew" data-order="0">
+ 
+ 
+ 
+ <span class="usr-msg no-renewal-before">Keine Verlängerung vor 22.09.2026 00:00</span>
+ <span class="renewals">( 0 von 3 Verlängerungen verbleiben  )</span>
+  </td>
+ 
+ 
+ <td class="fines">
+ <span class="tdlabel">Gebühren:</span>
+ 
+ <span>Nein</span>
+ 
+ </td>
+ 
+ 
+ 
+ <td></td>
+ </tr>
+ 
+ <tr>
+ 
+ <td class="jacketcell">
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ <img alt="Buchcover" class="ekzcover" src="https://cover.ekz.de/9783737336284.jpg" title="117923" />
+ 
+ </td>
+ 
+
+ <td class="title">
+  <a href="/cgi-bin/koha/opac-detail.pl?biblionumber=117923" class="title"> <span class="biblio-title">Duden 36+: A bis Z und 1 bis 10 </span> </a>
+ 
+
+ 
+
+ 
+
+ 
+ </td>
+
+ <td class="author">Westphal, Catharina</td>
+ 
+ <td class="itype">
+ 
+  Kinder- und Jugendliteratur
+ 
+ </td>
+ 
+ <td class="date_due" data-order="2026-09-29 23:59:00">
+ <span class="tdlabel">Fälligkeitsdatum:</span>
+ 29.09.2026
+ </td>
+ 
+ 
+ <td class="branch">
+ <span class="tdlabel">Bibliothek:</span>
+ Mediathek im KUBUS
+ </td>
+ 
+ 
+ 
+ <td class="call_no">
+ <span class="tdlabel">Signatur:</span>
+ G1 Schul
+ </td>
+ 
+ 
+ 
+ <td class="renew" data-order="0">
+ 
+ 
+ 
+ <span class="usr-msg no-renewal-before">Keine Verlängerung vor 22.09.2026 00:00</span>
+ <span class="renewals">( 0 von 3 Verlängerungen verbleiben  )</span>
+  </td>
+ 
+ 
+ <td class="fines">
+ <span class="tdlabel">Gebühren:</span>
+ 
+ <span>Nein</span>
+ 
+ </td>
+ 
+ 
+ 
+ <td></td>
+ </tr>
+ 
+ <tr>
+ 
+ <td class="jacketcell">
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ </td>
+ 
+
+ <td class="title">
+  <a href="/cgi-bin/koha/opac-detail.pl?biblionumber=13365" class="title"> <span class="biblio-title">Das dicke Mammutbuch der Technik</span> </a>
+ 
+
+ 
+
+ 
+
+ 
+ </td>
+
+ <td class="author">Ardley, Neil</td>
+ 
+ <td class="itype">
+ 
+  Kinder- und Jugendliteratur
+ 
+ </td>
+ 
+ <td class="date_due" data-order="2026-09-28 23:59:00">
+ <span class="tdlabel">Fälligkeitsdatum:</span>
+ 28.09.2026
+ </td>
+ 
+ 
+ <td class="branch">
+ <span class="tdlabel">Bibliothek:</span>
+ Mediathek im KUBUS
+ </td>
+ 
+ 
+ 
+ <td class="call_no">
+ <span class="tdlabel">Signatur:</span>
+ K Wa Ard
+ </td>
+ 
+ 
+ 
+ <td class="renew" data-order="0">
+ 
+ 
+ 
+ <span class="usr-msg no-renewal-before">Keine Verlängerung vor 21.09.2026 00:00</span>
+ <span class="renewals">( 3 von 3 Verlängerungen verbleiben  )</span>
+  </td>
+ 
+ 
+ <td class="fines">
+ <span class="tdlabel">Gebühren:</span>
+ 
+ <span>Nein</span>
+ 
+ </td>
+ 
+ 
+ 
+ <td></td>
+ </tr>
+ 
+ <tr>
+ 
+ <td class="jacketcell">
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ <img alt="Buchcover" class="ekzcover" src="https://cover.ekz.de/9783836958424.jpg" title="28350" />
+ 
+ </td>
+ 
+
+ <td class="title">
+  <a href="/cgi-bin/koha/opac-detail.pl?biblionumber=28350" class="title"> <span class="biblio-title">So geht Technik!</span> <span class="subtitle">Warum Toaster toasten, Flugzeuge fliegen und Wasser aus dem Hahn kommt</span> </a>
+ 
+
+ 
+
+ 
+
+ 
+ </td>
+
+ <td class="author">Farndon, John</td>
+ 
+ <td class="itype">
+ 
+  Kinder- und Jugendliteratur
+ 
+ </td>
+ 
+ <td class="date_due" data-order="2026-09-28 23:59:00">
+ <span class="tdlabel">Fälligkeitsdatum:</span>
+ 28.09.2026
+ </td>
+ 
+ 
+ <td class="branch">
+ <span class="tdlabel">Bibliothek:</span>
+ Mediathek im KUBUS
+ </td>
+ 
+ 
+ 
+ <td class="call_no">
+ <span class="tdlabel">Signatur:</span>
+ K Wa Far
+ </td>
+ 
+ 
+ 
+ <td class="renew" data-order="0">
+ 
+ 
+ 
+ <span class="usr-msg no-renewal-before">Keine Verlängerung vor 21.09.2026 00:00</span>
+ <span class="renewals">( 3 von 3 Verlängerungen verbleiben  )</span>
+  </td>
+ 
+ 
+ <td class="fines">
+ <span class="tdlabel">Gebühren:</span>
+ 
+ <span>Nein</span>
+ 
+ </td>
+ 
+ 
+ 
+ <td></td>
+ </tr>
+ 
+ <tr>
+ 
+ <td class="jacketcell">
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ <img alt="Buchcover" class="ekzcover" src="https://cover.ekz.de/9783551167606.jpg" title="12080" />
+ 
+ </td>
+ 
+
+ <td class="title">
+  <a href="/cgi-bin/koha/opac-detail.pl?biblionumber=12080" class="title"> <span class="biblio-title">Jakob streitet sich mit Conni und verträgt sich wieder</span> <span class="subtitle">mit lustigen Klappen</span> </a>
+ 
+
+ 
+
+ 
+
+ 
+ </td>
+
+ <td class="author">Grimm, Sandra</td>
+ 
+ <td class="itype">
+ 
+  Kinder- und Jugendliteratur
+ 
+ </td>
+ 
+ <td class="date_due" data-order="2026-09-28 23:59:00">
+ <span class="tdlabel">Fälligkeitsdatum:</span>
+ 28.09.2026
+ </td>
+ 
+ 
+ <td class="branch">
+ <span class="tdlabel">Bibliothek:</span>
+ Mediathek im KUBUS
+ </td>
+ 
+ 
+ 
+ <td class="call_no">
+ <span class="tdlabel">Signatur:</span>
+ G1 Jako
+ </td>
+ 
+ 
+ 
+ <td class="renew" data-order="0">
+ 
+ 
+ 
+ <span class="usr-msg no-renewal-before">Keine Verlängerung vor 21.09.2026 00:00</span>
+ <span class="renewals">( 3 von 3 Verlängerungen verbleiben  )</span>
+  </td>
+ 
+ 
+ <td class="fines">
+ <span class="tdlabel">Gebühren:</span>
+ 
+ <span>Nein</span>
+ 
+ </td>
+ 
+ 
+ 
+ <td></td>
+ </tr>
+ 
+ <tr>
+ 
+ <td class="jacketcell">
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ </td>
+ 
+
+ <td class="title">
+  <a href="/cgi-bin/koha/opac-detail.pl?biblionumber=9114" class="title"> <span class="biblio-title">Die Maus. Spurensuche mit der Maus</span> </a>
+ 
+
+ 
+
+ 
+
+ 
+ </td>
+
+ <td class="author">Frei-Borchers, Martin</td>
+ 
+ <td class="itype">
+ 
+  Kinder- und Jugendliteratur
+ 
+ </td>
+ 
+ <td class="date_due" data-order="2026-09-28 23:59:00">
+ <span class="tdlabel">Fälligkeitsdatum:</span>
+ 28.09.2026
+ </td>
+ 
+ 
+ <td class="branch">
+ <span class="tdlabel">Bibliothek:</span>
+ Mediathek im KUBUS
+ </td>
+ 
+ 
+ 
+ <td class="call_no">
+ <span class="tdlabel">Signatur:</span>
+ G1 Fre
+ </td>
+ 
+ 
+ 
+ <td class="renew" data-order="0">
+ 
+ 
+ 
+ <span class="usr-msg no-renewal-before">Keine Verlängerung vor 21.09.2026 00:00</span>
+ <span class="renewals">( 3 von 3 Verlängerungen verbleiben  )</span>
+  </td>
+ 
+ 
+ <td class="fines">
+ <span class="tdlabel">Gebühren:</span>
+ 
+ <span>Nein</span>
+ 
+ </td>
+ 
+ 
+ 
+ <td></td>
+ </tr>
+ 
+ <tr>
+ 
+ <td class="jacketcell">
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ <img alt="Buchcover" class="ekzcover" src="https://cover.ekz.de/9783836961738.jpg" title="119150" />
+ 
+ </td>
+ 
+
+ <td class="title">
+  <a href="/cgi-bin/koha/opac-detail.pl?biblionumber=119150" class="title"> <span class="biblio-title">Ich will kein Eichhörnchen mehr sein</span> </a>
+ 
+
+ 
+
+ 
+
+ 
+ </td>
+
+ <td class="author">Tallec, Olivier</td>
+ 
+ <td class="itype">
+ 
+  Kinder- und Jugendliteratur
+ 
+ </td>
+ 
+ <td class="date_due" data-order="2026-09-28 23:59:00">
+ <span class="tdlabel">Fälligkeitsdatum:</span>
+ 28.09.2026
+ </td>
+ 
+ 
+ <td class="branch">
+ <span class="tdlabel">Bibliothek:</span>
+ Mediathek im KUBUS
+ </td>
+ 
+ 
+ 
+ <td class="call_no">
+ <span class="tdlabel">Signatur:</span>
+ G1 Tall
+ </td>
+ 
+ 
+ 
+ <td class="renew" data-order="0">
+ 
+ 
+ 
+ <span class="usr-msg no-renewal-before">Keine Verlängerung vor 21.09.2026 00:00</span>
+ <span class="renewals">( 3 von 3 Verlängerungen verbleiben  )</span>
+  </td>
+ 
+ 
+ <td class="fines">
+ <span class="tdlabel">Gebühren:</span>
+ 
+ <span>Nein</span>
+ 
+ </td>
+ 
+ 
+ 
+ <td></td>
+ </tr>
+ 
+ <tr>
+ 
+ <td class="jacketcell">
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ <img alt="Buchcover" class="ekzcover" src="https://cover.ekz.de/9783473410569.jpg" title="165997" />
+ 
+ </td>
+ 
+
+ <td class="title">
+  <a href="/cgi-bin/koha/opac-detail.pl?biblionumber=165997" class="title"> <span class="biblio-title">Der schaurige Schusch</span> </a>
+ 
+
+ 
+
+ 
+
+ 
+ </td>
+
+ <td class="author">Habersack, Charlotte</td>
+ 
+ <td class="itype">
+ 
+  Kinder- und Jugendliteratur
+ 
+ </td>
+ 
+ <td class="date_due" data-order="2026-09-28 23:59:00">
+ <span class="tdlabel">Fälligkeitsdatum:</span>
+ 28.09.2026
+ </td>
+ 
+ 
+ <td class="branch">
+ <span class="tdlabel">Bibliothek:</span>
+ Mediathek im KUBUS
+ </td>
+ 
+ 
+ 
+ <td class="call_no">
+ <span class="tdlabel">Signatur:</span>
+ G1 Büch
+ </td>
+ 
+ 
+ 
+ <td class="renew" data-order="0">
+ 
+ 
+ 
+ <span class="usr-msg no-renewal-before">Keine Verlängerung vor 21.09.2026 00:00</span>
+ <span class="renewals">( 3 von 3 Verlängerungen verbleiben  )</span>
+  </td>
+ 
+ 
+ <td class="fines">
+ <span class="tdlabel">Gebühren:</span>
+ 
+ <span>Nein</span>
+ 
+ </td>
+ 
+ 
+ 
+ <td></td>
+ </tr>
+ 
+ <tr>
+ 
+ <td class="jacketcell">
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ <img alt="Buchcover" class="ekzcover" src="https://cover.ekz.de/9783411708284.jpg" title="13518" />
+ 
+ </td>
+ 
+
+ <td class="title">
+  <a href="/cgi-bin/koha/opac-detail.pl?biblionumber=13518" class="title"> <span class="biblio-title">Achtung, wir kochen!</span> <span class="subtitle">Duden Lesedetektive 1. Klasse</span> </a>
+ 
+
+ 
+
+ 
+
+ 
+ </td>
+
+ <td class="author">Petrick, Nina</td>
+ 
+ <td class="itype">
+ 
+  Kinder- und Jugendliteratur
+ 
+ </td>
+ 
+ <td class="date_due" data-order="2026-09-28 23:59:00">
+ <span class="tdlabel">Fälligkeitsdatum:</span>
+ 28.09.2026
+ </td>
+ 
+ 
+ <td class="branch">
+ <span class="tdlabel">Bibliothek:</span>
+ Mediathek im KUBUS
+ </td>
+ 
+ 
+ 
+ <td class="call_no">
+ <span class="tdlabel">Signatur:</span>
+ G3 Pet
+ </td>
+ 
+ 
+ 
+ <td class="renew" data-order="0">
+ 
+ 
+ 
+ <span class="usr-msg no-renewal-before">Keine Verlängerung vor 21.09.2026 00:00</span>
+ <span class="renewals">( 3 von 3 Verlängerungen verbleiben  )</span>
+  </td>
+ 
+ 
+ <td class="fines">
+ <span class="tdlabel">Gebühren:</span>
+ 
+ <span>Nein</span>
+ 
+ </td>
+ 
+ 
+ 
+ <td></td>
+ </tr>
+ 
+ <tr>
+ 
+ <td class="jacketcell">
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ <img alt="Buchcover" class="ekzcover" src="https://cover.ekz.de/9783411708093.jpg" title="10308" />
+ 
+ </td>
+ 
+
+ <td class="title">
+  <a href="/cgi-bin/koha/opac-detail.pl?biblionumber=10308" class="title"> <span class="biblio-title">Das Picknick im Wald</span> <span class="subtitle">Duden Lesedetektive 1. Klasse</span> </a>
+ 
+
+ 
+
+ 
+
+ 
+ </td>
+
+ <td class="author">Petrick, Nina</td>
+ 
+ <td class="itype">
+ 
+  Kinder- und Jugendliteratur
+ 
+ </td>
+ 
+ <td class="date_due" data-order="2026-09-28 23:59:00">
+ <span class="tdlabel">Fälligkeitsdatum:</span>
+ 28.09.2026
+ </td>
+ 
+ 
+ <td class="branch">
+ <span class="tdlabel">Bibliothek:</span>
+ Mediathek im KUBUS
+ </td>
+ 
+ 
+ 
+ <td class="call_no">
+ <span class="tdlabel">Signatur:</span>
+ G3 Pet
+ </td>
+ 
+ 
+ 
+ <td class="renew" data-order="0">
+ 
+ 
+ 
+ <span class="usr-msg no-renewal-before">Keine Verlängerung vor 21.09.2026 00:00</span>
+ <span class="renewals">( 3 von 3 Verlängerungen verbleiben  )</span>
+  </td>
+ 
+ 
+ <td class="fines">
+ <span class="tdlabel">Gebühren:</span>
+ 
+ <span>Nein</span>
+ 
+ </td>
+ 
+ 
+ 
+ <td></td>
+ </tr>
+ 
+ <tr>
+ 
+ <td class="jacketcell">
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ <img alt="Buchcover" class="ekzcover" src="https://cover.ekz.de/9783751202169.jpg" title="113468" />
+ 
+ </td>
+ 
+
+ <td class="title">
+  <a href="/cgi-bin/koha/opac-detail.pl?biblionumber=113468" class="title"> <span class="biblio-title">Zuhause bei den Waldtieren</span> <span class="subtitle">Lesestarter 1. Lesestufe</span> </a>
+ 
+
+ 
+
+ 
+
+ 
+ </td>
+
+ <td class="author">Wohlleben, Peter</td>
+ 
+ <td class="itype">
+ 
+  Kinder- und Jugendliteratur
+ 
+ </td>
+ 
+ <td class="date_due" data-order="2026-09-28 23:59:00">
+ <span class="tdlabel">Fälligkeitsdatum:</span>
+ 28.09.2026
+ </td>
+ 
+ 
+ <td class="branch">
+ <span class="tdlabel">Bibliothek:</span>
+ Mediathek im KUBUS
+ </td>
+ 
+ 
+ 
+ <td class="call_no">
+ <span class="tdlabel">Signatur:</span>
+ G3 Wohl
+ </td>
+ 
+ 
+ 
+ <td class="renew" data-order="0">
+ 
+ 
+ 
+ <span class="usr-msg no-renewal-before">Keine Verlängerung vor 21.09.2026 00:00</span>
+ <span class="renewals">( 3 von 3 Verlängerungen verbleiben  )</span>
+  </td>
+ 
+ 
+ <td class="fines">
+ <span class="tdlabel">Gebühren:</span>
+ 
+ <span>Nein</span>
+ 
+ </td>
+ 
+ 
+ 
+ <td></td>
+ </tr>
+ 
+ <tr>
+ 
+ <td class="jacketcell">
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ <img alt="Buchcover" class="ekzcover" src="https://cover.ekz.de/9783789109393.jpg" title="39448" />
+ 
+ </td>
+ 
+
+ <td class="title">
+  <a href="/cgi-bin/koha/opac-detail.pl?biblionumber=39448" class="title"> <span class="biblio-title">Bifi und Pops: Mission Katzenpups</span> <span class="subtitle">Lesestarter 1. Lesestufe</span> </a>
+ 
+
+ 
+
+ 
+
+ 
+ </td>
+
+ <td class="author">Taschinski, Stefanie</td>
+ 
+ <td class="itype">
+ 
+  Kinder- und Jugendliteratur
+ 
+ </td>
+ 
+ <td class="date_due" data-order="2026-09-28 23:59:00">
+ <span class="tdlabel">Fälligkeitsdatum:</span>
+ 28.09.2026
+ </td>
+ 
+ 
+ <td class="branch">
+ <span class="tdlabel">Bibliothek:</span>
+ Mediathek im KUBUS
+ </td>
+ 
+ 
+ 
+ <td class="call_no">
+ <span class="tdlabel">Signatur:</span>
+ G3 Tas
+ </td>
+ 
+ 
+ 
+ <td class="renew" data-order="0">
+ 
+ 
+ 
+ <span class="usr-msg no-renewal-before">Keine Verlängerung vor 21.09.2026 00:00</span>
+ <span class="renewals">( 3 von 3 Verlängerungen verbleiben  )</span>
+  </td>
+ 
+ 
+ <td class="fines">
+ <span class="tdlabel">Gebühren:</span>
+ 
+ <span>Nein</span>
+ 
+ </td>
+ 
+ 
+ 
+ <td></td>
+ </tr>
+ 
+ <tr>
+ 
+ <td class="jacketcell">
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ <img alt="Buchcover" class="ekzcover" src="https://cover.ekz.de/9783785585795.jpg" title="36303" />
+ 
+ </td>
+ 
+
+ <td class="title">
+  <a href="/cgi-bin/koha/opac-detail.pl?biblionumber=36303" class="title"> <span class="biblio-title">Ein Tag in der Autowerkstatt</span> <span class="subtitle">Bildermaus Mit Bildern lesen lernen</span> </a>
+ 
+
+ 
+
+ 
+
+ 
+ </td>
+
+ <td class="author">Wieker, Katharina</td>
+ 
+ <td class="itype">
+ 
+  Kinder- und Jugendliteratur
+ 
+ </td>
+ 
+ <td class="date_due" data-order="2026-09-28 23:59:00">
+ <span class="tdlabel">Fälligkeitsdatum:</span>
+ 28.09.2026
+ </td>
+ 
+ 
+ <td class="branch">
+ <span class="tdlabel">Bibliothek:</span>
+ Mediathek im KUBUS
+ </td>
+ 
+ 
+ 
+ <td class="call_no">
+ <span class="tdlabel">Signatur:</span>
+ G3 Wie
+ </td>
+ 
+ 
+ 
+ <td class="renew" data-order="0">
+ 
+ 
+ 
+ <span class="usr-msg no-renewal-before">Keine Verlängerung vor 21.09.2026 00:00</span>
+ <span class="renewals">( 3 von 3 Verlängerungen verbleiben  )</span>
+  </td>
+ 
+ 
+ <td class="fines">
+ <span class="tdlabel">Gebühren:</span>
+ 
+ <span>Nein</span>
+ 
+ </td>
+ 
+ 
+ 
+ <td></td>
+ </tr>
+ 
+ <tr>
+ 
+ <td class="jacketcell">
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ <img alt="Buchcover" class="ekzcover" src="https://cover.ekz.de/9783743207264.jpg" title="112975" />
+ 
+ </td>
+ 
+
+ <td class="title">
+  <a href="/cgi-bin/koha/opac-detail.pl?biblionumber=112975" class="title"> <span class="biblio-title">Tafiti schläft woanders</span> <span class="subtitle">Bildermaus Mit Bildern lesen lernen</span> </a>
+ 
+
+ 
+
+ 
+
+ 
+ </td>
+
+ <td class="author">Boehme, Julia</td>
+ 
+ <td class="itype">
+ 
+  Kinder- und Jugendliteratur
+ 
+ </td>
+ 
+ <td class="date_due" data-order="2026-09-28 23:59:00">
+ <span class="tdlabel">Fälligkeitsdatum:</span>
+ 28.09.2026
+ </td>
+ 
+ 
+ <td class="branch">
+ <span class="tdlabel">Bibliothek:</span>
+ Mediathek im KUBUS
+ </td>
+ 
+ 
+ 
+ <td class="call_no">
+ <span class="tdlabel">Signatur:</span>
+ G3 Boe
+ </td>
+ 
+ 
+ 
+ <td class="renew" data-order="0">
+ 
+ 
+ 
+ <span class="usr-msg no-renewal-before">Keine Verlängerung vor 21.09.2026 00:00</span>
+ <span class="renewals">( 3 von 3 Verlängerungen verbleiben  )</span>
+  </td>
+ 
+ 
+ <td class="fines">
+ <span class="tdlabel">Gebühren:</span>
+ 
+ <span>Nein</span>
+ 
+ </td>
+ 
+ 
+ 
+ <td></td>
+ </tr>
+ 
+ <tr>
+ 
+ <td class="jacketcell">
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ <img alt="Buchcover" class="ekzcover" src="https://cover.ekz.de/9783785580325.jpg" title="26355" />
+ 
+ </td>
+ 
+
+ <td class="title">
+  <a href="/cgi-bin/koha/opac-detail.pl?biblionumber=26355" class="title"> <span class="biblio-title">Meine beste Freundin Paula - Paula lernt schwimmen</span> <span class="subtitle">Bildermaus 1. Lesestufe</span> </a>
+ 
+
+ 
+
+ 
+
+ 
+ </td>
+
+ <td class="author">Reider, Katja</td>
+ 
+ <td class="itype">
+ 
+  Kinder- und Jugendliteratur
+ 
+ </td>
+ 
+ <td class="date_due" data-order="2026-09-28 23:59:00">
+ <span class="tdlabel">Fälligkeitsdatum:</span>
+ 28.09.2026
+ </td>
+ 
+ 
+ <td class="branch">
+ <span class="tdlabel">Bibliothek:</span>
+ Mediathek im KUBUS
+ </td>
+ 
+ 
+ 
+ <td class="call_no">
+ <span class="tdlabel">Signatur:</span>
+ G3 Rei
+ </td>
+ 
+ 
+ 
+ <td class="renew" data-order="0">
+ 
+ 
+ 
+ <span class="usr-msg no-renewal-before">Keine Verlängerung vor 21.09.2026 00:00</span>
+ <span class="renewals">( 3 von 3 Verlängerungen verbleiben  )</span>
+  </td>
+ 
+ 
+ <td class="fines">
+ <span class="tdlabel">Gebühren:</span>
+ 
+ <span>Nein</span>
+ 
+ </td>
+ 
+ 
+ 
+ <td></td>
+ </tr>
+ 
+ <tr>
+ 
+ <td class="jacketcell">
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ <img alt="Buchcover" class="ekzcover" src="https://cover.ekz.de/9783785581827.jpg" title="29494" />
+ 
+ </td>
+ 
+
+ <td class="title">
+  <a href="/cgi-bin/koha/opac-detail.pl?biblionumber=29494" class="title"> <span class="biblio-title">Ein Tag mit Lokführer Lars</span> <span class="subtitle">Bildermaus 1. Lesestufe</span> </a>
+ 
+
+ 
+
+ 
+
+ 
+ </td>
+
+ <td class="author">Thilo</td>
+ 
+ <td class="itype">
+ 
+  Kinder- und Jugendliteratur
+ 
+ </td>
+ 
+ <td class="date_due" data-order="2026-09-28 23:59:00">
+ <span class="tdlabel">Fälligkeitsdatum:</span>
+ 28.09.2026
+ </td>
+ 
+ 
+ <td class="branch">
+ <span class="tdlabel">Bibliothek:</span>
+ Mediathek im KUBUS
+ </td>
+ 
+ 
+ 
+ <td class="call_no">
+ <span class="tdlabel">Signatur:</span>
+ G3 Thi
+ </td>
+ 
+ 
+ 
+ <td class="renew" data-order="0">
+ 
+ 
+ 
+ <span class="usr-msg no-renewal-before">Keine Verlängerung vor 21.09.2026 00:00</span>
+ <span class="renewals">( 3 von 3 Verlängerungen verbleiben  )</span>
+  </td>
+ 
+ 
+ <td class="fines">
+ <span class="tdlabel">Gebühren:</span>
+ 
+ <span>Nein</span>
+ 
+ </td>
+ 
+ 
+ 
+ <td></td>
+ </tr>
+ 
+ <tr>
+ 
+ <td class="jacketcell">
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ <img alt="Buchcover" class="ekzcover" src="https://cover.ekz.de/9783785575819.jpg" title="25362" />
+ 
+ </td>
+ 
+
+ <td class="title">
+  <a href="/cgi-bin/koha/opac-detail.pl?biblionumber=25362" class="title"> <span class="biblio-title">Mein Freund, der Baggerführer</span> <span class="subtitle">Bildermaus 1. Lesestufe</span> </a>
+ 
+
+ 
+
+ 
+
+ 
+ </td>
+
+ <td class="author">Reider, Katja</td>
+ 
+ <td class="itype">
+ 
+  Kinder- und Jugendliteratur
+ 
+ </td>
+ 
+ <td class="date_due" data-order="2026-09-28 23:59:00">
+ <span class="tdlabel">Fälligkeitsdatum:</span>
+ 28.09.2026
+ </td>
+ 
+ 
+ <td class="branch">
+ <span class="tdlabel">Bibliothek:</span>
+ Mediathek im KUBUS
+ </td>
+ 
+ 
+ 
+ <td class="call_no">
+ <span class="tdlabel">Signatur:</span>
+ G3 Rei
+ </td>
+ 
+ 
+ 
+ <td class="renew" data-order="0">
+ 
+ 
+ 
+ <span class="usr-msg no-renewal-before">Keine Verlängerung vor 21.09.2026 00:00</span>
+ <span class="renewals">( 3 von 3 Verlängerungen verbleiben  )</span>
+  </td>
+ 
+ 
+ <td class="fines">
+ <span class="tdlabel">Gebühren:</span>
+ 
+ <span>Nein</span>
+ 
+ </td>
+ 
+ 
+ 
+ <td></td>
+ </tr>
+ 
+ <tr>
+ 
+ <td class="jacketcell">
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ <img alt="Buchcover" class="ekzcover" src="https://cover.ekz.de/9783743213722.jpg" title="161132" />
+ 
+ </td>
+ 
+
+ <td class="title">
+  <a href="/cgi-bin/koha/opac-detail.pl?biblionumber=161132" class="title"> <span class="biblio-title">Jim ist mies drauf - Fertig, los ... Banane!</span> <span class="subtitle">Leselöwen 1. Klasse</span> </a>
+ 
+
+ 
+
+ 
+
+ 
+ </td>
+
+ <td class="author">Lang, Suzanne</td>
+ 
+ <td class="itype">
+ 
+  Kinder- und Jugendliteratur
+ 
+ </td>
+ 
+ <td class="date_due" data-order="2026-09-28 23:59:00">
+ <span class="tdlabel">Fälligkeitsdatum:</span>
+ 28.09.2026
+ </td>
+ 
+ 
+ <td class="branch">
+ <span class="tdlabel">Bibliothek:</span>
+ Mediathek im KUBUS
+ </td>
+ 
+ 
+ 
+ <td class="call_no">
+ <span class="tdlabel">Signatur:</span>
+ G3 Lang
+ </td>
+ 
+ 
+ 
+ <td class="renew" data-order="0">
+ 
+ 
+ 
+ <span class="usr-msg no-renewal-before">Keine Verlängerung vor 21.09.2026 00:00</span>
+ <span class="renewals">( 3 von 3 Verlängerungen verbleiben  )</span>
+  </td>
+ 
+ 
+ <td class="fines">
+ <span class="tdlabel">Gebühren:</span>
+ 
+ <span>Nein</span>
+ 
+ </td>
+ 
+ 
+ 
+ <td></td>
+ </tr>
+ 
+ <tr>
+ 
+ <td class="jacketcell">
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ <img alt="Buchcover" class="ekzcover" src="https://cover.ekz.de/9783743207578.jpg" title="83374" />
+ 
+ </td>
+ 
+
+ <td class="title">
+  <a href="/cgi-bin/koha/opac-detail.pl?biblionumber=83374" class="title"> <span class="biblio-title">Achtung, Feuerwehr im Einsatz!</span> <span class="subtitle">Leselöwen 1. Klasse</span> </a>
+ 
+
+ 
+
+ 
+
+ 
+ </td>
+
+ <td class="author">Neubauer, Annette</td>
+ 
+ <td class="itype">
+ 
+  Kinder- und Jugendliteratur
+ 
+ </td>
+ 
+ <td class="date_due" data-order="2026-09-28 23:59:00">
+ <span class="tdlabel">Fälligkeitsdatum:</span>
+ 28.09.2026
+ </td>
+ 
+ 
+ <td class="branch">
+ <span class="tdlabel">Bibliothek:</span>
+ Mediathek im KUBUS
+ </td>
+ 
+ 
+ 
+ <td class="call_no">
+ <span class="tdlabel">Signatur:</span>
+ G3 Neub
+ </td>
+ 
+ 
+ 
+ <td class="renew" data-order="0">
+ 
+ 
+ 
+ <span class="usr-msg no-renewal-before">Keine Verlängerung vor 21.09.2026 00:00</span>
+ <span class="renewals">( 3 von 3 Verlängerungen verbleiben  )</span>
+  </td>
+ 
+ 
+ <td class="fines">
+ <span class="tdlabel">Gebühren:</span>
+ 
+ <span>Nein</span>
+ 
+ </td>
+ 
+ 
+ 
+ <td></td>
+ </tr>
+ 
+ <tr>
+ 
+ <td class="jacketcell">
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ </td>
+ 
+
+ <td class="title">
+  <a href="/cgi-bin/koha/opac-detail.pl?biblionumber=124622" class="title"> <span class="biblio-title">tiptoi Puzzle für kleine Entdecker: Zoo</span> <span class="subtitle">Kinderpuzzle ab 3 Jahren, für 1 Spieler</span> </a>
+ 
+
+ 
+
+ 
+
+ 
+ </td>
+
+ <td class="author"></td>
+ 
+ <td class="itype">
+ 
+  Spiele
+ 
+ </td>
+ 
+ <td class="date_due" data-order="2026-09-28 23:59:00">
+ <span class="tdlabel">Fälligkeitsdatum:</span>
+ 28.09.2026
+ </td>
+ 
+ 
+ <td class="branch">
+ <span class="tdlabel">Bibliothek:</span>
+ Mediathek im KUBUS
+ </td>
+ 
+ 
+ 
+ <td class="call_no">
+ <span class="tdlabel">Signatur:</span>
+ Spiel
+ </td>
+ 
+ 
+ 
+ <td class="renew" data-order="0">
+ 
+ 
+ 
+ <span class="usr-msg no-renewal-before">Keine Verlängerung vor 21.09.2026 00:00</span>
+ <span class="renewals">( 3 von 3 Verlängerungen verbleiben  )</span>
+  </td>
+ 
+ 
+ <td class="fines">
+ <span class="tdlabel">Gebühren:</span>
+ 
+ <span>Nein</span>
+ 
+ </td>
+ 
+ 
+ 
+ <td></td>
+ </tr>
+ 
+ <tr>
+ 
+ <td class="jacketcell">
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ <img alt="Buchcover" class="ekzcover" src="https://cover.ekz.de/9783785589663.jpg" title="37464" />
+ 
+ </td>
+ 
+
+ <td class="title">
+  <a href="/cgi-bin/koha/opac-detail.pl?biblionumber=37464" class="title"> <span class="biblio-title">Der kleine Seehund findet einen Freund</span> <span class="subtitle">Leselöwen 1. Klasse</span> </a>
+ 
+
+ 
+
+ 
+
+ 
+ </td>
+
+ <td class="author">Taube, Anna</td>
+ 
+ <td class="itype">
+ 
+  Kinder- und Jugendliteratur
+ 
+ </td>
+ 
+ <td class="date_due" data-order="2026-09-28 23:59:00">
+ <span class="tdlabel">Fälligkeitsdatum:</span>
+ 28.09.2026
+ </td>
+ 
+ 
+ <td class="branch">
+ <span class="tdlabel">Bibliothek:</span>
+ Mediathek im KUBUS
+ </td>
+ 
+ 
+ 
+ <td class="call_no">
+ <span class="tdlabel">Signatur:</span>
+ G3 Tau
+ </td>
+ 
+ 
+ 
+ <td class="renew" data-order="0">
+ 
+ 
+ 
+ <span class="usr-msg no-renewal-before">Keine Verlängerung vor 21.09.2026 00:00</span>
+ <span class="renewals">( 3 von 3 Verlängerungen verbleiben  )</span>
+  </td>
+ 
+ 
+ <td class="fines">
+ <span class="tdlabel">Gebühren:</span>
+ 
+ <span>Nein</span>
+ 
+ </td>
+ 
+ 
+ 
+ <td></td>
+ </tr>
+ 
+ <tr>
+ 
+ <td class="jacketcell">
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ <img alt="Buchcover" class="ekzcover" src="https://cover.ekz.de/004010168287317.jpg" title="165453" />
+ 
+ </td>
+ 
+
+ <td class="title">
+  <a href="/cgi-bin/koha/opac-detail.pl?biblionumber=165453" class="title"> <span class="biblio-title">Tier auf Tier: Deluxe</span> </a>
+ 
+
+ 
+
+ 
+
+ 
+ </td>
+
+ <td class="author"></td>
+ 
+ <td class="itype">
+ 
+  Spiele
+ 
+ </td>
+ 
+ <td class="date_due" data-order="2026-09-28 23:59:00">
+ <span class="tdlabel">Fälligkeitsdatum:</span>
+ 28.09.2026
+ </td>
+ 
+ 
+ <td class="branch">
+ <span class="tdlabel">Bibliothek:</span>
+ Mediathek im KUBUS
+ </td>
+ 
+ 
+ 
+ <td class="call_no">
+ <span class="tdlabel">Signatur:</span>
+ Spiel
+ </td>
+ 
+ 
+ 
+ <td class="renew" data-order="0">
+ 
+ 
+ 
+ <span class="usr-msg no-renewal-before">Keine Verlängerung vor 21.09.2026 00:00</span>
+ <span class="renewals">( 3 von 3 Verlängerungen verbleiben  )</span>
+  </td>
+ 
+ 
+ <td class="fines">
+ <span class="tdlabel">Gebühren:</span>
+ 
+ <span>Nein</span>
+ 
+ </td>
+ 
+ 
+ 
+ <td></td>
+ </tr>
+ 
+ <tr>
+ 
+ <td class="jacketcell">
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ <img alt="Buchcover" class="ekzcover" src="https://cover.ekz.de/9783219120363.jpg" title="153084" />
+ 
+ </td>
+ 
+
+ <td class="title">
+  <a href="/cgi-bin/koha/opac-detail.pl?biblionumber=153084" class="title"> <span class="biblio-title">Ente sagt Miau</span> </a>
+ 
+
+ 
+
+ 
+
+ 
+ </td>
+
+ <td class="author">MacIver, Juliette</td>
+ 
+ <td class="itype">
+ 
+  Kinder- und Jugendliteratur
+ 
+ </td>
+ 
+ <td class="date_due" data-order="2026-09-28 23:59:00">
+ <span class="tdlabel">Fälligkeitsdatum:</span>
+ 28.09.2026
+ </td>
+ 
+ 
+ <td class="branch">
+ <span class="tdlabel">Bibliothek:</span>
+ Mediathek im KUBUS
+ </td>
+ 
+ 
+ 
+ <td class="call_no">
+ <span class="tdlabel">Signatur:</span>
+ G1 MacI
+ </td>
+ 
+ 
+ 
+ <td class="renew" data-order="0">
+ 
+ 
+ 
+ <span class="usr-msg no-renewal-before">Keine Verlängerung vor 21.09.2026 00:00</span>
+ <span class="renewals">( 3 von 3 Verlängerungen verbleiben  )</span>
+  </td>
+ 
+ 
+ <td class="fines">
+ <span class="tdlabel">Gebühren:</span>
+ 
+ <span>Nein</span>
+ 
+ </td>
+ 
+ 
+ 
+ <td></td>
+ </tr>
+ 
+ <tr>
+ 
+ <td class="jacketcell">
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ <img alt="Buchcover" class="ekzcover" src="https://cover.ekz.de/004002051685041.jpg" title="165444" />
+ 
+ </td>
+ 
+
+ <td class="title">
+  <a href="/cgi-bin/koha/opac-detail.pl?biblionumber=165444" class="title"> <span class="biblio-title">Ihr seid die Jury: Zwei Gesichter - ein Schuss</span> </a>
+ 
+
+ 
+
+ 
+
+ 
+ </td>
+
+ <td class="author"></td>
+ 
+ <td class="itype">
+ 
+  Spiele
+ 
+ </td>
+ 
+ <td class="date_due" data-order="2026-09-28 23:59:00">
+ <span class="tdlabel">Fälligkeitsdatum:</span>
+ 28.09.2026
+ </td>
+ 
+ 
+ <td class="branch">
+ <span class="tdlabel">Bibliothek:</span>
+ Mediathek im KUBUS
+ </td>
+ 
+ 
+ 
+ <td class="call_no">
+ <span class="tdlabel">Signatur:</span>
+ Spiel
+ </td>
+ 
+ 
+ 
+ <td class="renew" data-order="0">
+ 
+ 
+ 
+ <span class="usr-msg no-renewal-before">Keine Verlängerung vor 21.09.2026 00:00</span>
+ <span class="renewals">( 3 von 3 Verlängerungen verbleiben  )</span>
+  </td>
+ 
+ 
+ <td class="fines">
+ <span class="tdlabel">Gebühren:</span>
+ 
+ <span>Nein</span>
+ 
+ </td>
+ 
+ 
+ 
+ <td></td>
+ </tr>
+ 
+ <tr>
+ 
+ <td class="jacketcell">
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ <img alt="Buchcover" class="ekzcover" src="https://images.thalia.media/00/-/7be51746a42e4ecd89d35350eef4eb60/billy-biber.jpeg" title="12710" />
+ 
+ </td>
+ 
+
+ <td class="title">
+  <a href="/cgi-bin/koha/opac-detail.pl?biblionumber=12710" class="title"> <span class="biblio-title">Billy Biber</span> </a>
+ 
+
+ 
+
+ 
+
+ 
+ </td>
+
+ <td class="author">Haferkamp, Kai</td>
+ 
+ <td class="itype">
+ 
+  Spiele
+ 
+ </td>
+ 
+ <td class="date_due" data-order="2026-09-12 23:59:00">
+ <span class="tdlabel">Fälligkeitsdatum:</span>
+ 12.09.2026
+ </td>
+ 
+ 
+ <td class="branch">
+ <span class="tdlabel">Bibliothek:</span>
+ Mediathek im KUBUS
+ </td>
+ 
+ 
+ 
+ <td class="call_no">
+ <span class="tdlabel">Signatur:</span>
+ Spiel
+ </td>
+ 
+ 
+ 
+ <td class="renew" data-order="0">
+ 
+ 
+ 
+ <span class="usr-msg no-renewal-before">Keine Verlängerung vor 05.09.2026 00:00</span>
+ <span class="renewals">( 2 von 3 Verlängerungen verbleiben  )</span>
+  </td>
+ 
+ 
+ <td class="fines">
+ <span class="tdlabel">Gebühren:</span>
+ 
+ <span>Nein</span>
+ 
+ </td>
+ 
+ 
+ 
+ <td></td>
+ </tr>
+ 
+ <tr>
+ 
+ <td class="jacketcell">
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ <img alt="Buchcover" class="ekzcover" src="https://cover.ekz.de/9783831039708.jpg" title="42851" />
+ 
+ </td>
+ 
+
+ <td class="title">
+  <a href="/cgi-bin/koha/opac-detail.pl?biblionumber=42851" class="title"> <span class="biblio-title">Wie kommt die Milch in die Tüte?: Der Kreislauf alltäglicher Dinge</span> </a>
+ 
+
+ 
+
+ 
+
+ 
+ </td>
+
+ <td class="author">Deutsch, Libby</td>
+ 
+ <td class="itype">
+ 
+  Kinder- und Jugendliteratur
+ 
+ </td>
+ 
+ <td class="date_due" data-order="2026-09-12 23:59:00">
+ <span class="tdlabel">Fälligkeitsdatum:</span>
+ 12.09.2026
+ </td>
+ 
+ 
+ <td class="branch">
+ <span class="tdlabel">Bibliothek:</span>
+ Mediathek im KUBUS
+ </td>
+ 
+ 
+ 
+ <td class="call_no">
+ <span class="tdlabel">Signatur:</span>
+ G Wa Deu
+ </td>
+ 
+ 
+ 
+ <td class="renew" data-order="0">
+ 
+ 
+ 
+ <span class="usr-msg no-renewal-before">Keine Verlängerung vor 05.09.2026 00:00</span>
+ <span class="renewals">( 2 von 3 Verlängerungen verbleiben  )</span>
+  </td>
+ 
+ 
+ <td class="fines">
+ <span class="tdlabel">Gebühren:</span>
+ 
+ <span>Nein</span>
+ 
+ </td>
+ 
+ 
+ 
+ <td></td>
+ </tr>
+ 
+ <tr>
+ 
+ <td class="jacketcell">
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ <img alt="Buchcover" class="ekzcover" src="https://cover.ekz.de/9783505150678.jpg" title="117712" />
+ 
+ </td>
+ 
+
+ <td class="title">
+  <a href="/cgi-bin/koha/opac-detail.pl?biblionumber=117712" class="title"> <span class="biblio-title">Heute ist der schönste Tag</span> </a>
+ 
+
+ 
+
+ 
+
+ 
+ </td>
+
+ <td class="author">Sabbag, Britta</td>
+ 
+ <td class="itype">
+ 
+  Kinder- und Jugendliteratur
+ 
+ </td>
+ 
+ <td class="date_due" data-order="2026-09-12 23:59:00">
+ <span class="tdlabel">Fälligkeitsdatum:</span>
+ 12.09.2026
+ </td>
+ 
+ 
+ <td class="branch">
+ <span class="tdlabel">Bibliothek:</span>
+ Mediathek im KUBUS
+ </td>
+ 
+ 
+ 
+ <td class="call_no">
+ <span class="tdlabel">Signatur:</span>
+ G1 Sabb
+ </td>
+ 
+ 
+ 
+ <td class="renew" data-order="0">
+ 
+ 
+ 
+ <span class="usr-msg no-renewal-before">Keine Verlängerung vor 05.09.2026 00:00</span>
+ <span class="renewals">( 2 von 3 Verlängerungen verbleiben  )</span>
+  </td>
+ 
+ 
+ <td class="fines">
+ <span class="tdlabel">Gebühren:</span>
+ 
+ <span>Nein</span>
+ 
+ </td>
+ 
+ 
+ 
+ <td></td>
+ </tr>
+ 
+ </tbody>
+ </table>
+ 
+ </form>
+
+ 
+ 
+
+ <!-- Add note modal -->
+ <div class="modal" id="addNoteModal" tabindex="-1" aria-labelledby="addNoteLabel" aria-hidden="true">
+ <div class="modal-dialog">
+ <form action="#" id="addNoteForm">
+ <div class="modal-content">
+ <div class="modal-header">
+ <h5 class="modal-title" id="addNoteLabel">Problem melden</h5>
+ <button aria-label="Schließen" class="closebtn" data-dismiss="modal" type="button">
+ <span aria-hidden="true">&times;</span>
+ </button>
+ </div>
+ <div class="modal-body" id="addNoteBody">
+ <h6 id="addNoteTitle"></h6>
+ <input type="hidden" id="addNoteIssueId" name="issue_id" value="" />
+ <textarea name="note" id="addNote" rows="4"></textarea>
+ <div class="hint">Ihre Notiz wird dem Bibliothekspersonal bei Rückgabe des Mediums angezeigt.</div>
+ </div>
+ <div class="modal-footer">
+ <button type="submit" class="btn btn-primary">Notiz senden</button>
+ <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
+ </div>
+ </div>
+ </form>
+ </div>
+ </div>
+
+ </div> <!-- / .opac-user-checkouts -->
+ 
+ 
+
+
+ 
+
+ 
+ <!-- FINES BOX -->
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+
+ 
+
+ 
+
+ 
+ </div> <!-- /.tab-content -->
+ </div> <!-- /#opac-user-views -->
+ </div> <!-- /#userdetails -->
+ </div> <!-- /.col-10 -->
+ </div> <!-- /.row -->
+ </div> <!-- /.container-fluid -->
+</div> <!-- /#main -->
+
+
+<div id="suspendHoldModal" class="modal" tabindex="-1" role="dialog" aria-labelledby="suspendModalLabel" aria-hidden="true" data-focus="false">
+ <div class="modal-dialog">
+ <div class="modal-content">
+ <form action="/cgi-bin/koha/opac-modrequest-suspend.pl" method="post">
+ <div class="modal-header">
+ 
+ <h5 class="modal-title" id="suspendModalLabel">Vormerkung aussetzen</h5>
+ 
+ <button aria-label="Schließen" class="closebtn" data-dismiss="modal" type="button">
+ <span aria-hidden="true">x</span>
+ </button>
+ </div>
+ <div class="modal-body">
+ <h6 id="suspendHoldTitle"></h6>
+ <input type="hidden" name="reserve_id" id="suspendHoldReserveId" value="" />
+ <label for="suspend_untilDate">Aussetzen bis:</label>
+ <input type="text" name="suspend_until" id="suspend_untilDate" size="10" />
+ <span class="dateformat">(JJJJ-MM-TT)</span>
+
+ <p><a href="#" class="clear-flatpickr" data-fp="suspend_untilDate">Löschen Sie das Datum, um unbefristet auszusetzen</a></p>
+ </div>
+ <div class="modal-footer">
+ <button class="btn btn-primary"><i class="fa fa-check" aria-hidden="true"></i> Aussetzen</button>
+ <button data-dismiss="modal" class="btn btn-secondary"><i class="fa fa-remove" aria-hidden="true"></i> Nicht aussetzen</button>
+ </div>
+ </form>
+ </div> <!-- /.modal-content -->
+ </div> <!-- /.modal-dialog -->
+</div> <!-- /#suspendModal -->
+
+
+
+
+
+
+
+
+
+               
+
+
+
+
+
+
+
+
+
+
+ 
+ 
+
+ 
+ <div class="container-fluid">
+ <div class="row">
+ <div class="col">
+ <div id="report-koha-url">
+ <div class="row justify-content-between">
+ 
+ 
+ <div class="col">
+ <div id="koha_url" class="clearfix noprint">
+ <p>Powered by 
+ <a class="koha_url" rel="nofollow" href="http://koha-community.org">Koha</a>
+ </p>
+ </div> <!-- /#koha_url -->
+ </div> <!-- /.col -->
+ 
+ </div> <!-- /.row.justify-content-between -->
+ </div> <!-- /#report-koha-url -->
+ </div> <!-- /.col -->
+ </div> <!-- /.row -->
+ </div> <!-- /.container-fluid -->
+ 
+ </div> <!-- / #wrapper in masthead.inc -->
+
+ 
+ 
+ 
+
+
+<!-- JavaScript includes -->
+<script src="/opac-tmpl/bootstrap/lib/jquery/jquery-3.6.0.min_22.1132001.js"></script>
+<script src="/opac-tmpl/bootstrap/lib/jquery/jquery-migrate-3.3.2.min_22.1132001.js"></script>
+<script src="/opac-tmpl/lib/jquery/jquery-ui-1.13.1.min_22.1132001.js"></script>
+<script src="/opac-tmpl/bootstrap/lib/bootstrap/js/bootstrap.bundle.min_22.1132001.js"></script>
+<script src="/opac-tmpl/bootstrap/lib/fontfaceobserver.min_22.1132001.js"></script>
+<script src="/opac-tmpl/bootstrap/lib/enquire.min_22.1132001.js"></script>
+<script src="/opac-tmpl/bootstrap/js/global_22.1132001.js"></script>
+
+
+<script>
+
+    var MSG_CONFIRM_AGAIN = _("Vorsicht: Dies kann nicht rückgängig gemacht werden. Bitte bestätigen Sie nochmals")
+    var MSG_DELETE_SEARCH_HISTORY = _("Sind Sie sicher, dass Sie Ihre Suchhistorie löschen möchten?");
+    var MSG_NO_SUGGESTION_SELECTED = _("Kein Anschaffungsvorschlag ausgewählt");
+    var MSG_SEARCHING = _("Suche in %s...");
+    var MSG_ERROR_SEARCHING_COLLECTION = _("Fehler bei der Suche im %s-Bestand");
+    var MSG_NO_RESULTS_FOUND_IN_COLLECTION = _("Es wurden keine Ergebnisse im %s-Bestand der Bibliothek gefunden");
+    var MSG_RESULTS_FOUND_IN_COLLECTION = _("%s Ergebnisse im %s-Bestand der Bibliothek gefunden");
+    var MSG_BY = _("von");
+    var MSG_TYPE = _("Typ");
+    var MSG_NEXT = _("Weiter");
+    var MSG_PREVIOUS = _("Zurück");
+    var MSG_CHECKOUTS = _("Ausleihen");
+    var MSG_NO_CHECKOUTS = _("Keine Ausleihen");
+    var MSG_CHECK_OUT = _("Ausleihe");
+    var MSG_CHECK_OUT_CONFIRM = _("Sind Sie sicher, dass Sie dieses Exemplar ausleihen möchten?");
+    var MSG_CHECKED_OUT_UNTIL = _("Ausgeliehen bis %s");
+    var MSG_CHECK_IN = _("Rückgabe");
+    var MSG_CHECK_IN_CONFIRM = _("Sind Sie sicher, dass Sie dieses Exemplar zurückgeben möchten?");
+    var MSG_NO_CHECKOUTS = _("Keine Ausleihen");
+    var MSG_DOWNLOAD = _("Download");
+    var MSG_HOLDS = _("Vormerkungen");
+    var MSG_NO_HOLDS = _("Keine Vormerkungen");
+    var MSG_PLACE_HOLD = _("Vormerken");
+    var MSG_CANCEL_HOLD = _("Abbrechen");
+    var MSG_CANCEL_HOLD_CONFIRM = _("Sind Sie sicher, dass Sie diese Vormerkung stornieren möchten?");
+    var MSG_ON_HOLD = _("Vorgemerkt");
+
+    
+    
+    
+
+    
+    $(".print-large").on("click",function(){
+        window.print();
+        return false;
+    });
+    $(".addtoshelf").on("click",function(e){
+        e.preventDefault();
+        Dopop( this.href );
+    });
+    $("body").on("click", ".addtocart", function(e){
+        e.preventDefault();
+        var biblionumber = $(this).data("biblionumber");
+        addRecord( biblionumber );
+    });
+    $("body").on("click", ".cartRemove", function(e){
+        e.preventDefault();
+        var biblionumber = $(this).data("biblionumber");
+        delSingleRecord( biblionumber );
+    });
+    $(".clearsh").on("click", function(e){
+        if (! confirmDelete(MSG_DELETE_SEARCH_HISTORY) ) {
+            e.preventDefault();
+        }
+    });
+
+</script>
+
+
+ <script src="/opac-tmpl/bootstrap/js/basket_22.1132001.js"></script>
+
+
+
+
+
+
+
+ <script src="/opac-tmpl/bootstrap/js/localcovers_22.1132001.js"></script>
+ <script>
+
+    var NO_LOCAL_JACKET = _("Kein Coverbild verfügbar");
+
+    </script>
+
+
+
+
+
+
+<script src="/opac-tmpl/lib/js-cookie/js.cookie-3.0.1.min_22.1132001.js"></script>
+<script>
+$(document).ready(function() {
+    if($('#searchsubmit').length) {
+        $(document).on("click", '#searchsubmit', function(e) {
+            Cookies.remove("form_serialized", { path: '/'});
+            Cookies.remove("form_serialized_limits", { path: '/'});
+            Cookies.remove("search_path_code", { path: '/'});
+        });
+    }
+    
+    
+    $( "#translControl1" ).autocomplete({
+        source: function(request, response) {
+            if ( request.term.match(/[:=]/) ) {
+                response([]);
+                return;
+            }
+            var index = '';
+            if ( $('#masthead_search') ) {
+                index = $( "#masthead_search" ).val();
+                if ( index ) {
+                    index = index.replace(/,.*$/,'');
+                    switch (index) {
+                        case 'kw': index = ''; break;
+                        case 'nb':
+                        case 'ns': response([]); return; break;
+                    }
+                }
+            }
+            $.ajax({
+                url: "/cgi-bin/koha/svc/catsearch-autocomplete",
+                dataType: "json",
+                data: {
+                    text : request.term,
+                    field : index,
+                    count : 20
+                },
+                success: function(data) {
+                    response( data.suggestions );
+                }
+            });
+        },
+        minLength: 3,
+        delay: 300,
+        select: function( event, ui ) {
+            $('#translControl1').val(ui.item.value);
+            $("#searchform").submit();    
+        }
+    });
+    
+});
+</script>
+
+ 
+
+
+<script>
+    var flatpickr_weekdays = {
+        shorthand: [ "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+        longhand: [ "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" ]
+    };
+
+    var flatpickr_months = {
+        shorthand: [ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+        longhand: [ "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+    };
+    var debug    = "";
+    var dateformat_pref = "dmydot";
+    var sentmsg = 0;
+    if (debug > 1) {alert("dateformat: " + dateformat_pref + "\ndebug is on (level " + debug + ")");}
+    var calendarFirstDayOfWeek = '1';
+    var flatpickr_timeformat_string = "H:i";
+    var flatpickr_timeformat = true;
+    var flatpickr_dateformat_string = "";
+    switch ( dateformat_pref ){
+        case "us":
+            flatpickr_dateformat_string = "m/d/Y";
+            break;
+        case "metric":
+            flatpickr_dateformat_string = "d/m/Y";
+            break;
+        case "dmydot":
+            flatpickr_dateformat_string = "d.m.Y";
+            break;
+        default:
+            flatpickr_dateformat_string = "Y-m-d";
+    }
+
+    function get_dateformat_str(dateformat) {
+        var dateformat_str;
+        if (dateformat == 'us') {
+            dateformat_str = 'mm/dd/yyyy';
+        } else if (dateformat == 'metric') {
+            dateformat_str = 'dd/mm/yyyy';
+        } else if (dateformat == 'iso') {
+            dateformat_str = 'yyyy-mm-dd';
+        } else if (dateformat == 'dmydot') {
+            dateformat_str = 'dd.mm.yyyy';
+        }
+        return dateformat_str;
+    }
+</script>
+<script src="/opac-tmpl/lib/flatpickr/flatpickr.min_22.1132001.js"></script>
+<script>
+    flatpickr.l10ns.default.weekdays = flatpickr_weekdays;
+    flatpickr.l10ns.default.months   = flatpickr_months;
+    flatpickr.setDefaults({
+        dateFormat: "Y-m-d",
+        altInput: true,
+        allowInput: true,
+        altFormat: flatpickr_dateformat_string,
+        altInputClass: 'flatpickr-input',
+        nextArrow: '<i class="fa fa-fw fa-arrow-right" aria-hidden="true"></i>',
+        prevArrow: '<i class="fa fa-fw fa-arrow-left" aria-hidden="true"></i>',
+        time_24hr: flatpickr_timeformat,
+        locale: {
+            "firstDayOfWeek": calendarFirstDayOfWeek
+        },
+        onReady: function( selectedDates, dateStr, instance ){
+            /* When flatpickr instance is created, automatically append a "clear date" link */
+            if( $(instance.input).hasClass("futuredate") ){
+                instance.set("minDate", new Date().fp_incr(1));
+            }
+            if( $(instance.input).hasClass("pastdate") ){
+                instance.set("maxDate", new Date().fp_incr(-1));
+            }
+            $(instance.input).find('~input.flatpickr:first')
+                /* Add a wrapper element so that we can prevent the clear button from wrapping */
+                .wrap("<span class='flatpickr_wrapper'></span>")
+                .after( $("<a/>")
+                    .attr("href","#")
+                    .addClass("clear_date")
+                    .on("click", function(e){
+                        e.preventDefault();
+                        instance.clear();
+                    })
+                    .addClass("fa fa-fw fa-remove")
+                    .attr("aria-hidden", true)
+                    .attr("aria-label", _("Datum löschen") )
+                ).keydown(function(e) {
+                    var key = (event.keyCode ? event.keyCode : event.which);
+                    if ( key == 40 ) {
+                        instance.set('allowInput',false);
+                    }
+                });
+        },
+        onClose: function( selectedDates, dateText, instance) {
+            validate_date( dateText, instance );
+            var thisInput = instance.input;
+            if ( thisInput.hasAttribute('data-start_for') ) {
+                var endPicker = document.querySelector("#"+thisInput.dataset.start_for)._flatpickr;
+                endPicker.set('minDate', selectedDates[0]);
+            }
+        },
+    });
+
+    var MSG_PLEASE_ENTER_A_VALID_DATE = ( _("Bitte geben Sie ein gültiges Datum (%s) ein.") );
+
+    function is_valid_date(date) {
+        // An empty string is considered as a valid date for convenient reasons.
+        if (date === '') return 1;
+        var dateformat = flatpickr_dateformat_string;
+        switch ( dateformat_pref ){
+            case "us":
+                flatpickr_dateformat_string = "m/d/Y";
+                break;
+            case "metric":
+                flatpickr_dateformat_string = "d/m/Y";
+                break;
+            case "dmydot":
+                flatpickr_dateformat_string = "d.m.Y";
+                break;
+            default:
+                flatpickr_dateformat_string = "Y-m-d";
+        }
+        try {
+            flatpickr.parseDate(date, dateformat);
+        } catch (e) {
+            return 0;
+        }
+        return 1;
+    }
+
+    function validate_date(dateText, inst) {
+        if (!is_valid_date(dateText)) {
+            var dateformat_str = get_dateformat_str( dateformat_pref );
+            alert(MSG_PLEASE_ENTER_A_VALID_DATE.format(dateformat_str));
+            inst.clear();
+        }
+    }
+
+        $(document).ready(function(){
+            $(".flatpickr").each(function(){
+                let options = {};
+                let refresh_max_date = 0;
+                let disable_buttons = [];
+
+                if( $(this).data("flatpickr-futureinclusive") === true
+                 || $(this).data("flatpickr-futuredate") === true ) {
+                    let original_date = $(this).val();
+                    if ( original_date ) {
+                        original_date = Date_from_syspref( original_date ).getTime();
+                        let tomorrow = new Date().fp_incr(1).getTime();
+
+                        options['enable'] = [function(date){
+                            date = date.getTime();
+                            if ( date == original_date ) return true;
+                            if ( date >= tomorrow)       return true;
+                        }];
+                    }
+                    else {
+                        if( $(this).data("flatpickr-futureinclusive") === true ) {
+                            options['minDate'] = new Date().setHours(00, 00, 00, 00);
+                        } else {
+                            options['minDate'] = new Date().fp_incr(1);
+                        }
+                    }
+
+                    disable_buttons.push(0); /* Yesterday */
+
+                    if ( $(this).data("flatpickr-futuredate") === true ) {
+                        disable_buttons.push(1); /* Today */
+                    }
+                }
+                if( $(this).data("flatpickr-pastinclusive") === true ) {
+                    options['maxDate'] = new Date(); /* Not today or hh:mm will be 00:00 */
+                    refresh_max_date = 1;
+                    disable_buttons.push(2); /* Tomorrow */
+                }
+                if( $(this).data("flatpickr-pastdate") === true ) {
+                    options['maxDate'] = new Date().fp_incr(-1).setHours(23, 59, 00, 00);
+                    disable_buttons.push(1); /* Today */
+                    disable_buttons.push(2); /* Tomorrow */
+                }
+                if ( $(this).data('flatpickr-enable-time') === true ) {
+                    options['enableTime'] = true;
+                    options['dateFormat'] = flatpickr_dateformat_string + " " + flatpickr_timeformat_string;
+                }
+
+                let fp = $(this).flatpickr(options);
+
+                $(disable_buttons).each(function(index, value){
+                    $(fp.calendarContainer).find(".shortcut-buttons-flatpickr-button[data-index='"+value+"']").prop("disabled", "disabled");
+                });
+
+                if ( refresh_max_date ) {
+                    /* Refresh the maxDate every 30 secondes to make sure the user will not
+                       be stuck with the minute passed.
+                       Adding 1 minute to not introduce a gap.
+                       Example: last update at 40s, a new minute passed at 00.
+                       Between 00 and 10s the user won't be able click 'Today'.
+                    */
+                    setInterval(() => {
+                        let now = new Date();
+                        fp.set("maxDate", now.setMinutes(now.getMinutes() + 1));
+                    }, 30000);
+                }
+            });
+        });
+
+</script>
+
+ 
+
+<script src="/opac-tmpl/lib/jquery/plugins/jquery.dataTables.min_22.1132001.js"></script>
+<script src="/opac-tmpl/lib/jquery/plugins/dataTables.responsive.min_22.1132001.js"></script>
+<script>
+    var MSG_DT_FIRST = _("Erste");
+    var MSG_DT_LAST = _("Letzte");
+    var MSG_DT_NEXT = _("Weiter");
+    var MSG_DT_PREVIOUS = _("Zurück");
+    var MSG_DT_EMPTY_TABLE = _("Keine Daten verfügbar");
+    var MSG_DT_INFO = _("Zeige _START_ bis _END_ von _TOTAL_");
+    var MSG_DT_INFO_EMPTY = _("Keine Einträge anzuzeigen");
+    var MSG_DT_INFO_FILTERED = _("(Auswahl von _MAX_ Einträgen)");
+    var MSG_DT_LENGTH_MENU = _("Zeige _MENU_ Einträge");
+    var MSG_DT_LOADING_RECORDS = _("Lädt...");
+    var MSG_DT_PROCESSING = _("Lädt...");
+    var MSG_DT_SEARCH = _("Suche:");
+    var MSG_DT_ZERO_RECORDS = _("Keine übereinstimmenden Datensätze gefunden");
+    var MSG_DT_COPY_TO_CLIPBOARD = _("In Zwischenablage kopieren");
+    var MSG_DT_COPY_KEYS = _("Drücken Sie <i>Strg</i> oder <i>⌘</i> + <i>C</i> um die Daten aus der Tabelle<br>in Ihre Zwischenablage zu kopieren.<br><br>Um Abzubrechen, klicken Sie diese Nachricht an oder drücken Sie Escape.");
+    var MSG_DT_COPIED_ROWS = _("%d Zeilen in Zwischenablage kopiert");
+    var MSG_DT_COPIED_ONE_ROW = _("Eine Zeile in Zwischenablage kopiert");
+    var MSG_CLEAR_FILTER = _("Filter löschen");
+    var MSG_DT_ALL = _("Alle");
+    var CONFIG_EXCLUDE_ARTICLES_FROM_SORT = _("ein eine einer eines einem einen der die das");
+</script>
+<script src="/opac-tmpl/bootstrap/js/datatables_buttons_shim_22.1132001.js"></script>
+<script src="/opac-tmpl/bootstrap/js/datatables_22.1132001.js"></script>
+
+ 
+ <script>
+        var AR_CAPTION_COUNT = _("(%s gesamt)");
+
+
+        function tableInit( tableId ){
+            if( tableId == "checkoutst" ){
+                $(".dt-buttons").append("<button type=\"button\" class=\"dt-button buttons-ical\" id=\"buttons-ics\">iCal</button> ");
+                
+            }
+        }
+        $(document).ready(function(){
+            var tab = $(location).attr('hash');
+            if ( tab.length ) {
+                $("#opac-user-views a[href='" + tab + "']").tab("show");
+            }
+            $('#opac-user-article-requests caption .count').html(AR_CAPTION_COUNT.format(''));
+
+            $(".modal-nojs").addClass("modal").addClass("hide").removeClass("modal-nojs");
+
+            $(".btn-delete-hold").on("click", function(e){
+                e.preventDefault();
+                var hold_title = $(this).data("title");
+                var reserve_id = $(this).data("reserve_id");
+                confirmModal( hold_title, _("Sind Sie sicher, dass Sie diese Vormerkung stornieren möchten?"), _("Ja, Vormerkung stornieren"), _("Nein, Vormerkung nicht stornieren"), function( result ){
+                        $("#bootstrap-confirm-box-modal").remove()
+                        if( result ){
+                            $("#delete_hold_" + reserve_id ).submit();
+                        }
+                    }
+                );
+            });
+
+            $(".btn-req-delete-hold").on("click", function(e){
+                e.preventDefault();
+                var hold_title = $(this).data("title");
+                var reserve_id = $(this).data("reserve_id");
+                confirmModal( hold_title, _("Sind Sie sicher, dass Sie die Stornierung dieser Vormerkung anfragen möchten?"), _("Ja"), _("Nein"), function( result ){
+                        $("#bootstrap-confirm-box-modal").remove()
+                        if( result ){
+                            $("#req_cancel_hold_" + reserve_id ).submit();
+                        }
+                    }
+                );
+            });
+
+            $(".btn-delete-article-request").on("click", function(e){
+                e.preventDefault();
+                var article_request = $(this).data("title");
+                var article_request_id = $(this).data("article-request_id");
+                (function(row){
+                    var doCancel = function( result ){
+                        $("#bootstrap-confirm-box-modal").remove();
+                        if( result ){
+                            $.ajax({
+                                type: "DELETE",
+                                url: '/api/v1/public/patrons/'+borrowernumber+'/article_requests/'+article_request_id+'?cancellation_reason=OPAC',
+                                success: function( data ) {
+                                    row.parents('tr').hide({
+                                        duration: 'slow',
+                                        complete: function() {
+                                            var ar_tab = $('a[href="#opac-user-article-requests"');
+                                            var ar_table = $('#article-requests-table');
+                                            var ar_length = $('tbody tr:visible', ar_table).length;
+                                            var ar_count = $('caption .count', ar_table);
+
+                                            ar_tab.html(ar_tab.html().replace(/\(\d+\)/, '('+ar_length+')'));
+                                            ar_count.html(AR_CAPTION_COUNT.format(ar_length));
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    };
+                    confirmModal( article_request, _("Sind Sie sicher, dass Sie diese Artikelbestellung stornieren möchten?"), _("Ja, Artikelbestellung stornieren"), _("Nein, Artikelbestellung nicht stornieren"), doCancel);
+                })($(this))
+            });
+
+            /* We initiate this flatpickr instance here so that we can use the variable later */
+            var suspend_until_date = $("#suspend_untilDate").flatpickr({
+                minDate: "today"
+            });
+
+            $(document).on("click", ".suspend_hold", function(e){
+                e.preventDefault();
+                var title = $(this).data("title");
+                var reserve_id = $(this).data("reserve_id");
+                $("#suspendHoldReserveId").val( reserve_id );
+                $("#suspendHoldTitle").html( "<em>" + title + "</em>" );
+                $("#suspendHoldModal").modal("show");
+            });
+
+            $("#suspendHoldModal").on("hidden.bs.modal", function(){
+                $("#suspendHoldTitle").html("");
+                $("#suspendHoldReserveId").val("");
+                suspend_until_date.clear();
+            });
+
+            $("#suspend_all_submit").on("click", function(e){
+                e.preventDefault();
+                var title = _("Sind Sie sicher, dass Sie alle Vormerkungen aussetzen möchten?");
+                var body = _("Alle Vormerkungen werden ausgesetzt.");
+                confirmModal( body, title, _("Ja, alle Vormerkungen aussetzen"), "", function( result ){
+                        $("#bootstrap-confirm-box-modal").remove()
+                        if( result ){
+                            $("#suspend_all_holds").submit();
+                        }
+                    }
+                );
+            });
+
+            $("#resume_all_submit").on("click", function(e){
+                e.preventDefault();
+                var title = _("Sind Sie sicher, dass Sie alle ausgesetzten Vormerkungen wieder aktivieren möchten?");
+                var body = _("Alle Vormerkungen werden wieder aktiviert.");
+                confirmModal( body, title, _("Ja, alle Vormerkungen reaktivieren"), _("Nein, Vormerkungen nicht reaktivieren"), function( result ){
+                        $("#bootstrap-confirm-box-modal").remove()
+                        if( result ){
+                            $("#resume_all_holds").submit();
+                        }
+                    }
+                );
+            });
+
+            const export_format_spreadsheet = ButtonsShim.export_format_spreadsheet;
+            
+            var parseBookingDateAttribute = function(value) {
+                if (!value) {
+                    return null;
+                }
+
+                var trimmed = value.trim();
+                var normalized = trimmed.indexOf('T') !== -1 ? trimmed : trimmed.replace(' ', 'T');
+                var parsed = new Date(normalized);
+
+                if (!isNaN(parsed.getTime())) {
+                    return parsed;
+                }
+
+                var fallback = new Date(trimmed.split(' ')[0]);
+                return isNaN(fallback.getTime()) ? null : fallback;
+            };
+
+            var normalizeBookingDateOnly = function(value) {
+                if (!value) {
+                    return null;
+                }
+
+                var dateObject = value instanceof Date ? value : parseBookingDateAttribute(value);
+                if (!dateObject || isNaN(dateObject.getTime())) {
+                    return null;
+                }
+
+                return new Date(
+                    dateObject.getFullYear(),
+                    dateObject.getMonth(),
+                    dateObject.getDate()
+                );
+            };
+
+            var bookingStatusLabelMap = {
+                active: _("Aktiv"),
+                pending: _("Offen"),
+                expired: _("Abgelaufen"),
+                new: _("Neu")
+            };
+
+            var bookingStatusBadgeClassMap = {
+                active: 'badge-primary',
+                pending: 'badge-warning',
+                expired: 'badge-secondary',
+                new: 'badge-info'
+            };
+
+            var deriveBookingStatus = function(rawStatus, startAttr, endAttr) {
+                if (!rawStatus) {
+                    return 'unknown';
+                }
+
+                if (rawStatus !== 'new') {
+                    return rawStatus;
+                }
+
+                var today = normalizeBookingDateOnly(new Date());
+                var startDate = normalizeBookingDateOnly(startAttr);
+                var endDate = normalizeBookingDateOnly(endAttr);
+
+                if (endDate && today && endDate < today) {
+                    return 'expired';
+                }
+
+                if (startDate && today && startDate > today) {
+                    return 'pending';
+                }
+
+                if (startDate && today) {
+                    if (!endDate || endDate >= today) {
+                        return 'active';
+                    }
+                }
+
+                if (!startDate && endDate && today) {
+                    return endDate < today ? 'expired' : 'active';
+                }
+
+                return 'new';
+            };
+
+            var updateBookingRowStatus = function($row) {
+                var statusCell = $row.find('td.status');
+                if (!statusCell.length) {
+                    return 'unknown';
+                }
+
+                var rawStatus = statusCell.attr('data-raw-status') || statusCell.attr('data-status') || '';
+                if (rawStatus !== 'new') {
+                    statusCell.attr('data-status', rawStatus || 'unknown');
+                    return rawStatus || 'unknown';
+                }
+
+                var startAttr = $row.find('td.start-date').attr('data-start-date');
+                var endAttr = $row.find('td.end-date').attr('data-end-date');
+                var derivedStatus = deriveBookingStatus(rawStatus, startAttr, endAttr);
+
+                statusCell.attr('data-status', derivedStatus);
+
+                var badge = statusCell.find('.badge').first();
+                if (badge.length) {
+                    var label = bookingStatusLabelMap[derivedStatus] || bookingStatusLabelMap.new;
+                    var badgeClass = bookingStatusBadgeClassMap[derivedStatus] || bookingStatusBadgeClassMap.new;
+
+                    badge
+                        .removeClass('badge-primary badge-secondary badge-success badge-info badge-warning badge-danger')
+                        .addClass(badgeClass)
+                        .text(label);
+                }
+
+                return derivedStatus;
+            };
+
+            var dTables = $("#checkoutst,#holdst,#overduest,#opac-user-relative-issues-table,#divibibcheckoutst,#opac-user-bookings-table");
+
+            dTables.each(function(){
+                var $table = $(this);
+                var tableId = $table.attr("id");
+                var isBookingsTable = tableId === "opac-user-bookings-table";
+                var psortIndex = $table.find("th.psort").index();
+                if (psortIndex < 0) {
+                    psortIndex = 0;
+                }
+                var defaultOrder = isBookingsTable ? [[3, 'asc'], [4, 'asc']] : [[ psortIndex, 'asc' ]];
+
+                var config = {
+                    "sorting": defaultOrder,
+                    "order": defaultOrder,
+                    "dom": '<"top"<"table_entries"><"table_controls"fB>>t',
+                    "columnDefs": [
+                        { "targets": [ "nosort" ],"sortable": false,"searchable": false },
+                        { "type": "anti-the", "targets" : [ "anti-the" ] },
+                        { "visible": false, "targets" : [ "hidden" ] },
+                        { "responsivePriority":  1, "className": 'all', "targets": ["titlecol"] },
+                        { "responsivePriority":  2, "targets": ["renewcol"] },
+                        { "responsivePriority":  3, "targets": ["duedatecol"] },
+                        { "responsivePriority":  4, "targets": ["jacketcol"] },
+                        { "className": 'dtr-control', "orderable": false, "targets": -1 },
+                    ],
+                    "language": {
+                        "search": "_INPUT_",
+                        "searchPlaceholder": _("Suche")
+                    },
+                    "autoWidth": false,
+                    "responsive": {
+                        details: {
+                            type: 'column',
+                            target: -1,
+                            display: $.fn.dataTable.Responsive.display.childRowImmediate
+                        }
+                    },
+                    buttons: [
+                        /* Override default button set so that we can extend the options of print and csv */
+                        'clearFilter', 'copy',
+                        {
+                            extend: "print",
+                            exportOptions: {
+                                /* Print view should show all columns (even invisible ones) unless they are .noExport */
+                                columns: ":not(.noExport)"
+                            }
+                        },
+                        {
+                            extend: "csv",
+                            exportOptions: {
+                                /* CSV export should include all columns (even invisible ones) unless they are .noExport */
+                                columns: ":not(.noExport)",
+                                format:  export_format_spreadsheet
+                            }
+                        }
+                    ]
+                };
+
+                if (isBookingsTable) {
+                    config.dom = '<"top"<"table_entries"><"table_controls"fB>>t<"bottom"ip>';
+                    config.paging = true;
+                    config.pageLength = 20;
+                    config.drawCallback = function() {
+                        var apiTable = $(this).DataTable();
+                        apiTable.rows({ page: 'current' }).every(function() {
+                            updateBookingRowStatus($(this.node()));
+                        });
+
+                        /* Apply Bootstrap pagination classes */
+                        $(this).closest('.dataTables_wrapper').find('.dataTables_paginate').addClass('pagination');
+                        $('.paginate_button').each(function() {
+                            $(this).addClass('page-link');
+                            if (!$(this).parent().hasClass('page-item')) {
+                                $(this).wrap('<li class="page-item"></li>');
+                            }
+                            if ($(this).hasClass('current')) {
+                                $(this).parent().addClass('active');
+                            }
+                            if ($(this).hasClass('disabled')) {
+                                $(this).parent().addClass('disabled');
+                            }
+                        });
+                    };
+                }
+
+                var initializedTable = $table.on("init.dt", function() {
+                        tableInit( $(this).attr("id") );
+                    })
+                    .dataTable($.extend(true, {}, dataTablesDefaults, config));
+
+                if (isBookingsTable) {
+                    initializedTable.DataTable().rows().every(function() {
+                        updateBookingRowStatus($(this.node()));
+                    });
+                }
+            });
+
+            var dataTables = $("#recalls-table,#article-requests-table");
+            dataTables.each(function(){
+                $(this).dataTable($.extend(true, {}, dataTablesDefaults, {
+                    "searching": false,
+                    "paging": false,
+                    "info": false,
+                    "autoWidth": false,
+                    "responsive": {
+                        "details": { "type": 'column',"target": -1 }
+                    },
+                    "columnDefs": [
+                        { "className": 'dtr-control', "orderable": false, "targets": -1 }
+                    ],
+                }));
+            });
+            $('a[data-toggle="tab"]').on('shown.bs.tab', function (event) {
+                dTables.DataTable().responsive.recalc();
+                dataTables.DataTable().responsive.recalc();
+
+                // Initialize combobox for cancellation reason when bookings tab is shown
+                if (event.target.id === 'opac-user-bookings-tab') {
+                    $("#cancellation-reason").comboBox({
+                        displayProperty: 'name',
+                        placeholder: _("Wählen oder geben Sie einen Grund ein"),
+                    });
+                }
+            } );
+
+            $("body").on("click", "#buttons-ics", function(){
+                location.href="/cgi-bin/koha/opac-ics.pl";
+            });
+
+            
+            
+
+            
+
+            $(".change_pickup").on("click", function(){
+                var hold_id = $(this).data("hold-id");
+                $(this).hide();
+                $("#change-pickup-location" + hold_id ).show();
+            });
+
+            if ( $('#opac-user-clubs').length ) {
+                $('#opac-user-clubs-tab-link').on('click', function() {
+                    $('#opac-user-clubs').text(_("Lädt..."));
+                    $('#opac-user-clubs').load('/cgi-bin/koha/clubs/clubs-tab.pl?borrowernumber=10000001');
+                });
+            }
+
+            $(".cancel_recall").click(function(e){
+                return confirmDelete(_("Sind Sie sicher, dass Sie diesen Rückruf entfernen möchten?"));
+            });
+
+            $("body").on("click", ".btn-add-note", function(e){
+                e.preventDefault();
+                var title = $(this).data("title");
+                var issue_id = $(this).data("issueid");
+                var note = $("#note_" + issue_id ).val();
+                var origvalue = $("#note_" + issue_id ).data("origvalue");
+                $("#addNote").val( note );
+                $("#addNoteIssueId").val( issue_id );
+                $("#addNoteTitle").text( title );
+                $("#addNoteModal").modal("show");
+            });
+
+            $("#addNoteForm").on("submit", function(e){
+                e.preventDefault();
+                var title = $("#addNoteTitle").text();
+                var issue_id = $("#addNoteIssueId").val();
+                var note = $("#addNote").val();
+                submitNote( title, issue_id, note );
+            });
+
+            $("#addNoteModal").on("hidden.bs.modal", function(){
+                $("#addNoteTitle").text("");
+                $("#addNote").val("");
+            });
+        });
+
+        function submitNote( title, issue_id, note ){
+            var self = $("#addNoteModal");
+            var notebutton = $("#save_" + issue_id );
+            var noteinput = $("#note_" + issue_id );
+
+            var ajaxData = {
+                'action': 'issuenote',
+                'issue_id': issue_id,
+                'note': note
+            };
+
+            $.ajax({
+                url: '/cgi-bin/koha/svc/checkout_notes/',
+                type: 'POST',
+                dataType: 'json',
+                data: ajaxData,
+            })
+            .done(function(data) {
+                var message = "";
+                if(data.status == 'saved') {
+                    $("#notesaved").removeClass("alert-error");
+                    $("#notesaved").addClass("alert-info");
+                    noteinput.data('origvalue', data.note)
+                        .val(data.note);
+                    notebutton.text( _("Notiz bearbeiten" ) );
+                    $("#viewnote_" + issue_id ).text( data.note );
+                    message = "<p>" + _("Ihre Notiz über %s wurde gespeichert und der Bibliothek übermittelt.").format( em(title) ) + "</p>";
+                    message += "<p class=\"checkout_note\">" + data.note;
+                    message += "<a href=\"/cgi-bin/koha/opac-issue-note.pl?issue_id=" + issue_id + "\" class=\"btn btn-link btn-sm btn-add-note\" data-title=\"" + title + "\" data-issueid=\"" + issue_id + "\"><i class=\"fa fa-pencil\" aria-hidden=\"true\"></i> " + _("Notiz bearbeiten") + "</a>";
+                    message += "</p>";
+                } else if(data.status == 'removed') {
+                    $("#notesaved").removeClass("alert-error");
+                    $("#notesaved").addClass("alert-info");
+                    noteinput.data('origvalue', "")
+                        .val("")
+                    notebutton.text( _("Notiz hinzufügen") );
+                    $("#viewnote_" + issue_id ).text( data.note );
+                    message = "<p>" + _("Ihre Notiz über %s wurde entfernt.").format( em(title) ) + "</p>";
+                } else {
+                    $("#notesaved").removeClass("alert-info");
+                    $("#notesaved").addClass("alert-error");
+                    message =  "<p>" + _("Ihre Notiz über %s konnte nicht gespeichert werden.").format( em(title) ) + "</p>";
+                    notebutton.text( _("Notiz hinzufügen") );
+                    $("#viewnote_" + issue_id ).text( data.note );
+                    message += "<p style=\"font-weight:bold;\">" + _("Ein Fehler ist aufgetreten. Die Notiz wurde nicht gelöscht.") + "</p>";
+                }
+                $("#notesaved").html(message);
+            })
+            .fail(function(data) {
+                $("#notesaved").removeClass("alert-info");
+                $("#notesaved").addClass("alert-error");
+                var message = "<p style=\"font-weight:bold;\">" + _("Ein Fehler ist aufgetreten. Die Notiz wurde nicht gelöscht.") + "</p>";
+                $("#notesaved").html(message);
+            })
+            .always(function() {
+                self.modal("hide");
+                $("#notesaved").show();
+            });
+        }
+
+        function em( title ){
+            return "<em>" + title + "</em>";
+        }
+
+        var borrowernumber = "10000001";
+    </script>
+ 
+ 
+
+
+ <script>
+        $( document ).ready(function() {
+  $("span.title_resp_stmt").hide();
+
+  $('#wrapper').after(
+      $('<div>').attr('class','navbar-fixed-bottom navbar-static-bottom noprint').append(
+          $('<div>').attr('class','navbar-inner').attr('style','background: #f0f3f3; margin-top:20px; margin-left:30px; margin-right:30px; padding-top: 3px').append(
+              $('<ul>').attr('class','nav pull-right').attr('id','formalPageLinks').append(
+                  $('<li>').attr('class','active').append(
+                      $('<p>').attr('class','lang navbar-text').append(
+                          $('<a>').attr('href','https://www.stadt-remseck.de/impressum').append(
+                              $('<strong>').append("Impressum").attr('style','margin-right:2em')
+                          )
+                      )
+                  )
+              ).append(
+                  $('<li>').attr('class','active').append(
+                      $('<p>').attr('class','lang navbar-text').append(
+                          $('<a>').attr('href','https://www.stadt-remseck.de/datenschutz').append(
+                              $('<strong>').append("Datenschutzerklärung").attr('style','margin-right:2em')
+                          )
+                      )
+                  )
+              )
+          )
+      )
+  );
+  $('#i18nMenu').hide();
+});
+
+
+    </script>
+
+
+    <script>window.__LMS_EVENT_MANAGEMENT_PAGE_URL__ = "/cgi-bin/koha/opac-page.pl?page_id=227";</script>
+    <script type="text/javascript" src="/api/v1/contrib/eventmanagement/static/js/opac-widget-inject.js"></script>
+
+</body>
+</html>
+
+

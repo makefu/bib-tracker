@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="de"><head>
+	<style>
+		@import url(css/aDISStandard.css);
+	</style>
+	<script src="js/aDISMain.min.js"></script>
+	<script src="js/fckeditor/fckeditor.js"></script>
+	<title> Anmelden - Stadtbibliothek Stuttgart </title>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,shrink-to-fit=no">
+<meta name="description" content="OPAC der Stadtbibliothek Stuttgart">
+<!--
+(c) Software: aDIS/BMS und aDIS/Archiv von aStec angewandte Systemtechnik - www.astec.de
+STU, BSG01 de V8.62/40
+//-->
+<script src="/aDISWeb_kopac86/js/scripts-head.js"></script>
+<link rel="stylesheet" href="/aDISWeb_kopac86/css/kopac_style.css"><link rel="stylesheet" media="screen, projection" href="css/POOLM02QPRODXYZ@_00000001_00000001.css"/><link rel="stylesheet" media="screen, projection" href="css/POOLM02QPRODXYZ@_00000002_00000002.css"/>
+<!--[if lt IE 9]><script src="/aDISWeb_kopac86/js/html5shiv-printshiv.min.js"></script><script src="/aDISWeb_kopac86/js/css3-mediaqueries.js"></script><![endif]-->
+<link rel="shortcut icon" type="image/x-icon" href="/aDISWeb_stu/images/favicon.ico">
+</head>
+<body class="opac01 bsg01">
+<script><!--
+
+
+
+
+
+
+aDIS.sendBackRequest = function(e) {
+  if(e.state != null && e.state.action)
+    location.href="/aDISWeb/app;jsessionid=0123456789ABCDEF0123456789ABCDEF?service=direct/1/POOLM02QPRODXYZ@_00000013_00000013/$BrowserBack";
+}
+
+
+
+
+
+
+
+function startIdleTimer() {
+  if (typeof idleId != 'undefined')
+    clearTimeout(idleId)
+  idleId = window.setTimeout("to('"+ idleLink + "')", idleTime);
+}			
+function to(link) {
+  location.href=link;
+}
+
+
+
+
+
+function setupaDISHandlers()  {
+  aDIS.addListener("mousedown",document, aDIS.docOnEvent);
+  aDIS.addListener("keydown",document, aDIS.docOnEvent);
+  aDIS.addListener("keyup",document, aDIS.docOnEvent);
+  aDIS.addListener("click",document, aDIS.docOnEvent); 
+
+  aDIS.initFormElements();
+  aDIS.initIframes();
+  aDIS.initScrollPos();
+}
+
+
+
+
+
+
+  var UserAgent = navigator.userAgent.toLowerCase();
+  var mobileBrowser = false;
+  if (UserAgent.search(/(iphone|ipod|ipad|opera mini|fennec|palm|blackberry|android|symbian|series60)/) != -1)
+    mobileBrowser = true;
+  
+  aDIS.isFirstFocusAllowed = function(el){
+    if(el && !mobileBrowser){
+
+      var yPos = el.getBoundingClientRect().top;
+      var pageScroll = document.forms[0].scrollPos.value;
+      
+      if(pageScroll == 0 || yPos > 0)
+       return true;
+    }
+
+    return false;
+
+}
+
+
+
+
+aDIS.onLoad = function (e)
+{
+
+
+
+if (history.pushState && history.state == null) {
+  history.pushState({ action : 1 }, "", null);
+  history.pushState({ action : 2 }, "", null);
+}       
+
+window.onpopstate = function (e){  
+  aDIS.sendBackRequest(e);
+}
+
+
+
+
+  idleTime=1800000;
+  idleLink="/aDISWeb/app;jsessionid=0123456789ABCDEF0123456789ABCDEF?service=direct/1/POOLM02QPRODXYZ@_00000013_00000013/$Timeout";
+  startIdleTimer();
+
+
+  if (!e) var e = window.event;
+  document.forms[0].scriptEnabled.value=true;
+  if (self.specialOnLoad != undefined)
+    specialOnLoad(e);
+  setupaDISHandlers();
+  aDIS.getDimensions();
+
+
+      var el = document.Form0.$Textfield;
+      if(aDIS.isFirstFocusAllowed(el))
+       el.focus();
+    
+
+}
+
+aDIS.addListener('load', window, aDIS.onLoad);
+
+
+// --></script> <div class="aDISMaske"><form method="post" name="Form0" action="/aDISWeb/app;jsessionid=0123456789ABCDEF0123456789ABCDEF" onsubmit="return formOnSubmit();">
+<input type="hidden" name="service" value="direct/1/POOLM02QPRODXYZ@_00000013_00000013/$Form.form"/>
+<input type="hidden" name="sp" value="S0"/>
+<input type="hidden" name="Form0" value="focus,keyCode,stz,source,selected,requestCount,scriptEnabled,scrollPos,scrDim,winDim,imgDim,$Textfield,$Textfield$0,$FormConditional,textButton,$FormConditional$0,textButton$0,$FormConditional$1,textButton$1,$FormConditional$2,textButton$2"/>
+<input type="hidden" name="focus" value=""/>
+<input type="hidden" name="keyCode" value="0"/>
+<input type="hidden" name="stz" value=""/>
+<input type="hidden" name="source" value=""/>
+<input type="hidden" name="selected" value=""/>
+<input type="hidden" name="requestCount" value="1"/>
+<input type="hidden" name="scriptEnabled" value="F"/>
+<input type="hidden" name="scrollPos" value="0"/>
+<input type="hidden" name="scrDim" value=""/>
+<input type="hidden" name="winDim" value=""/>
+<input type="hidden" name="imgDim" value=""/>
+<input type="hidden" name="$FormConditional" value="T"/>
+<input type="hidden" name="$FormConditional$0" value="T"/>
+<input type="hidden" name="$FormConditional$1" value="T"/>
+<input type="hidden" name="$FormConditional$2" value="T"/>
+				 <div id="wrapper">
+        <div id="wrapper-inside">
+          <nav id="sprunglinks" aria-label="Sprunglinks">
+            <ul>
+              <li><a class="sprung" href="#main">Hauptinhalt</a></li>
+            </ul>
+          </nav>
+    <header id="header">
+      <div class="inside">
+          <div id="mhead" class="block">
+            <div id="mhead-inside">
+              <div id="logo">
+                <a href="javascript:top.htmlOnLink('*SW4')" title="Startseite der Stadtbibliothek" aria-label="Startseite der Stadtbibliothek">
+                  <img class="img-standard" src="/aDISWeb_stu/images/logo.svg" width="147" height="168" alt="Logo">
+                  <img class="img-fixed" src="/aDISWeb_stu/images/logo-fixed.svg" alt="Logo" width="73" height="84">
+                </a>
+              </div>
+               <div id="slogan-wrapper">
+                <div id="spruch"><a href="javascript:top.htmlOnLink('*SW42')"><span>Stadtbibliothek Stuttgart</span></a></div>
+              </div>
+          </div>
+        </div>
+       </div>
+    </header>
+<div id="container">
+            <div id="container-inside">
+              <main id="main" aria-label="Hauptbereich">
+                <div class="inside">
+
+<!-- START aDISPage Styling -->
+                  <div class="aDISPage">
+                    <div class="grid-wrapper">
+                      <div class="grid-row">
+
+<!-- START: KOPFBEREICH -->
+                        <div class="grid-col col-12 col-sm-12 col-md-9 col-lg-9 col-xl-9">
+                          <div class="grid-inside">
+                            <h1>
+                              <span class="invisible">Aktuelle Seite: </span>
+                               Anmelden
+                             </h1>
+                          </div>
+                        </div>
+
+<!-- Druckbutton -->
+                        <div class="grid-col col-12 col-sm-12 col-md-3 col-lg-3 col-xl-3">
+                         </div>
+
+<!-- Toolbar -->
+                        <div class="grid-col col-12">
+                         </div>
+                        <div class="grid-col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 arena-all">
+                             <div class="grid-inside">
+                               <div id="R03" class="txtmsk"><div class="html_div" style="width:100%; height:100%;"><p> Ihr Anfangspasswort besteht aus Ihrem Geburtsdatum in der Form TT.MM.JJJJ (also mit den Punkten zwischen Tag, Monat und Jahr). - <strong>Beispiel: 01.06.1978</strong><p></div>
+</div>
+                              <div id="R04" class="aDISListe"><div class="html_div" style="width:100%; height:100%;"></div>
+</div>
+                               <div class="form-primary">
+                                <div class="form-primary-inside">
+                                  <fieldset id="OPACGP" class="grp max60" >
+  <legend class="leg">Angaben zur Anmeldung</legend>
+  <div id="F03" class="widget-flex">
+    <label class="zweifach" for="IDENT_1" class="ausweis">Ausweisnummer</label><input type="text" name="$Textfield" data-fld="IDENT_1" id="IDENT_1" autocomplete="username" class="fuenffach"/> </div>
+  
+  <div id="F12" class="widget-flex">
+    <label class="zweifach" for="LPASSW_1">Passwort</label><input type="password" name="$Textfield$0" data-fld="LPASSW_1" id="LPASSW_1" autocomplete="current-password" class="fuenffach"/> </div>
+<br class="klar"/></fieldset>
+                                  <div id="R05">
+  <p class="widget-submit block"> <input type="submit" name="textButton" value="Anmelden" data-fld="$$GFBO_2" class="imp-button anmelden"/> <input type="submit" name="textButton$0" value="Abbrechen" data-fld="$$GFBO_1" class="abbrechen"/> </p>
+
+  <p class="widget-submit block"><input type="submit" name="textButton$1" value="Passwort vergessen?" data-fld="$$GFBO_3" class="button-link passwort-vergessen"/><input type="submit" name="textButton$2" value="Bibliothekskunde werden" data-fld="$$GFBO_4" class="button-link registrieren"/> </p>
+</div>
+                                </div>
+                              </div>
+                             </div>
+                          </div>
+
+<!-- ENDE: OPTIONEN-Spalte RECHTS -->
+                         </div>
+<!-- /grid-row -->
+                      </div>
+<!-- /grid-wrapper -->
+                    </div>
+<!-- STOP aDISPage Styling -->
+                  </div>
+              </main>
+            </div>
+          </div>
+          <footer id="footer">
+            <div class="inside">
+              <div class="grid-wrapper">
+                <div class="grid-row">
+                   <div class="grid-col col-12 col-md-6 col-lg-6 col-xl-6">
+                    <nav id="legal" class="mod_navigation block" aria-label="Rechtliche Links">
+                      <ul>
+                        <li><a href="https://stadtbibliothek-stuttgart.de/content/info/impressum.html" target="_blank" rel="noopener" aria-label="Impressum (neues Browser-Fenster)">Impressum</a></li>
+                        <li><a href="https://stadtbibliothek-stuttgart.de/content/info/datenschutz.html" target="_blank" rel="noopener" aria-label="Datenschutz (neues Browser-Fenster)">Datenschutz</a></li>
+                        <li><a href="https://stadtbibliothek-stuttgart.de/content/info/gebuehren.html" target="_blank" rel="noopener" aria-label="Benutzungs- und Geb&uuml;hrenverordnung (neues Browser-Fenster)">Benutzungs- und Geb&uuml;hrenordnung</a></li>
+
+<!-- <li><a href="https://[ Bitte eintragen ]" target="_blank" rel="noopener" aria-label="Hinweis zur Barrierefreiheit (neues Browser-Fenster)">Barrierefreiheit</a></li> -->
+                      </ul>
+                    </nav>
+                  </div>
+                   <div class="grid-col col-12 col-md-6 col-lg-6 col-xl-6">
+                    <p id="goingup" class="block">
+                      <a href="#wrapper">Seitenanfang</a>
+                    </p>
+                  </div>
+                   <div class="grid-col col-12 col-md-6 col-lg-4 col-xl-4">
+                    <nav id="social" class="mod_navigation block" aria-label="Die Bibliothek in den soziale Medien">
+                      <ul>
+                        <li class="nav-facebook"><a href="https://www.facebook.com/Stadtbibliothek.Stuttgart" target="_blank" rel="noopener" aria-label="Die Bibliothek auf facebook (neues Browser-Fenster)"><img src="/aDISWeb_stu/images/icons/facebook.svg" width="26" height="26" alt="facebook" title="facebook"></a></li>
+                        <li class="nav-youtube"><a href="https://www.youtube.com/c/StadtbibliothekStuttgartYT" target="_blank" rel="noopener" aria-label="Die Bibliothek auf YouTube (neues Browser-Fenster)"><img src="/aDISWeb_stu/images/icons/youtube.svg" width="26" height="26" alt="YouTube" title="YouTube"></a></li>
+                        <li class="nav-instagram"><a href="https://www.instagram.com/stadtbibliothekstuttgart/" target="_blank" rel="noopener" aria-label="Die Bibliothek auf Instagram(neues Browser-Fenster)"><img src="/aDISWeb_stu/images/icons/instagram.svg" width="26" height="26" alt="Instagram" title="Instagram"></a></li>
+                        <li class="nav-mastodon"><a href="https://xn--baw-joa.social/@stadtbibliothekstuttgart" target="_blank" rel="noopener" aria-label="Die Bibliothek auf Mastodon (neues Browser-Fenster)"><img src="/aDISWeb_stu/images/icons/mastodon.svg" width="26" height="26" alt="Mastodon" title="Mastodon"></a></li>
+                      </ul>
+                    </nav>
+                  </div>
+                   <div class="grid-col col-12 col-md-6 col-lg-4 col-xl-4">
+                    <p id="roessle">
+                      <a href="https://www.stuttgart.de" target="_blank" rel="noopener"><img src="/aDISWeb_stu/images/roessle.svg" width="135" height="35" alt="Stuttgart.de" title="Stuttgart.de"></a>
+                    </p>
+                  </div>
+                   <div class="grid-col col-12 col-md-12 col-lg-4 col-xl-4">
+                    <p id="credits">
+                      <a href="https://www.astec.de" target="_blank" rel="noopener" aria-label="Barrierefreie Bibliotheksoftware der astec eG (neues Browser-Fenster)">Barrierefreie Bibliothekssoftware der |a|S|tec| eG</a>
+                    </p>
+                  </div>
+                 </div>
+              </div>
+              <div class="clear"></div>
+             </div>
+          </footer>
+   </div>
+</div>
+<script src="/aDISWeb_kopac86/js/scripts-main.js"></script></form>
+</div></body>
+</html>

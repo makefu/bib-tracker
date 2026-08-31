@@ -7,6 +7,14 @@
 - Tests use realistic inputs: real recorded OPAC HTML and real recorded
   provider payloads, under `tests/fixtures/`. Never hand-written JSON standing
   in for an API response — record it.
+- `tests/fixtures/library/` is constructed: a small controlled story that the
+  reconciliation tests assert line by line, which no live account will hold
+  still for. `tests/fixtures/library/recorded/` is the counterweight — verbatim
+  captures of both live OPACs, copied from ha_stadtbibliothek, refreshed there
+  with `nix run .#record-fixtures`. `test_recorded_pages.py` drives the poller
+  with them. Reach for a recorded page before inventing markup: a constructed
+  fixture that agrees with the parser and with nothing else is how a poll comes
+  to succeed with the wrong answer.
 - Commit messages in Linux-kernel style, explaining *why*.
 - `git add -AN` before any `nix build`, and run long builds through `pueue`.
 
