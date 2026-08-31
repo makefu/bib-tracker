@@ -1,0 +1,49 @@
+{
+  "nodes": {
+    "ha-stadtbibliothek": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1788201671,
+        "narHash": "sha256-vFmD49eNYi3P66t8oTJWzwSoVmpnETrGOO6Ja/FnL/U=",
+        "ref": "main",
+        "rev": "367c27ef534d159a4f6fd6f9687163c1f296e9b5",
+        "revCount": 73,
+        "type": "git",
+        "url": "file:///home/makefu/r/ha_stadtbibliothek"
+      },
+      "original": {
+        "ref": "main",
+        "type": "git",
+        "url": "file:///home/makefu/r/ha_stadtbibliothek"
+      }
+    },
+    "nixpkgs": {
+      "locked": {
+        "lastModified": 1788039129,
+        "narHash": "sha256-pa4Q0qErvCvzCaaUph7Sm37RhR4xvPrYI8Lgz6k85+A=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "d2f67949798825fe853f7c5d0492b8bf016d3f88",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "root": {
+      "inputs": {
+        "ha-stadtbibliothek": "ha-stadtbibliothek",
+        "nixpkgs": "nixpkgs"
+      }
+    }
+  },
+  "root": "root",
+  "version": 7
+}

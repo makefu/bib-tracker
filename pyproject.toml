@@ -1,0 +1,62 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bib-tracker"
+version = "0.1.0"
+description = "Track what your household borrows from German public libraries"
+requires-python = ">=3.13"
+dependencies = [
+    "fastapi",
+    "uvicorn",
+    "jinja2",
+    "httpx",
+    "apscheduler",
+    "pydantic",
+    "pydantic-settings",
+    "python-multipart",
+    "pillow",
+    "structlog",
+    "ha-stadtbibliothek",
+]
+
+[project.scripts]
+bib-tracker = "bib_tracker.cli:main"
+bib-tracker-migrate = "bib_tracker.cli:migrate"
+bib-tracker-poll = "bib_tracker.cli:poll_once"
+bib-tracker-rebuild = "bib_tracker.cli:rebuild"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+bib_tracker = ["db/migrations/*.sql"]
+"bib_tracker.web" = ["templates/**/*.html", "static/**/*"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py313"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "RUF"]
+
+[tool.mypy]
+strict = true
+python_version = "3.13"
+files = ["src/bib_tracker"]
+
+[[tool.mypy.overrides]]
+# ha-stadtbibliothek does not ship py.typed yet.
+module = ["custom_components.*"]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = ["apscheduler.*"]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+markers = ["live: hits real library or metadata APIs; excluded from the nix build"]
