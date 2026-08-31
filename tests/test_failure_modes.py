@@ -242,3 +242,51 @@ async def test_concurrent_polls_of_one_account_are_refused(poll_service: PollSer
             await poll_service.poll("remseck")
     finally:
         lock.release()
+
+
+@respx.mock
+async def test_a_confirmed_emptiness_dates_the_return_from_when_it_was_first_seen(
+    poll_service: PollService, db: Database
+) -> None:
+    """Holding a run back delays believing it, not the date it recorded: the
+    books went back before the first empty poll, not before the second."""
+    _mock(library_fixture("remseck_checkouts.html"))
+    await poll_service.poll("remseck")
+
+    _mock(library_fixture("remseck_no_checkouts.html"))
+    held = await poll_service.poll("remseck")
+    assert (await _run(db, held))["status"] == "suspect"
+    assert await _open_loans(db) == 4
+
+    confirming = await poll_service.poll("remseck")
+
+    assert (await _run(db, confirming))["status"] == "success"
+    # The held-back run is accepted too, and reconciled in its own order.
+    assert (await _run(db, held))["status"] == "success"
+    assert (await _run(db, held))["reconciled"] == 1
+    assert await _open_loans(db) == 0
+
+    returned = await db.fetch_all("SELECT return_date_latest FROM loans WHERE state = 'returned'")
+    assert len(returned) == 4
+
+
+async def _open_loans(db: Database) -> int:
+    row = await db.fetch_one("SELECT COUNT(*) AS n FROM loans WHERE state = 'open'")
+    return int(row["n"])  # type: ignore[index]
+
+
+@respx.mock
+async def test_polling_builds_the_history(poll_service: PollService, db: Database) -> None:
+    _mock(library_fixture("remseck_checkouts.html"))
+    await poll_service.poll("remseck")
+    assert await _open_loans(db) == 4
+
+    _mock(library_fixture("remseck_checkouts_returned.html"))
+    await poll_service.poll("remseck")
+
+    assert await _open_loans(db) == 3
+    row = await db.fetch_one(
+        "SELECT m.title, l.state FROM loans l JOIN media m ON m.id = l.media_id WHERE l.state = 'returned'"
+    )
+    assert row is not None
+    assert row["title"] == "Die unendliche Geschichte"

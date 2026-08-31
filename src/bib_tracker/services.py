@@ -19,6 +19,7 @@ from .db import queries
 from .db.connection import Database
 from .library.identity import copy_key
 from .library.poller import PollResult, PollStatus, poll_account
+from .library.reconcile import reconcile_pending
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -139,6 +140,14 @@ class PollService:
         items = [{"copy_key": self._copy_key(account, raw), "raw": raw} for raw in result.serialised_loans()]
         status, reason = await self._assess(account_id, len(items))
 
+        if status == "success":
+            # A later poll agreeing with the held-back ones settles it. They
+            # are promoted rather than dropped, so the history keeps the date
+            # the change was first seen rather than when it was confirmed.
+            promoted = await queries.promote_suspect_runs(self._db, account_id)
+            if promoted:
+                _LOGGER.info("Confirmed %d held-back poll(s) for %s", promoted, account.name)
+
         await queries.finish_run(
             self._db,
             run_id,
@@ -153,6 +162,9 @@ class PollService:
             account_id=account_id,
             observed_at=result.finished_at,
         )
+
+        if status == "success":
+            await reconcile_pending(self._db, self._settings, self._accounts)
 
     @staticmethod
     def _copy_key(account: AccountConfig, raw: dict[str, Any]) -> str:

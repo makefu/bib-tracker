@@ -262,3 +262,32 @@ async def latest_run(db: Database, account_id: int | None = None) -> dict[str, A
             (account_id,),
         )
     return dict(row) if row else None
+
+
+async def promote_suspect_runs(db: Database, account_id: int) -> int:
+    """Accept the suspect runs at the head of this account's log.
+
+    Called once a later poll confirms what they saw. They are promoted rather
+    than discarded so the history keeps the earlier date, which is when the
+    change actually happened.
+    """
+    rows = await db.fetch_all(
+        "SELECT id, status FROM poll_runs WHERE account_id = ? AND status IN ('success', 'suspect')"
+        " ORDER BY started_at DESC, id DESC LIMIT 20",
+        (account_id,),
+    )
+    pending = []
+    for row in rows:
+        if row["status"] != "suspect":
+            break
+        pending.append(row["id"])
+
+    if not pending:
+        return 0
+
+    async with db.write() as w:
+        await w.execute(
+            f"UPDATE poll_runs SET status = 'success' WHERE id IN ({','.join('?' * len(pending))})",
+            pending,
+        )
+    return len(pending)

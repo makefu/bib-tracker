@@ -15,7 +15,7 @@ pkgs.testers.nixosTest {
   name = "bib-tracker";
 
   nodes.machine =
-    { ... }:
+    { config, ... }:
     {
       imports = [ self.nixosModules.default ];
 
@@ -34,6 +34,8 @@ pkgs.testers.nixosTest {
       };
 
       environment.etc."bib-tracker-password".text = "hunter2";
+      # So the test can run bib-tracker-rebuild by hand.
+      environment.systemPackages = [ config.services.bib-tracker.package ];
 
       services.bib-tracker = {
         enable = true;
@@ -90,6 +92,15 @@ pkgs.testers.nixosTest {
         machine.wait_until_succeeds("curl -fsS localhost:8099/api/loans | grep -q '\"open_loans\":3'")
         machine.fail("curl -fsS localhost:8099/api/loans | grep -q 'Die unendliche Geschichte'")
 
+    with subtest("the return became history, with its date bounded"):
+        machine.succeed("curl -fsS localhost:8099/api/history | grep -q '\"count\":4'")
+        machine.succeed(
+            "curl -fsS 'localhost:8099/api/history?state=returned' | grep -q 'Die unendliche Geschichte'"
+        )
+        machine.succeed(
+            "curl -fsS 'localhost:8099/api/history?state=returned' | grep -q '\"return_date_source\":\"last_seen\"'"
+        )
+
     with subtest("an auth failure must NOT look like everything was returned"):
         machine.succeed("curl -fsS -X POST localhost:8081/__scenario__/3")
         machine.succeed("curl -fsS -X POST localhost:8099/api/accounts/test/poll")
@@ -97,6 +108,18 @@ pkgs.testers.nixosTest {
             "curl -fsS localhost:8099/api/runs/latest | grep -q '\"status\":\"auth_error\"'"
         )
         machine.succeed("curl -fsS localhost:8099/api/loans | grep -q '\"open_loans\":3'")
+
+    with subtest("history can be recomputed from the stored observations"):
+        before = machine.succeed("curl -fsS localhost:8099/api/history")
+        # Reuse the unit's own environment so the rebuild sees the same
+        # database and account settings the service does.
+        machine.succeed(
+            "export $(systemctl show bib-tracker.service -p Environment --value"
+            " | xargs -n1 | grep -E '^BIB_TRACKER_(DB_PATH|ACCOUNTS_FILE)=' | xargs)"
+            " && bib-tracker-rebuild"
+        )
+        after = machine.succeed("curl -fsS localhost:8099/api/history")
+        assert before == after, "rebuilding from observations changed the history"
 
     with subtest("the database lives where the module said"):
         machine.succeed("test -f /var/lib/bib-tracker/bib-tracker.db")

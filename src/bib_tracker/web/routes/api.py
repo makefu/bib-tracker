@@ -13,6 +13,7 @@ from fastapi.responses import JSONResponse
 
 from ...db import queries
 from ...db.connection import Database
+from ...library.reconcile import apply_overrides
 from ...services import PollInProgressError, PollService
 
 router = APIRouter(prefix="/api")
@@ -58,6 +59,89 @@ async def list_loans(request: Request) -> JSONResponse:
             )
 
     return JSONResponse({"open_loans": len(loans), "loans": loans})
+
+
+@router.get("/history")
+async def history(request: Request, limit: int = 100, state: str | None = None) -> JSONResponse:
+    """Everything ever borrowed, current and returned.
+
+    Dates come with their source and bounds so a caller can tell an observed
+    date from an inferred one rather than presenting a guess as a fact.
+    """
+    db = _db(request)
+    where = ""
+    params: list[Any] = []
+    if state in {"open", "returned"}:
+        where = "WHERE l.state = ?"
+        params.append(state)
+
+    rows = await db.fetch_all(
+        f"""
+        SELECT
+            l.loan_key, l.state, a.name AS account, m.title, m.author, m.media_class,
+            c.branch, c.call_number,
+            COALESCE(o.lend_date, l.lend_date) AS lend_date,
+            CASE WHEN o.lend_date IS NOT NULL THEN 'manual' ELSE l.lend_date_source END AS lend_date_source,
+            l.lend_date_earliest, l.lend_date_latest,
+            COALESCE(o.return_date, l.return_date) AS return_date,
+            CASE WHEN o.return_date IS NOT NULL THEN 'manual' ELSE l.return_date_source END
+                AS return_date_source,
+            l.return_date_earliest, l.return_date_latest,
+            l.first_due_date, l.last_due_date, l.times_renewed, l.max_renewals,
+            l.was_overdue, l.max_overdue_days, l.duration_days, l.duration_uncertainty_days
+        FROM loans l
+        JOIN media m ON m.id = l.media_id
+        JOIN copies c ON c.id = l.copy_id
+        JOIN accounts a ON a.id = l.account_id
+        LEFT JOIN loan_overrides o ON o.loan_key = l.loan_key
+        {where}
+        ORDER BY lend_date DESC, l.id DESC
+        LIMIT ?
+        """,
+        [*params, limit],
+    )
+
+    loans = [dict(row) for row in rows]
+    for item in loans:
+        item["was_overdue"] = bool(item["was_overdue"])
+    return JSONResponse({"count": len(loans), "loans": loans})
+
+
+@router.post("/loans/{loan_key}/override")
+async def override_loan(request: Request, loan_key: str) -> JSONResponse:
+    """Correct an inferred date by hand.
+
+    Stored outside the derived history so it survives a rebuild.
+    """
+    db = _db(request)
+    payload = await request.json()
+
+    row = await db.fetch_one("SELECT 1 FROM loans WHERE loan_key = ?", (loan_key,))
+    if row is None:
+        raise HTTPException(status_code=404, detail=f"No loan {loan_key!r}")
+
+    async with db.write() as w:
+        await w.execute(
+            """
+            INSERT INTO loan_overrides (loan_key, lend_date, return_date, state, note)
+            VALUES (:loan_key, :lend_date, :return_date, :state, :note)
+            ON CONFLICT (loan_key) DO UPDATE SET
+                lend_date = excluded.lend_date, return_date = excluded.return_date,
+                state = excluded.state, note = excluded.note
+            """,
+            {
+                "loan_key": loan_key,
+                "lend_date": payload.get("lend_date"),
+                "return_date": payload.get("return_date"),
+                "state": payload.get("state"),
+                "note": payload.get("note"),
+            },
+        )
+
+    async with db.write() as w:
+        await apply_overrides(w)
+
+    return JSONResponse({"loan_key": loan_key, "status": "corrected"})
 
 
 @router.get("/runs/latest")
