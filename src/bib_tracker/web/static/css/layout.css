@@ -1,0 +1,203 @@
+/* The shell: sidebar on a laptop, bottom tab bar on a phone.
+ *
+ * A sidebar rather than a top nav because it carries ambient state -- poll
+ * health, how many items are due, how many wait to be rated -- that a single
+ * row of links cannot hold without growing to two. */
+
+.shell {
+  display: grid;
+  min-height: 100vh;
+  grid-template-columns: var(--shell-w) 1fr;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-6);
+  padding: var(--sp-5) var(--sp-4);
+  background: var(--surface-1);
+  border-right: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font: 600 var(--fs-lg) / 1 var(--font-title);
+  color: var(--text);
+  text-decoration: none;
+}
+
+.brand__mark {
+  width: 1.6rem;
+  height: 1.6rem;
+  display: grid;
+  place-items: center;
+  border-radius: var(--r-sm);
+  background: var(--primary);
+  color: var(--on-primary);
+  font-size: 0.9rem;
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nav__link {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-2) var(--sp-3);
+  border-radius: var(--r-md);
+  color: var(--text-muted);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.nav__link:hover {
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+.nav__link[aria-current="page"] {
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+.nav__count {
+  margin-left: auto;
+  min-width: 1.4em;
+  padding: 0 0.4em;
+  border-radius: var(--r-full);
+  background: var(--surface-3);
+  color: var(--text-muted);
+  font-size: var(--fs-xs);
+  text-align: center;
+}
+
+.nav__count[data-tone="warn"] {
+  background: var(--warn-bg);
+  color: var(--warn-500);
+}
+
+.sidebar__foot {
+  margin-top: auto;
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  display: grid;
+  gap: var(--sp-2);
+}
+
+.main {
+  min-width: 0;
+  padding: var(--sp-6) var(--sp-6) var(--sp-12);
+}
+
+.main__inner {
+  max-width: var(--content-max);
+  margin: 0 auto;
+}
+
+.page-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-6);
+}
+
+.page-head__actions {
+  margin-left: auto;
+  display: flex;
+  gap: var(--sp-2);
+}
+
+.grid {
+  display: grid;
+  gap: var(--sp-4);
+}
+
+.grid--kpi {
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+}
+
+.grid--cards {
+  grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+}
+
+.stack {
+  display: grid;
+  gap: var(--sp-4);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  flex-wrap: wrap;
+}
+
+.tabbar {
+  display: none;
+}
+
+@media (max-width: 1023px) {
+  .shell {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    position: static;
+    height: auto;
+    flex-direction: row;
+    align-items: center;
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+    padding: var(--sp-3) var(--sp-4);
+  }
+
+  .sidebar .nav,
+  .sidebar__foot {
+    display: none;
+  }
+
+  .main {
+    padding: var(--sp-4) var(--sp-4) 5rem;
+  }
+
+  .tabbar {
+    position: fixed;
+    inset: auto 0 0 0;
+    z-index: 20;
+    display: flex;
+    justify-content: space-around;
+    padding: var(--sp-2) var(--sp-2) max(var(--sp-2), env(safe-area-inset-bottom));
+    background: var(--surface-1);
+    border-top: 1px solid var(--border);
+  }
+
+  .tabbar__link {
+    display: grid;
+    justify-items: center;
+    gap: 2px;
+    /* Comfortably tappable. */
+    min-width: 3.5rem;
+    min-height: 2.75rem;
+    padding: var(--sp-1);
+    border-radius: var(--r-md);
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: var(--fs-xs);
+  }
+
+  .tabbar__link[aria-current="page"] {
+    color: var(--primary);
+    background: var(--surface-2);
+  }
+}

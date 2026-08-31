@@ -84,3 +84,37 @@ async def poll_service(db, settings, account_config):
 
 def library_fixture(name: str) -> str:
     return (FIXTURES / "library" / name).read_text(encoding="utf-8")
+
+
+@pytest.fixture
+async def api(settings, account_config, tmp_path):
+    """An app with one account, pointed at a respx-mocked OPAC."""
+    import json
+
+    import httpx
+    from asgi_lifespan import LifespanManager
+
+    from bib_tracker.app import create_app
+
+    accounts_file = tmp_path / "accounts.json"
+    accounts_file.write_text(
+        json.dumps(
+            [
+                {
+                    "name": account_config.name,
+                    "library_type": account_config.library_type,
+                    "username": account_config.username,
+                    "base_url": account_config.base_url,
+                    "password_file": str(account_config.password_file),
+                }
+            ]
+        )
+    )
+    settings.accounts_file = accounts_file
+    settings.poll_on_startup = False
+
+    app = create_app(settings)
+    async with LifespanManager(app):
+        transport = httpx.ASGITransport(app=app)
+        async with httpx.AsyncClient(transport=transport, base_url="http://test") as client:
+            yield client

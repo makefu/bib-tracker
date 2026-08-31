@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Abfragen · bib-tracker{% endblock %}
+
+{% block content %}
+  <div class="page-head">
+    <h1>Abfragen</h1>
+    <span class="muted">{{ health }}</span>
+  </div>
+
+  {% if suspect %}
+    <div class="notice" data-tone="warn" style="margin-bottom: var(--sp-4)">
+      <span>
+        {{ suspect }} Abfrage{{ '' if suspect == 1 else 'n' }} wird zurückgehalten: es
+        sind auf einmal so viele Medien verschwunden, dass eher der Katalog sich
+        geändert haben dürfte als dass alles zurückgegeben wurde. Die nächste
+        Abfrage entscheidet.
+      </span>
+    </div>
+  {% endif %}
+
+  <div class="table-wrap">
+    <table class="table">
+      <caption class="sr-only">Verlauf der Abfragen</caption>
+      <thead>
+        <tr>
+          <th scope="col">Zeitpunkt</th>
+          <th scope="col">Konto</th>
+          <th scope="col">Auslöser</th>
+          <th scope="col">Ergebnis</th>
+          <th scope="col">Medien</th>
+          <th scope="col">Dauer</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for run in runs %}
+          <tr>
+            <td class="nums">{{ run.started_at | de_date }}</td>
+            <td>{{ run.account }}</td>
+            <td class="muted">{{ run.trigger }}</td>
+            <td>
+              <span
+                class="status"
+                data-state="{{ 'open' if run.status == 'success' else ('duesoon' if run.status == 'suspect' else 'overdue') }}"
+              >
+                {{ run.status }}
+              </span>
+              {% if run.error_message %}
+                <div class="cell-title__meta">{{ run.error_message }}</div>
+              {% elif run.suspect_reason %}
+                <div class="cell-title__meta">{{ run.suspect_reason }}</div>
+              {% endif %}
+            </td>
+            <td class="nums">{{ run.loan_count if run.loan_count is not none else '–' }}</td>
+            <td class="nums muted">{{ run.duration_ms }} ms</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

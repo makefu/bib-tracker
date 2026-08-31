@@ -78,7 +78,8 @@ async def history(request: Request, limit: int = 100, state: str | None = None) 
     rows = await db.fetch_all(
         f"""
         SELECT
-            l.loan_key, l.state, a.name AS account, m.title, m.author, m.media_class,
+            l.loan_key, l.state, a.name AS account, m.id AS media_id, m.title, m.author,
+            m.media_class,
             c.branch, c.call_number,
             COALESCE(o.lend_date, l.lend_date) AS lend_date,
             CASE WHEN o.lend_date IS NOT NULL THEN 'manual' ELSE l.lend_date_source END AS lend_date_source,

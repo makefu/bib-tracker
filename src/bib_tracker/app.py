@@ -20,6 +20,7 @@ from .scheduler import PollScheduler
 from .services import PollService
 from .web import STATIC_DIR
 from .web.routes.api import router as api_router
+from .web.routes.pages import router as pages_router
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -77,6 +78,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.state.settings = settings
     app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
     app.include_router(api_router)
+    app.include_router(pages_router)
 
     @app.get("/healthz")
     async def healthz() -> JSONResponse:

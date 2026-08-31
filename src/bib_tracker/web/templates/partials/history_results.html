@@ -1,0 +1,43 @@
+<div id="results">
+  <div class="row" style="margin-bottom: var(--sp-3)">
+    <span class="muted">
+      {{ total | de_num }} Ausleihe{{ '' if total == 1 else 'n' }}
+      {%- if works %} · {{ works | de_num }} Werke{% endif %}
+    </span>
+    <span class="htmx-indicator faint" role="status">Lade …</span>
+  </div>
+
+  {% if untracked %}
+    <div class="notice" style="margin-bottom: var(--sp-4)">
+      <span>
+        {{ untracked }} Ausleihe{{ '' if untracked == 1 else 'n' }} lief{{ '' if untracked == 1 else 'en' }}
+        schon, als die Aufzeichnung begann — die Leihdauer ist dafür unbekannt.
+      </span>
+    </div>
+  {% endif %}
+
+  {% if loans %}
+    <div class="table-wrap">
+      <table class="table">
+        <caption class="sr-only">Alle Ausleihen, neueste zuerst</caption>
+        <thead>
+          <tr>
+            <th scope="col">Titel</th>
+            <th scope="col">Status</th>
+            <th scope="col">Ausgeliehen</th>
+            <th scope="col">Zurück</th>
+            <th scope="col">Verl.</th>
+          </tr>
+        </thead>
+        <tbody id="rows">
+          {% include "partials/history_rows.html" %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div class="card empty">
+      <p><strong>Keine Ausleihen für diese Filter.</strong></p>
+      <a class="btn" href="/history">Filter zurücksetzen</a>
+    </div>
+  {% endif %}
+</div>

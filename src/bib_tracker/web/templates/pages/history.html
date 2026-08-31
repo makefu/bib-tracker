@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block title %}Verlauf · bib-tracker{% endblock %}
+
+{% block content %}
+  <div class="page-head">
+    <h1>Verlauf</h1>
+    <div class="page-head__actions">
+      <a class="btn" href="/export/history.csv?{{ query_string }}">CSV</a>
+    </div>
+  </div>
+
+  {# Every filter lives in the query string, so back, forward and bookmarks
+     all behave and a non-HTMX request of the same URL renders the page. #}
+  <form
+    id="filters"
+    class="card stack"
+    style="margin-bottom: var(--sp-4)"
+    hx-get="/history"
+    hx-target="#results"
+    hx-swap="outerHTML"
+    hx-push-url="true"
+    hx-indicator="#results"
+    hx-trigger="change, keyup changed delay:300ms from:input[name=q], submit"
+  >
+    <div class="row">
+      <input
+        class="field field--grow"
+        type="search"
+        name="q"
+        value="{{ filters.q or '' }}"
+        placeholder="Titel, Autor, Signatur …"
+        aria-label="Suche"
+      />
+      <div class="chips" role="group" aria-label="Status">
+        {% for value, label in [('all', 'Alle'), ('open', 'Ausgeliehen'), ('returned', 'Zurück'), ('overdue', 'Überfällig')] %}
+          <label class="chip">
+            <input
+              type="radio"
+              name="state"
+              value="{{ value }}"
+              {% if (filters.state or 'all') == value %}checked{% endif %}
+            />
+            {{ label }}
+          </label>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="chips" role="group" aria-label="Medienart">
+        {% for value in ['book', 'audiobook', 'music', 'movie', 'game', 'magazine', 'other'] %}
+          <label class="chip">
+            <input
+              type="checkbox"
+              name="media_class"
+              value="{{ value }}"
+              {% if value in filters.media_class %}checked{% endif %}
+            />
+            <span aria-hidden="true">{{ value | media_icon }}</span>
+            {{ value | media_label }}
+          </label>
+        {% endfor %}
+      </div>
+
+      {% if accounts | length > 1 %}
+        <div class="chips" role="group" aria-label="Konto">
+          {% for account in accounts %}
+            <label class="chip">
+              <input
+                type="checkbox"
+                name="account"
+                value="{{ account.name }}"
+                {% if account.name in filters.account %}checked{% endif %}
+              />
+              {{ account.display_name or account.name }}
+            </label>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+  </form>
+
+  {% include "partials/history_results.html" %}
+{% endblock %}

@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}Übersicht · bib-tracker{% endblock %}
+
+{% block content %}
+  <div class="page-head">
+    <h1>Übersicht</h1>
+    <div class="page-head__actions">
+      <button class="btn btn--primary" hx-post="/api/poll" hx-swap="none" hx-indicator="this">
+        Jetzt abfragen
+      </button>
+    </div>
+  </div>
+
+  {% if not accounts %}
+    <div class="card empty">
+      <p><strong>Noch kein Konto eingerichtet.</strong></p>
+      <p class="muted">
+        Konten werden im NixOS-Modul deklariert, unter
+        <code>services.bib-tracker.accounts</code>.
+      </p>
+    </div>
+  {% else %}
+    <div class="grid grid--kpi" style="margin-bottom: var(--sp-6)">
+      {% for tile in tiles %}
+        <div class="card stat" {% if tile.confidence %}data-confidence="{{ tile.confidence }}"{% endif %}>
+          <span class="stat__value">{{ tile.value }}</span>
+          <span class="stat__label">{{ tile.label }}</span>
+        </div>
+      {% endfor %}
+    </div>
+
+    {% if due_soon %}
+      <div class="card" style="margin-bottom: var(--sp-6)">
+        <div class="card__head">
+          <h2 class="card__title">Bald fällig</h2>
+          <span class="card__note">nächste 7 Tage</span>
+        </div>
+        <div class="stack">
+          {% for loan in due_soon %}
+            <div class="row">
+              {% set overdue = loan.days_remaining < 0 %}
+              <span class="status" data-state="{{ 'overdue' if overdue else 'duesoon' }}">
+                {{ loan.title }}
+              </span>
+              <span class="muted">{{ loan.account }}</span>
+              <span style="margin-left: auto" class="{{ 'muted' if not overdue }}">
+                {{ loan.due_date | rel_days }}
+              </span>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+
+    <div class="card">
+      <div class="card__head">
+        <h2 class="card__title">Zuletzt zurückgegeben</h2>
+        <a class="card__note" href="/history?state=returned">alle ansehen</a>
+      </div>
+      {% if recent %}
+        <div class="stack">
+          {% for loan in recent %}
+            <div class="row">
+              <span class="badge" data-mt="{{ loan.media_class }}">
+                <span aria-hidden="true">{{ loan.media_class | media_icon }}</span>
+                {{ loan.media_class | media_label }}
+              </span>
+              <a href="/media/{{ loan.media_id }}">{{ loan.title }}</a>
+              <span class="muted" style="margin-left: auto">
+                {{ loan.duration_days | duration_de }}
+              </span>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="muted">Noch nichts zurückgegeben, seit die Aufzeichnung läuft.</p>
+      {% endif %}
+    </div>
+  {% endif %}
+{% endblock %}

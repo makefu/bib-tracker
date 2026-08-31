@@ -3,43 +3,11 @@
 from __future__ import annotations
 
 import httpx
-import pytest
 import respx
-from asgi_lifespan import LifespanManager
 
-from bib_tracker.app import create_app
 from tests.conftest import library_fixture
 
 BASE_URL = "http://opac.test"
-
-
-@pytest.fixture
-async def api(settings, account_config, tmp_path):
-    """An app whose single account points at the mocked OPAC."""
-    import json
-
-    accounts_file = tmp_path / "accounts.json"
-    accounts_file.write_text(
-        json.dumps(
-            [
-                {
-                    "name": account_config.name,
-                    "library_type": account_config.library_type,
-                    "username": account_config.username,
-                    "base_url": account_config.base_url,
-                    "password_file": str(account_config.password_file),
-                }
-            ]
-        )
-    )
-    settings.accounts_file = accounts_file
-    settings.poll_on_startup = False
-
-    app = create_app(settings)
-    async with LifespanManager(app):
-        transport = httpx.ASGITransport(app=app)
-        async with httpx.AsyncClient(transport=transport, base_url="http://test") as client:
-            yield client
 
 
 def _mock(checkouts: str) -> None:

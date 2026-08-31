@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}{{ media.title }} · bib-tracker{% endblock %}
+
+{% block content %}
+  {% import "partials/date.html" as dates %}
+  <div class="page-head">
+    <h1>{{ media.title }}</h1>
+  </div>
+
+  <div class="card" style="margin-bottom: var(--sp-4)">
+    <div class="row">
+      <span class="badge" data-mt="{{ media.media_class }}">
+        <span aria-hidden="true">{{ media.media_class | media_icon }}</span>
+        {{ media.media_class | media_label }}
+      </span>
+      {% if media.author %}<span class="muted">{{ media.author }}</span>{% endif %}
+      {% if media.publisher %}<span class="faint">{{ media.publisher }}</span>{% endif %}
+      {% if media.isbn13 %}<span class="faint nums">ISBN {{ media.isbn13 }}</span>{% endif %}
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card__head">
+      <h2 class="card__title">Ausgeliehen</h2>
+      <span class="card__note">{{ loans | length }}×</span>
+    </div>
+    <div class="table-wrap">
+      <table class="table">
+        <caption class="sr-only">Alle Ausleihen dieses Werks</caption>
+        <thead>
+          <tr>
+            <th scope="col">Konto</th>
+            <th scope="col">Ausgeliehen</th>
+            <th scope="col">Zurück</th>
+            <th scope="col">Dauer</th>
+            <th scope="col">Verl.</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for loan in loans %}
+            <tr>
+              <td>{{ loan.account }}</td>
+              <td>
+                {{ dates.show(loan.lend_date, loan.lend_date_source, loan.lend_date_earliest,
+                              loan.lend_date_latest, none) }}
+              </td>
+              <td>
+                {{ dates.show(loan.return_date, loan.return_date_source, loan.return_date_earliest,
+                              loan.return_date_latest, none) }}
+              </td>
+              <td class="nums">
+                {{ loan.duration_days | duration_de }}
+                {%- if loan.duration_uncertainty_days %}
+                  <span class="faint" title="Unsicherheit aus geschätzten Daten">
+                    ±{{ loan.duration_uncertainty_days }}
+                  </span>
+                {%- endif %}
+              </td>
+              <td class="nums">{{ loan.times_renewed }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}

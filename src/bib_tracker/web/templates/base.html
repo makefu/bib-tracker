@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="{{ theme | default('auto') }}">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{% block title %}bib-tracker{% endblock %}</title>
+    <link rel="stylesheet" href="/static/css/tokens.css" />
+    <link rel="stylesheet" href="/static/css/base.css" />
+    <link rel="stylesheet" href="/static/css/layout.css" />
+    <link rel="stylesheet" href="/static/css/components.css" />
+    <script>
+      // Blocking on purpose: applying the stored theme after first paint
+      // would flash the wrong one.
+      (function () {
+        try {
+          var stored = localStorage.getItem("bib-tracker-theme") || "auto";
+          var dark =
+            stored === "dark" ||
+            (stored === "auto" &&
+              window.matchMedia("(prefers-color-scheme: dark)").matches);
+          document.documentElement.dataset.theme = dark ? "dark" : "light";
+          document.documentElement.dataset.themeChoice = stored;
+        } catch (e) {
+          document.documentElement.dataset.theme = "light";
+        }
+      })();
+    </script>
+    <script src="/static/vendor/htmx.min.js" defer></script>
+    <script src="/static/vendor/alpine.min.js" defer></script>
+  </head>
+  <body>
+    <a class="skip" href="#main">Zum Inhalt</a>
+
+    <div class="shell">
+      <aside class="sidebar">
+        <a class="brand" href="/">
+          <span class="brand__mark" aria-hidden="true">B</span>
+          bib-tracker
+        </a>
+
+        {% set nav = [
+          ('/', 'Übersicht', none),
+          ('/loans', 'Ausleihen', counts.open_loans),
+          ('/history', 'Verlauf', none),
+          ('/runs', 'Abfragen', counts.failed_runs),
+        ] %}
+        <nav class="nav" aria-label="Hauptnavigation">
+          {% for href, label, count in nav %}
+            <a
+              class="nav__link"
+              href="{{ href }}"
+              {% if active == href %}aria-current="page"{% endif %}
+            >
+              {{ label }}
+              {% if count %}
+                <span class="nav__count" {% if href == '/runs' %}data-tone="warn"{% endif %}>
+                  {{ count }}
+                </span>
+              {% endif %}
+            </a>
+          {% endfor %}
+        </nav>
+
+        <div class="sidebar__foot">
+          {% include "partials/poll_status.html" %}
+          <div class="theme-toggle" role="group" aria-label="Farbschema" x-data="themeToggle()">
+            <template x-for="option in options" :key="option.value">
+              <button
+                type="button"
+                :aria-pressed="choice === option.value"
+                x-text="option.label"
+                @click="set(option.value)"
+              ></button>
+            </template>
+          </div>
+        </div>
+      </aside>
+
+      <main class="main" id="main">
+        <div class="main__inner">{% block content %}{% endblock %}</div>
+      </main>
+    </div>
+
+    <nav class="tabbar" aria-label="Hauptnavigation">
+      {% for href, label, icon in [
+        ('/', 'Übersicht', '🏠'),
+        ('/loans', 'Ausleihen', '📚'),
+        ('/history', 'Verlauf', '🕘'),
+        ('/runs', 'Abfragen', '🔄'),
+      ] %}
+        <a
+          class="tabbar__link"
+          href="{{ href }}"
+          {% if active == href %}aria-current="page"{% endif %}
+        >
+          <span aria-hidden="true">{{ icon }}</span>
+          {{ label }}
+        </a>
+      {% endfor %}
+    </nav>
+
+    <div class="toasts" id="toasts" aria-live="polite" aria-atomic="false"></div>
+
+    <script>
+      function themeToggle() {
+        return {
+          choice: document.documentElement.dataset.themeChoice || "auto",
+          options: [
+            { value: "auto", label: "Auto" },
+            { value: "light", label: "Hell" },
+            { value: "dark", label: "Dunkel" },
+          ],
+          set(value) {
+            this.choice = value;
+            try {
+              localStorage.setItem("bib-tracker-theme", value);
+            } catch (e) {
+              /* private browsing: the choice just will not persist */
+            }
+            var dark =
+              value === "dark" ||
+              (value === "auto" &&
+                window.matchMedia("(prefers-color-scheme: dark)").matches);
+            document.documentElement.dataset.theme = dark ? "dark" : "light";
+          },
+        };
+      }
+    </script>
+  </body>
+</html>

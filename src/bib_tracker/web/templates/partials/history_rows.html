@@ -1,0 +1,50 @@
+{% import "partials/date.html" as dates %}
+{% for loan in loans %}
+  <tr
+    class="row-account"
+    style="--account-colour: {{ loan.account_colour or 'transparent' }}"
+    aria-label="{{ loan.title }}, Konto {{ loan.account }}"
+  >
+    <td>
+      <div class="cell-title">
+        <a class="cell-title__name" href="/media/{{ loan.media_id }}">{{ loan.title }}</a>
+        <span class="cell-title__meta">
+          {% if loan.author %}<span>{{ loan.author }}</span>{% endif %}
+          <span class="badge" data-mt="{{ loan.media_class }}">
+            <span aria-hidden="true">{{ loan.media_class | media_icon }}</span>
+            {{ loan.media_class | media_label }}
+          </span>
+          {% if loan.branch %}<span>{{ loan.branch }}</span>{% endif %}
+          {% if loan.borrow_count and loan.borrow_count > 1 %}
+            <a href="/media/{{ loan.media_id }}" class="badge" data-mt="other"
+              >{{ loan.borrow_count }}×</a
+            >
+          {% endif %}
+        </span>
+      </div>
+    </td>
+    <td>
+      {% if loan.state == 'open' %}
+        {% set overdue = loan.last_due_date and loan.days_remaining is not none and loan.days_remaining < 0 %}
+        <span class="status" data-state="{{ 'overdue' if overdue else 'open' }}">
+          {{ 'überfällig' if overdue else 'ausgeliehen' }}
+        </span>
+        <div class="cell-title__meta">{{ loan.last_due_date | rel_days }}</div>
+      {% else %}
+        <span class="status" data-state="returned">zurück</span>
+        <div class="cell-title__meta">{{ loan.duration_days | duration_de }}</div>
+      {% endif %}
+    </td>
+    <td>
+      {{ dates.show(loan.lend_date, loan.lend_date_source, loan.lend_date_earliest,
+                    loan.lend_date_latest, loan.uncertainty_note) }}
+    </td>
+    <td>
+      {{ dates.show(loan.return_date, loan.return_date_source, loan.return_date_earliest,
+                    loan.return_date_latest, loan.uncertainty_note) }}
+    </td>
+    <td class="nums">
+      {{ loan.times_renewed }}{% if loan.max_renewals %}/{{ loan.max_renewals }}{% endif %}
+    </td>
+  </tr>
+{% endfor %}

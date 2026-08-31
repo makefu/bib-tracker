@@ -1,0 +1,30 @@
+{#
+  One date, honest about how well it is known.
+
+  Most dates here are inferred, so inferred is the *unmarked* rendering -- a
+  tilde and a dotted underline, no colour, no badge. Only a genuinely unknown
+  start gets a distinct glyph, because that is the rare case worth noticing.
+#}
+{% macro show(value, source, earliest, latest, uncertainty_note) -%}
+  {%- if not value -%}
+    <span class="date faint">–</span>
+  {%- elif source == 'exact' -%}
+    <time class="date" datetime="{{ value }}">{{ value | de_date_short }}</time>
+  {%- elif source == 'manual' -%}
+    <time class="date date--manual" datetime="{{ value }}" title="Von Hand korrigiert">
+      {{ value | de_date_short }}
+    </time>
+  {%- elif source == 'before_tracking' -%}
+    <time
+      class="date date--unknown"
+      datetime="{{ value }}"
+      title="Lief bereits, als die Aufzeichnung am {{ value | de_date }} begann — Beginn unbekannt"
+    >≤ {{ value | de_date_short }}</time>
+  {%- else -%}
+    <time
+      class="date date--inferred"
+      datetime="{{ value }}"
+      title="Geschätzt{% if earliest and latest %}: zwischen {{ earliest | de_date }} und {{ latest | de_date }}{% endif %}{% if uncertainty_note %} · {{ uncertainty_note }}{% endif %}"
+    >~{{ value | de_date_short }}</time>
+  {%- endif -%}
+{%- endmacro %}

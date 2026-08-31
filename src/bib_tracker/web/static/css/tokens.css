@@ -1,1 +1,144 @@
-/* placeholder until the design system lands */
+/* Design tokens.
+ *
+ * Every colour is defined once on :root and only re-pointed for dark, so a
+ * component never needs to know which theme it is in. */
+
+:root {
+  color-scheme: light;
+
+  /* Neutral ramp, slightly cool. */
+  --n-0: #ffffff;
+  --n-50: #f7f8fa;
+  --n-100: #eef0f4;
+  --n-200: #e0e4ea;
+  --n-300: #c8cfd9;
+  --n-400: #9aa4b2;
+  --n-500: #6b7684;
+  --n-600: #4d5663;
+  --n-700: #39404b;
+  --n-800: #242a33;
+  --n-900: #141920;
+  --n-1000: #0b0e13;
+
+  /* Deep petrol: reads institutional and stays out of the way of cover art. */
+  --b-50: #e8f4f4;
+  --b-100: #c6e4e4;
+  --b-300: #6fbdbd;
+  --b-500: #158b8b;
+  --b-600: #0f7272;
+  --b-700: #0b5959;
+  --b-900: #053535;
+
+  /* Warm amber for highlights and anything about money. */
+  --a-300: #f6c96a;
+  --a-500: #e0a029;
+  --a-700: #a06f10;
+
+  --ok-500: #2f8f4e;
+  --ok-bg: #e7f5ec;
+  --warn-500: #b6791a;
+  --warn-bg: #fdf3e0;
+  --bad-500: #c4392f;
+  --bad-bg: #fceceb;
+  --info-500: #3565c4;
+  --info-bg: #e9eefb;
+
+  --bg: var(--n-50);
+  --surface-1: var(--n-0);
+  --surface-2: var(--n-100);
+  --surface-3: var(--n-200);
+  --border: var(--n-200);
+  --border-strong: var(--n-300);
+  --text: var(--n-800);
+  --text-muted: var(--n-500);
+  --text-faint: var(--n-400);
+  --primary: var(--b-600);
+  --primary-hover: var(--b-700);
+  --on-primary: #fff;
+  --focus: var(--b-500);
+
+  /* Media classes. Also the categorical chart palette, so the same thing is
+   * the same colour wherever it appears. */
+  --mt-book: #4f5bd5;
+  --mt-audiobook: #8b46c9;
+  --mt-music: #1789a8;
+  --mt-movie: #c2456d;
+  --mt-game: #c07816;
+  --mt-magazine: #177a63;
+  --mt-other: var(--n-500);
+
+  --sp-1: 0.25rem;
+  --sp-2: 0.5rem;
+  --sp-3: 0.75rem;
+  --sp-4: 1rem;
+  --sp-5: 1.25rem;
+  --sp-6: 1.5rem;
+  --sp-8: 2rem;
+  --sp-10: 2.5rem;
+  --sp-12: 3rem;
+
+  --r-sm: 6px;
+  --r-md: 10px;
+  --r-lg: 16px;
+  --r-full: 999px;
+
+  --sh-1: 0 1px 2px rgb(11 14 19 / 0.06), 0 1px 3px rgb(11 14 19 / 0.08);
+  --sh-2: 0 4px 12px rgb(11 14 19 / 0.08), 0 2px 4px rgb(11 14 19 / 0.05);
+
+  --ease: cubic-bezier(0.2, 0.7, 0.3, 1);
+  --dur: 160ms;
+
+  /* System stacks: nothing to download, nothing to self-host. */
+  --font-ui: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  --font-title: ui-serif, Georgia, "Iowan Old Style", "Source Serif 4", serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  --fs-xs: 0.75rem;
+  --fs-sm: 0.8125rem;
+  --fs-md: 0.9375rem;
+  --fs-lg: 1.0625rem;
+  --fs-xl: clamp(1.25rem, 1.05rem + 0.6vw, 1.5rem);
+  --fs-2xl: clamp(1.6rem, 1.25rem + 1.4vw, 2.25rem);
+  --lh-tight: 1.25;
+  --lh: 1.55;
+
+  --shell-w: 232px;
+  --content-max: 1360px;
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --bg: var(--n-1000);
+  --surface-1: var(--n-900);
+  --surface-2: var(--n-800);
+  --surface-3: var(--n-700);
+  --border: #242b35;
+  --border-strong: #333c48;
+  --text: #e6eaf0;
+  --text-muted: #98a3b2;
+  --text-faint: #6d7887;
+  --primary: var(--b-300);
+  --primary-hover: #8fd0d0;
+  --on-primary: #04282a;
+  --focus: var(--b-300);
+
+  --ok-500: #5cc47c;
+  --ok-bg: #12291b;
+  --warn-500: #e0a441;
+  --warn-bg: #2b2113;
+  --bad-500: #ef6b60;
+  --bad-bg: #2e1614;
+  --info-500: #7ea3f0;
+  --info-bg: #141d31;
+
+  --mt-book: #8b93ef;
+  --mt-audiobook: #b98ae0;
+  --mt-music: #4fc0da;
+  --mt-movie: #e8829f;
+  --mt-game: #e0a83f;
+  --mt-magazine: #4cc0a3;
+
+  --sh-1: 0 1px 2px rgb(0 0 0 / 0.4);
+  --sh-2: 0 6px 20px rgb(0 0 0 / 0.45);
+}

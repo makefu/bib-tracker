@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Ausleihen · bib-tracker{% endblock %}
+
+{% block content %}
+  <div class="page-head">
+    <h1>Ausleihen</h1>
+    <div class="page-head__actions">
+      {% for account in accounts %}
+        <button
+          class="btn"
+          hx-post="/api/accounts/{{ account.name }}/poll"
+          hx-swap="none"
+          hx-indicator="this"
+        >
+          {{ account.display_name or account.name }} aktualisieren
+        </button>
+      {% endfor %}
+    </div>
+  </div>
+
+  {% include "partials/loans_table.html" %}
+{% endblock %}

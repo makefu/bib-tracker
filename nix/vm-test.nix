@@ -68,9 +68,10 @@ pkgs.testers.nixosTest {
         machine.succeed("curl -fsS localhost:8099/readyz")
 
     with subtest("vendored assets ship in the closure, so no CDN is needed"):
-        machine.succeed(
-            "curl -fsS -o /dev/null -w '%{http_code}' localhost:8099/static/css/tokens.css | grep -q 200"
-        )
+        for asset in ["css/tokens.css", "css/components.css", "vendor/htmx.min.js", "vendor/alpine.min.js"]:
+            machine.succeed(
+                f"curl -fsS -o /dev/null -w '%{{http_code}}' localhost:8099/static/{asset} | grep -q 200"
+            )
 
     with subtest("the declared account was seeded from the module"):
         machine.succeed("curl -fsS localhost:8099/api/accounts | grep -q '\"name\":\"test\"'")
@@ -91,6 +92,20 @@ pkgs.testers.nixosTest {
         machine.succeed("curl -fsS -X POST localhost:8099/api/accounts/test/poll")
         machine.wait_until_succeeds("curl -fsS localhost:8099/api/loans | grep -q '\"open_loans\":3'")
         machine.fail("curl -fsS localhost:8099/api/loans | grep -q 'Die unendliche Geschichte'")
+
+    with subtest("the pages render with the scraped data"):
+        for path in ["/", "/loans", "/history", "/runs"]:
+            machine.succeed(f"curl -fsS localhost:8099{path} | grep -q '<!DOCTYPE html>'")
+        machine.succeed("curl -fsS localhost:8099/history | grep -q 'Die unendliche Geschichte'")
+        machine.succeed("curl -fsS localhost:8099/loans | grep -q 'Ende, Michael'")
+        # An HTMX request must get the fragment, not the whole page again.
+        machine.succeed(
+            "curl -fsS -H 'HX-Request: true' localhost:8099/history"
+            " | grep -q 'id=\"results\"'"
+        )
+        machine.fail(
+            "curl -fsS -H 'HX-Request: true' localhost:8099/history | grep -q '<!DOCTYPE html>'"
+        )
 
     with subtest("the return became history, with its date bounded"):
         machine.succeed("curl -fsS localhost:8099/api/history | grep -q '\"count\":4'")

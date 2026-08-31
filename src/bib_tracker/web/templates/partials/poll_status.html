@@ -1,0 +1,25 @@
+{# Ambient health, refreshed in place. The reason the sidebar earns its width. #}
+<div
+  class="stack"
+  id="poll-status"
+  hx-get="/partials/poll-status"
+  hx-trigger="every 60s"
+  hx-swap="outerHTML"
+>
+  {% for account in accounts %}
+    <div class="row" style="gap: var(--sp-2); font-size: var(--fs-xs)">
+      <span
+        class="status"
+        data-state="{{ 'open' if account.last_success_at else 'overdue' }}"
+        title="{{ account.name }}"
+      >
+        {{ account.display_name or account.name }}
+      </span>
+      <span class="faint" style="margin-left: auto">
+        {{ account.last_success_at | de_date_short }}
+      </span>
+    </div>
+  {% else %}
+    <span class="faint">Keine Konten eingerichtet</span>
+  {% endfor %}
+</div>
