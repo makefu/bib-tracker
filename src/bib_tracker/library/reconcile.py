@@ -22,6 +22,7 @@ from ..config import AccountConfig, Settings
 from ..db.connection import Database, Writer
 from .identity import author_key, media_key
 from .media_class import MediaClass, classify
+from .merge_media import adopt_isbn, find_isbn_owner
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -463,7 +464,7 @@ async def _upsert_media(w: Writer, item: Any, observed_at: datetime) -> int:
     media_class = _media_class_of(item)
     key = media_key(media_class, item["title"], item["author"])
 
-    row = await w.fetch_one("SELECT id, raw_media_types FROM media WHERE media_key = ?", (key,))
+    row = await w.fetch_one("SELECT id, raw_media_types, isbn13 FROM media WHERE media_key = ?", (key,))
     if row is not None:
         raw_types = set(json.loads(row["raw_media_types"]))
         if item["media_type"]:
@@ -472,7 +473,19 @@ async def _upsert_media(w: Writer, item: Any, observed_at: datetime) -> int:
             "UPDATE media SET last_seen_at = ?, raw_media_types = ?, updated_at = datetime('now') WHERE id = ?",
             (observed_at.isoformat(), json.dumps(sorted(raw_types)), row["id"]),
         )
-        return int(row["id"])
+
+        media_id = int(row["id"])
+        if item["isbn"] and not row["isbn13"]:
+            # Another row may already carry this ISBN, in which case the two
+            # catalogue records are one work and get folded together.
+            media_id = await adopt_isbn(w, media_id, item["isbn"])
+        return media_id
+
+    if item["isbn"]:
+        owner = await find_isbn_owner(w, item["isbn"], -1)
+        if owner is not None:
+            # A different catalogue record for a work we already track.
+            return owner
 
     return await w.execute(
         """

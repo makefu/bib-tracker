@@ -14,7 +14,7 @@ from fastapi.responses import HTMLResponse, JSONResponse
 from ...db import queries
 from ...db.connection import Database
 from ...library.reconcile import apply_overrides
-from ...services import PollInProgressError, PollService
+from ...services import PollInProgressError, PollService, RenewalService
 from ..render import render
 
 router = APIRouter(prefix="/api")
@@ -293,6 +293,45 @@ async def set_price(request: Request, media_id: int) -> HTMLResponse:
     if updated is None:  # pragma: no cover - the row was there a moment ago
         raise HTTPException(status_code=404, detail=f"No media {media_id}")
     return render(request, "partials/price.html", "partials/price.html", {"media": dict(updated)})
+
+
+def _renewals(request: Request) -> RenewalService:
+    db = _db(request)
+    return RenewalService(db, request.app.state.settings, _service(request))
+
+
+@router.post("/loans/{loan_key}/renew", response_class=HTMLResponse)
+async def renew_loan(request: Request, loan_key: str) -> HTMLResponse:
+    """Renew one loan, from the row menu."""
+    try:
+        outcome = await _renewals(request).renew_loan(loan_key)
+    except KeyError as err:
+        raise HTTPException(status_code=404, detail=str(err)) from err
+
+    return await _loans_fragment(request, [outcome])
+
+
+@router.post("/accounts/{name}/renew-due", response_class=HTMLResponse)
+async def renew_due(request: Request, name: str, days: int | None = None) -> HTMLResponse:
+    """Renew everything falling due soon, then show what happened per item.
+
+    Never a bare "done": a library can refuse an individual renewal, and the
+    only useful answer says which ones it refused.
+    """
+    try:
+        outcomes = await _renewals(request).renew_due(name, days)
+    except KeyError as err:
+        raise HTTPException(status_code=404, detail=str(err)) from err
+
+    return await _loans_fragment(request, outcomes)
+
+
+async def _loans_fragment(request: Request, outcomes: list[Any]) -> HTMLResponse:
+    from .pages import loans_context
+
+    context = await loans_context(request)
+    context["renewals"] = outcomes
+    return render(request, "partials/loans_table.html", "partials/loans_table.html", context)
 
 
 @router.get("/stats")

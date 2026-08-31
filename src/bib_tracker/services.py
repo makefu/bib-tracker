@@ -7,12 +7,15 @@ result may be trusted enough to become history.
 from __future__ import annotations
 
 import asyncio
+import contextlib
 import logging
 from collections import defaultdict
+from dataclasses import dataclass
 from datetime import UTC, datetime
 from typing import Any
 
 import httpx
+from custom_components.stadtbibliothek.backends import create_backend
 
 from .config import AccountConfig, Settings
 from .db import queries
@@ -47,6 +50,12 @@ class PollService:
 
     def is_running(self, name: str) -> bool:
         return self._locks[name].locked()
+
+    def account(self, name: str) -> AccountConfig | None:
+        return self._accounts.get(name)
+
+    def shared_client(self) -> httpx.AsyncClient:
+        return self._shared_client()
 
     async def aclose(self) -> None:
         if self._client is not None:
@@ -207,3 +216,124 @@ class PollService:
                 return "suspect", f"{dropped} of {previous} loans vanished at once; awaiting confirmation"
 
         return "success", None
+
+
+@dataclass
+class RenewalOutcome:
+    loan_key: str
+    title: str
+    item_id: str
+    success: bool
+    error: str | None = None
+
+
+class RenewalService:
+    """Renewing loans.
+
+    Not what this application is for -- Home Assistant does the routine
+    renewing -- so this exists for the occasional deliberate click, and always
+    re-polls afterwards rather than guessing at the new due date.
+    """
+
+    def __init__(self, db: Database, settings: Settings, polling: PollService) -> None:
+        self._db = db
+        self._settings = settings
+        self._polling = polling
+
+    async def renew_loan(self, loan_key: str) -> RenewalOutcome:
+        row = await self._db.fetch_one(
+            """
+            SELECT l.loan_key, m.title, c.item_id, a.name AS account
+            FROM loans l
+            JOIN media m ON m.id = l.media_id
+            JOIN copies c ON c.id = l.copy_id
+            JOIN accounts a ON a.id = l.account_id
+            WHERE l.loan_key = ? AND l.state = 'open'
+            """,
+            (loan_key,),
+        )
+        if row is None:
+            raise KeyError(f"No open loan {loan_key!r}")
+
+        outcomes = await self._renew(row["account"], [dict(row)])
+        return outcomes[0]
+
+    async def renew_due(self, account_name: str, threshold_days: int | None = None) -> list[RenewalOutcome]:
+        """Renew everything falling due within the threshold."""
+        # Validate before querying: an unknown account must be an error, not
+        # an empty result that looks like "nothing was due".
+        if self._polling.account(account_name) is None:
+            raise KeyError(f"Unknown account {account_name!r}")
+
+        threshold = self._settings.renew_threshold_days if threshold_days is None else threshold_days
+        rows = await self._db.fetch_all(
+            """
+            SELECT l.loan_key, m.title, c.item_id
+            FROM loans l
+            JOIN media m ON m.id = l.media_id
+            JOIN copies c ON c.id = l.copy_id
+            JOIN accounts a ON a.id = l.account_id
+            WHERE l.state = 'open' AND a.name = ? AND l.can_be_renewed = 1
+                  AND julianday(l.last_due_date) - julianday(date('now')) <= ?
+            ORDER BY l.last_due_date
+            """,
+            (account_name, threshold),
+        )
+        return await self._renew(account_name, [dict(row) for row in rows])
+
+    async def _renew(self, account_name: str, loans: list[dict[str, Any]]) -> list[RenewalOutcome]:
+        account = self._polling.account(account_name)
+        if account is None:
+            raise KeyError(f"Unknown account {account_name!r}")
+        if not loans:
+            return []
+
+        backend = await create_backend(
+            account.library_type,
+            client=self._polling.shared_client(),
+            base_url=account.base_url,
+        )
+        outcomes: list[RenewalOutcome] = []
+        try:
+            await backend.login(account.username, account.resolve_password())
+            for entry in loans:
+                outcomes.append(await self._renew_one(backend, entry))
+        except Exception as err:
+            outcomes.extend(
+                RenewalOutcome(
+                    loan_key=entry["loan_key"],
+                    title=entry["title"],
+                    item_id=entry["item_id"] or "",
+                    success=False,
+                    error=str(err),
+                )
+                for entry in loans[len(outcomes) :]
+            )
+        finally:
+            await backend.close()
+
+        if any(outcome.success for outcome in outcomes):
+            # Re-poll rather than assume the new due date: the library decides
+            # how long an extension runs, and it is not always a full period.
+            with contextlib.suppress(PollInProgressError):
+                await self.poll_after_renewal(account_name)
+
+        return outcomes
+
+    async def poll_after_renewal(self, account_name: str) -> int:
+        return await self._polling.poll(account_name, trigger="manual")
+
+    @staticmethod
+    async def _renew_one(backend: Any, entry: dict[str, Any]) -> RenewalOutcome:
+        item_id = entry["item_id"] or ""
+        try:
+            ok = await backend.renew_loan(item_id)
+        except Exception as err:
+            return RenewalOutcome(entry["loan_key"], entry["title"], item_id, False, str(err))
+        return RenewalOutcome(
+            entry["loan_key"],
+            entry["title"],
+            item_id,
+            bool(ok),
+            None if ok else "Die Bibliothek hat die Verlängerung abgelehnt",
+        )

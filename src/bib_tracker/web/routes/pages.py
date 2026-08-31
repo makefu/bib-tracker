@@ -142,8 +142,8 @@ async def _recent_returns(db: Database) -> list[dict[str, Any]]:
     return [dict(row) for row in rows]
 
 
-@router.get("/loans", response_class=HTMLResponse)
-async def loans(request: Request) -> HTMLResponse:
+async def loans_context(request: Request) -> dict[str, Any]:
+    """Shared by the page and by the fragment a renewal swaps back in."""
     db = _db(request)
     rows = await db.fetch_all(
         """
@@ -162,7 +162,13 @@ async def loans(request: Request) -> HTMLResponse:
     )
     context = await _shell(request, "/loans")
     context["loans"] = [dict(row) for row in rows]
-    return render(request, "pages/loans.html", "partials/loans_table.html", context)
+    context.setdefault("renewals", [])
+    return context
+
+
+@router.get("/loans", response_class=HTMLResponse)
+async def loans(request: Request) -> HTMLResponse:
+    return render(request, "pages/loans.html", "partials/loans_table.html", await loans_context(request))
 
 
 @router.get("/history", response_class=HTMLResponse)

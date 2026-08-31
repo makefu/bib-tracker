@@ -1,5 +1,23 @@
 {% import "partials/date.html" as dates %}
 <div id="loans">
+  {% if renewals %}
+    {# Per item, never a bare "done": a library can refuse one and not another. #}
+    <div class="notice" data-tone="{{ 'warn' if renewals | rejectattr('success') | list else 'info' }}"
+         style="margin-bottom: var(--sp-4)" role="status">
+      <div class="stack" style="gap: var(--sp-1)">
+        {% for outcome in renewals %}
+          <div class="row">
+            <span class="status" data-state="{{ 'open' if outcome.success else 'overdue' }}">
+              {{ outcome.title }}
+            </span>
+            <span class="{{ 'muted' if outcome.success else '' }}">
+              {{ 'verlängert' if outcome.success else outcome.error }}
+            </span>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
   {% if loans %}
     <div class="table-wrap">
       <table class="table">
@@ -79,6 +97,7 @@
                       role="menuitem"
                       style="width: 100%"
                       hx-post="/api/loans/{{ loan.loan_key }}/renew"
+                      hx-indicator="closest tr"
                       hx-target="#loans"
                       hx-swap="outerHTML"
                       {% if not loan.can_be_renewed %}disabled aria-disabled="true"{% endif %}

@@ -7,12 +7,22 @@
     <div class="page-head__actions">
       {% for account in accounts %}
         <button
-          class="btn"
+          class="btn btn--ghost"
           hx-post="/api/accounts/{{ account.name }}/poll"
           hx-swap="none"
           hx-indicator="this"
         >
           {{ account.display_name or account.name }} aktualisieren
+        </button>
+        <button
+          class="btn"
+          hx-post="/api/accounts/{{ account.name }}/renew-due"
+          hx-target="#loans"
+          hx-swap="outerHTML"
+          hx-indicator="this"
+          hx-confirm="Alle bald fälligen Medien von {{ account.display_name or account.name }} verlängern?"
+        >
+          Fällige verlängern
         </button>
       {% endfor %}
     </div>

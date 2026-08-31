@@ -16,6 +16,7 @@ import httpx
 from ..config import Settings
 from ..db.connection import Database
 from ..library.media_class import MediaClass
+from ..library.merge_media import adopt_isbn
 from . import PROVIDER_FACTORIES, build_provider
 from .base import BaseProvider, MediaQuery, ProviderConfig, ProviderRecord, ProviderStatus
 from .covers import store_cover
@@ -301,10 +302,14 @@ class EnrichmentWorker:
         columns = {
             key: value
             for key, value in merged.items()
-            if key in {"isbn13", "published_year", "publisher", "page_count", "language", "description", "author"}
+            if key in {"published_year", "publisher", "page_count", "language", "description", "author"}
         }
         assignments = ", ".join(f"{key} = :{key}" for key in columns)
         async with self._db.write() as w:
+            isbn = merged.get("isbn13")
+            if isbn:
+                # Two catalogue records resolving to one ISBN are one work.
+                media_id = await adopt_isbn(w, media_id, str(isbn))
             await w.execute(
                 f"UPDATE media SET {assignments + ', ' if assignments else ''}"
                 "metadata_state = :state, updated_at = datetime('now') WHERE id = :id",
