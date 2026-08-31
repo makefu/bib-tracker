@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}Ausleihe eintragen · bib-tracker{% endblock %}
+
+{% block content %}
+  <div class="page-head">
+    <h1>Ausleihe eintragen</h1>
+    <span class="muted">für die Zeit vor der Aufzeichnung</span>
+  </div>
+
+  <form class="card stack" style="max-width: 40rem" hx-post="/history/add" hx-target="#add-result" hx-swap="innerHTML">
+    <div class="stack">
+      <label for="isbn">ISBN</label>
+      <div class="row">
+        <input class="field field--grow" id="isbn" name="isbn" inputmode="numeric" placeholder="9783522621885" />
+        {# Looked up before saving, so the matched title is visible first. #}
+        <button
+          class="btn"
+          type="button"
+          hx-post="/history/add/lookup"
+          hx-include="#isbn"
+          hx-target="#lookup"
+          hx-swap="innerHTML"
+          hx-indicator="this"
+        >
+          Nachschlagen
+        </button>
+      </div>
+      <div id="lookup"></div>
+    </div>
+
+    <div class="stack">
+      <label for="title">Titel</label>
+      <input class="field" id="title" name="title" required />
+    </div>
+
+    <div class="stack">
+      <label for="author">Autor:in</label>
+      <input class="field" id="author" name="author" />
+    </div>
+
+    <div class="row">
+      <div class="stack">
+        <label for="account">Konto</label>
+        <select class="field" id="account" name="account" required>
+          {% for account in accounts %}
+            <option value="{{ account.name }}">{{ account.display_name or account.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="stack">
+        <label for="media_class">Medienart</label>
+        <select class="field" id="media_class" name="media_class">
+          {% for value in ['book', 'audiobook', 'music', 'movie', 'game', 'magazine', 'other'] %}
+            <option value="{{ value }}">{{ value | media_label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="stack">
+        <label for="lend_date">Ausgeliehen am</label>
+        <input class="field" id="lend_date" name="lend_date" type="date" required />
+      </div>
+
+      <div class="stack">
+        <label for="return_date">Zurückgegeben am</label>
+        <input class="field" id="return_date" name="return_date" type="date" />
+        <span class="faint">leer lassen, wenn noch ausgeliehen</span>
+      </div>
+    </div>
+
+    <div class="row">
+      <button class="btn btn--primary" type="submit">Eintragen</button>
+      <a class="btn btn--ghost" href="/history">Abbrechen</a>
+    </div>
+
+    <div id="add-result"></div>
+  </form>
+{% endblock %}

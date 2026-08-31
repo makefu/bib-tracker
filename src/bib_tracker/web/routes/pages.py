@@ -14,7 +14,9 @@ from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import HTMLResponse, Response
 
 from ...db.connection import Database
+from ...library.media_class import MediaClass
 from ...metadata.covers import VARIANTS, placeholder_svg, read_cover
+from ...metadata.lookup import lookup_isbn
 from ..filters import MEDIA_CLASS_LABELS
 from ..render import render
 
@@ -242,6 +244,63 @@ async def history(request: Request) -> HTMLResponse:
         "query_string": urlencode([(key, value) for key, value in params.multi_items() if key != "page"]),
     }
     return render(request, "pages/history.html", "partials/history_results.html", context)
+
+
+@router.get("/history/add", response_class=HTMLResponse)
+async def history_add_form(request: Request) -> HTMLResponse:
+    return render(request, "pages/history_add.html", None, await _shell(request, "/history"))
+
+
+@router.post("/history/add/lookup", response_class=HTMLResponse)
+async def history_add_lookup(request: Request) -> HTMLResponse:
+    """Resolve an ISBN before saving, so the match can be eyeballed first."""
+    form = await request.form()
+    isbn = str(form.get("isbn") or "").replace("-", "").strip()
+    if not isbn:
+        return render(
+            request, "partials/lookup_result.html", "partials/lookup_result.html", {"record": None, "searched": False}
+        )
+
+    worker = getattr(request.app.state, "enrichment", None)
+    record = None
+    if worker is not None:
+        record = await lookup_isbn(worker, isbn)
+
+    return render(
+        request,
+        "partials/lookup_result.html",
+        "partials/lookup_result.html",
+        {"record": record, "searched": True},
+    )
+
+
+@router.post("/history/add", response_class=HTMLResponse)
+async def history_add(request: Request) -> HTMLResponse:
+    from ...library.manual import ManualLoan, add_past_loan
+
+    form = await request.form()
+    try:
+        entry = ManualLoan(
+            account=str(form["account"]),
+            title=str(form["title"]).strip(),
+            author=str(form.get("author") or "").strip() or None,
+            isbn=str(form.get("isbn") or "").replace("-", "").strip() or None,
+            media_class=MediaClass(str(form.get("media_class") or "book")),
+            lend_date=date.fromisoformat(str(form["lend_date"])),
+            return_date=(date.fromisoformat(str(form["return_date"])) if form.get("return_date") else None),
+        )
+    except (KeyError, ValueError) as err:
+        raise HTTPException(status_code=400, detail=f"Unvollständige Angaben: {err}") from err
+
+    if entry.return_date and entry.return_date < entry.lend_date:
+        raise HTTPException(status_code=400, detail="Das Rückgabedatum liegt vor dem Ausleihdatum")
+
+    try:
+        await add_past_loan(_db(request), request.app.state.settings, entry)
+    except KeyError as err:
+        raise HTTPException(status_code=404, detail=str(err)) from err
+
+    return HTMLResponse(f'<div class="notice">Eingetragen: <a href="/history">{entry.title}</a></div>')
 
 
 @router.get("/runs", response_class=HTMLResponse)

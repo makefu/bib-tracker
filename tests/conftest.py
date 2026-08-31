@@ -112,6 +112,7 @@ async def api(settings, account_config, tmp_path):
     )
     settings.accounts_file = accounts_file
     settings.poll_on_startup = False
+    settings.metadata_enabled = True
 
     app = create_app(settings)
     async with LifespanManager(app):

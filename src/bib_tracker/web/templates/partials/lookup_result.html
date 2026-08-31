@@ -1,0 +1,31 @@
+{% if record %}
+  {#
+    Shown before saving, so a wrong match is caught by the person who knows,
+    rather than stored and quietly believed.
+  #}
+  <div class="notice" x-data>
+    <div class="stack" style="gap: var(--sp-1)">
+      <strong>{{ record.title }}</strong>
+      <span class="muted">
+        {{ record.authors | join(', ') }}
+        {%- if record.published_year %} · {{ record.published_year }}{% endif %}
+        {%- if record.publisher %} · {{ record.publisher }}{% endif %}
+      </span>
+      <span class="faint">gefunden bei {{ record.provider }}</span>
+    </div>
+    <button
+      class="btn"
+      type="button"
+      @click="
+        document.getElementById('title').value = {{ record.title | tojson }};
+        document.getElementById('author').value = {{ (record.authors | join(', ')) | tojson }};
+      "
+    >
+      Übernehmen
+    </button>
+  </div>
+{% elif searched %}
+  <div class="notice" data-tone="warn">
+    <span>Nichts gefunden. Titel und Autor:in bitte von Hand eintragen.</span>
+  </div>
+{% endif %}

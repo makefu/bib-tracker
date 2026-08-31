@@ -115,10 +115,13 @@ async def reconcile_run(
                 report,
             )
 
-        # Whatever is still open but was not seen has gone back.
-        for loans in open_loans.values():
-            for loan in loans:
-                await _close_loan(w, loan, run_id, observed_at, previous_at, settings, report)
+        # A hand-entered loan is one item, not a survey of the account, so it
+        # may add history but must never conclude that everything else went
+        # back. Only an actual look at the OPAC can close a loan.
+        if run["trigger"] != "import":
+            for loans in open_loans.values():
+                for loan in loans:
+                    await _close_loan(w, loan, run_id, observed_at, previous_at, settings, report)
 
         await w.execute("UPDATE poll_runs SET reconciled = 1 WHERE id = ?", (run_id,))
         await apply_overrides(w)
