@@ -1,480 +1,268 @@
-<!DOCTYPE html>
-<html lang="de"><head>
-	<style>
-		@import url(css/aDISStandard.css);
-	</style>
-	<script src="js/aDISMain.min.js"></script>
-	<script src="js/fckeditor/fckeditor.js"></script>
-	<title> Meine Ausleihen - Stadtbibliothek Stuttgart </title>
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,shrink-to-fit=no">
-<meta name="description" content="OPAC der Stadtbibliothek Stuttgart">
-<!--
-(c) Software: aDIS/BMS und aDIS/Archiv von aStec angewandte Systemtechnik - www.astec.de
-STU, OPACOS de V8.62/40
-//-->
-<script src="/aDISWeb_kopac86/js/scripts-head.js"></script>
-<link rel="stylesheet" href="/aDISWeb_kopac86/css/kopac_style.css"><link rel="stylesheet" media="screen, projection" href="css/POOLM02QPRODXYZ@_00000001_00000001.css"/><link rel="stylesheet" media="screen, projection" href="css/POOLM02QPRODXYZ@_00000002_00000002.css"/>
-<!--[if lt IE 9]><script src="/aDISWeb_kopac86/js/html5shiv-printshiv.min.js"></script><script src="/aDISWeb_kopac86/js/css3-mediaqueries.js"></script><![endif]-->
-<link rel="shortcut icon" type="image/x-icon" href="/aDISWeb_stu/images/favicon.ico">
-</head>
-<body class="opac01 opacos">
-<script><!--
-
-
-
-
-
-
-aDIS.sendBackRequest = function(e) {
-  if(e.state != null && e.state.action)
-    location.href="/aDISWeb/app;jsessionid=0123456789ABCDEF0123456789ABCDEF?service=direct/1/POOLM02QPRODXYZ@_00000015_00000015/$BrowserBack";
-}
-
-
-
-
-
-
-
-function startIdleTimer() {
-  if (typeof idleId != 'undefined')
-    clearTimeout(idleId)
-  idleId = window.setTimeout("to('"+ idleLink + "')", idleTime);
-}			
-function to(link) {
-  location.href=link;
-}
-
-
-
-
-
-function setupaDISHandlers()  {
-  aDIS.addListener("mousedown",document, aDIS.docOnEvent);
-  aDIS.addListener("keydown",document, aDIS.docOnEvent);
-  aDIS.addListener("keyup",document, aDIS.docOnEvent);
-  aDIS.addListener("click",document, aDIS.docOnEvent); 
-
-  aDIS.initFormElements();
-  aDIS.initIframes();
-  aDIS.initScrollPos();
-}
-
-
-
-
-
-
-
-function aDISTimeoutCounter() {
-  this.alertModalEl = null;
-  this.alertModalElWrapper = null;
-  this.alertHiddenInterval = 0;
-  this.sessionEndDate = null;
-  this.activeElementBefore = null;
-    
-  this.init = function(mins, alertInterval, modalAt) {
-    if(mins == 0) return;
-    this.label = document.getElementById("adis-timeoutcounter-label");
-    if(this.label == null) return;
-    this.labelWrapper = document.querySelector("p.adis-timeout-counter");
-    if(this.labelWrapper == null) return;
-
-    this.time = {mins:0, secs:0, initTo:0, alertAt: 0, modalAt:0};
-    this.time.initTo = this.time.mins = mins;
-    
-    if(alertInterval > 0){
-      if(this.time.mins < 10)
-        alertInterval = 1;
-      if((this.time.mins - alertInterval) < 0)
-        return;
-      this.time.alertAt = this.time.mins - this.alertInterval;
-    }
-    
-    this.timer=setInterval(this.run.bind(this), 1000); //1000 = 1 second
-      
-    if(modalAt != 0){
-      var but = document.getElementById("adis-timeoutcounter-reloader");
-      if(but != null) 
-        but.addEventListener("click", this.reset.bind(this));
-      this.alertModalElWrapper = document.getElementById("adis-timeout-alert-modal-wrapper");
-      this.alertModalEl = document.getElementById("adis-timeout-alert-modal");
-      this.time.modalAt = modalAt;  
-    }
-
-    this.labelUpdateShow();
-  };
-  
-  this.reset = function(){
-    var response = aDISAjax.makeReq("GET", {"url" : "/aDISWeb/app;jsessionid=0123456789ABCDEF0123456789ABCDEF?service=aDISTimeoutRefresh/POOLM02QPRODXYZ@_00000015_00000015/$TimeoutCounter&requestCount=4"});
-    if (response.success) {
-      this.time.mins =  this.time.initTo;
-      this.time.alertAt =  this.time.mins - this.alertHiddenInterval;
-      this.time.secs = 0;
-
-      var dt = new Date();
-      dt = dt.setMinutes(dt.getMinutes() + this.time.mins);
-      this.sessionEndDate = new Date(dt);
-    }
-    this.modalHide();
-    this.labelUpdateShow();
-  };
-  
-  this.modalShow = function(){
-    if(this.alertModalElWrapper == null) return;
-    this.alertModalElWrapper.classList.remove("adis-hidden");
-    this.alertModalElWrapper.style.display = 'block';
-    if(this.alertModalEl == null) return;
-    this.alertModalEl.classList.remove("adis-alert-inactive");
-    //hide adis-timeoutcounter-label
-    this.labelWrapper.classList.add("adis-hidden");
-    //set focus to modal button and rememeber focus element it was before
-    if(document.getElementById("adis-timeoutcounter-reloader") == null) return;
-    this.activeElementBefore = document.activeElement;
-    document.getElementById("adis-timeoutcounter-reloader").focus();
-  };
-  
-  this.modalHide = function(){
-    if(this.alertModalElWrapper == null) return;
-    if(this.alertModalElWrapper.classList.contains("adis-hidden"))
-      return;
-    this.alertModalElWrapper.classList.add("adis-hidden");
-    this.alertModalElWrapper.style.display = 'none';
-    if(this.alertModalEl == null) return;
-    this.alertModalEl.classList.add("adis-alert-inactive");
-    //show adis-timeoutcounter-label
-    this.labelWrapper.classList.remove("adis-hidden");
-    //set focus to element it was before modal
-    if(this.activeElementBefore == null) return;
-    this.activeElementBefore.focus();
-    this.activeElementBefore = null;
-  };
-
-  this.labelUpdateShow = function() {
-    var dt = new Date();
-    dt = dt.setMinutes(dt.getMinutes() + this.time.initTo);
-    this.sessionEndDate = new Date(dt);
-    this.label.innerHTML = this.addZero(this.sessionEndDate.getHours()) + ":" + this.addZero(this.sessionEndDate.getMinutes()) + " Uhr";
-    this.labelWrapper.classList.remove("adis-hidden");
-    document.getElementById("adis-timeout-modal-endtime").innerHTML = this.addZero(this.sessionEndDate.getHours()) + ":" + this.addZero(this.sessionEndDate.getMinutes()) + " Uhr";
-  };
-
-  this.addZero = function(i) {
-    if (i < 10) {i = "0" + i}
-    return i;
-  };
-   
-  this.run = function() {
-    if(this.time.secs > 0){
-      if(this.time.secs == 1){
-        if(this.time.modalAt > 0 && this.time.modalAt == this.time.mins)
-          this.modalShow();
-        if( this.time.alertAt >= 0 && this.time.alertAt == this.time.mins){ 
-          this.time.alertAt = (this.time.alertAt < 10)? --this.time.alertAt : this.time.alertAt-this.alertHiddenInterval;
-        }    
-      }
-      --this.time.secs;
-    }
-    else{
-      --this.time.mins;
-      if(this.time.mins >= 0){
-        this.time.secs = 59;
-      }
-      else{
-        clearInterval(this.timer);
-        this.modalHide();
-        return;
-      }
-    }
-  };
-    
-};
-aDISTimeoutCounter.prototype = {
-  constuctor : aDISTimeoutCounter
-};
- 
-
-
-
-aDIS.onLoad = function (e)
-{
-
-
-
-if (history.pushState && history.state == null) {
-  history.pushState({ action : 1 }, "", null);
-  history.pushState({ action : 2 }, "", null);
-}       
-
-window.onpopstate = function (e){  
-  aDIS.sendBackRequest(e);
-}
-
-
-
-
-  idleTime=1800000;
-  idleLink="/aDISWeb/app;jsessionid=0123456789ABCDEF0123456789ABCDEF?service=direct/1/POOLM02QPRODXYZ@_00000015_00000015/$Timeout";
-  startIdleTimer();
-
-
-  if (!e) var e = window.event;
-  document.forms[0].scriptEnabled.value=true;
-  if (self.specialOnLoad != undefined)
-    specialOnLoad(e);
-  setupaDISHandlers();
-  aDIS.getDimensions();
-
-
-timeOutCounter = new aDISTimeoutCounter(); //global var
-timeOutCounter.init(30, 5, 2);
-
-}
-
-aDIS.addListener('load', window, aDIS.onLoad);
-
-
-// --></script> <div class="aDISMaske"><form method="post" name="Form0" action="/aDISWeb/app;jsessionid=0123456789ABCDEF0123456789ABCDEF" onsubmit="return formOnSubmit();">
-<input type="hidden" name="service" value="direct/1/POOLM02QPRODXYZ@_00000015_00000015/$Form.form"/>
-<input type="hidden" name="sp" value="S0"/>
-<input type="hidden" name="Form0" value="focus,keyCode,stz,source,selected,requestCount,scriptEnabled,scrollPos,scrDim,winDim,imgDim,S1W5_AUTHFU_1,$ScriptButton,$FormConditional,textButton,$FormConditional$0,$FormConditional$1,textButton$0,$FormConditional$2,textButton$1,$FormConditional$3,$FormConditional$4,$FormConditional$5,$FormConditional$6,textButton$2,cellCheck,cellCheck$0,cellCheck$1,cellCheck$2,cellCheck$3,cellCheck$4,cellCheck$5,cellCheck$6,cellCheck$7,cellCheck$8,cellCheck$9,$FormConditional$7,$FormConditional$8,textButton$3,$FormConditional$9,textButton$4,$FormConditional$10,$FormConditional$11,$FormConditional$12,$FormConditional$13,textButton$5"/>
-<input type="hidden" name="focus" value=""/>
-<input type="hidden" name="keyCode" value="0"/>
-<input type="hidden" name="stz" value=""/>
-<input type="hidden" name="source" value=""/>
-<input type="hidden" name="selected" value=""/>
-<input type="hidden" name="requestCount" value="3"/>
-<input type="hidden" name="scriptEnabled" value="T"/>
-<input type="hidden" name="scrollPos" value="0"/>
-<input type="hidden" name="scrDim" value=""/>
-<input type="hidden" name="winDim" value=""/>
-<input type="hidden" name="imgDim" value=""/>
-<input type="hidden" name="$FormConditional" value="T"/>
-<input type="hidden" name="$FormConditional$0" value="F"/>
-<input type="hidden" name="$FormConditional$1" value="T"/>
-<input type="hidden" name="$FormConditional$2" value="T"/>
-<input type="hidden" name="$FormConditional$3" value="F"/>
-<input type="hidden" name="$FormConditional$4" value="F"/>
-<input type="hidden" name="$FormConditional$5" value="F"/>
-<input type="hidden" name="$FormConditional$6" value="T"/>
-<input type="hidden" name="$FormConditional$7" value="F"/>
-<input type="hidden" name="$FormConditional$8" value="T"/>
-<input type="hidden" name="$FormConditional$9" value="T"/>
-<input type="hidden" name="$FormConditional$10" value="F"/>
-<input type="hidden" name="$FormConditional$11" value="F"/>
-<input type="hidden" name="$FormConditional$12" value="F"/>
-<input type="hidden" name="$FormConditional$13" value="T"/>
-				 <div id="wrapper">
-    <div id="wrapper-inside">
-       <nav id="sprunglinks" aria-label="Sprunglinks">
-        <ul>
-          <li><a class="sprung" href="#main">Hauptinhalt</a></li>
-        </ul>
-      </nav>
-<!-- BEGIN Sticky-Wrapper -->
-<div class="sticky-wrapper">
-    <header id="header">
+<!doctype html>
+<html lang="de">
+ <head><!-- aDISWeb Mosaik 1.6.3-4-g6a3d6c3 (6a3d6c3@2026-09-04T10:49:47Z) / d.sha1 10c4eda289029bcc93963519e0ecc2231c3d94ad -->
+<link rel="stylesheet" href="/aDISWeb/css/aDISStandard.css?v=6a3d6c3-0" nonce="xUgp4bDp7-eNeXn3VJ_KDuCtbNnYp2nc"><title>Meine Ausleihen - Stadtbibliothek Stuttgart</title><meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,shrink-to-fit=no">
+  <meta name="description" content="OPAC der Stadtbibliothek Stuttgart">
+  <script src="/aDISWeb_kopac86/js/scripts-head.js?v=6a3d6c3-0" nonce="xUgp4bDp7-eNeXn3VJ_KDuCtbNnYp2nc"></script>
+  <link rel="stylesheet" href="/aDISWeb_kopac86/css/kopac_style.css?v=6a3d6c3-0" nonce="xUgp4bDp7-eNeXn3VJ_KDuCtbNnYp2nc">
+  <link rel="stylesheet" href="/aDISWeb/css/POOLM02QPRODXYZ@_00000001_00000001.css?v=6a3d6c3-0" media="screen, projection" nonce="xUgp4bDp7-eNeXn3VJ_KDuCtbNnYp2nc"><link rel="stylesheet" href="/aDISWeb/css/POOLM02QPRODXYZ@_00000002_00000002.css?v=6a3d6c3-0" media="screen, projection" nonce="xUgp4bDp7-eNeXn3VJ_KDuCtbNnYp2nc"><link rel="shortcut icon" type="image/x-icon" href="/aDISWeb_stu/images/favicon.ico?v=6a3d6c3-0">
+ <script src="/aDISWeb/js/aDISMain.min.js?v=6a3d6c3-0" nonce="xUgp4bDp7-eNeXn3VJ_KDuCtbNnYp2nc"></script>
+<script src="/aDISWeb/js/tabs.js?v=6a3d6c3-0" nonce="xUgp4bDp7-eNeXn3VJ_KDuCtbNnYp2nc"></script></head><body class="opac01 opacos"><div class="aDISMaske">
+   <form action="/aDISWeb/_0123456789abcdef0123456789abcdef/app" method="POST" name="Form0"><input type="hidden" name="identity" value="-OmBj9UPXjlE1l_j"><input type="hidden" name="keyCode" value="0"><input type="hidden" name="focus" value=""><input type="hidden" name="stz" value=""><input type="hidden" name="source" value=""><input type="hidden" name="selected" value=""><input type="hidden" name="requestCount" value="4"><input type="hidden" name="scriptEnabled" value="true"><input type="hidden" name="scrollPos" value="0"><div id="wrapper">
+     <div id="wrapper-inside">
+      <nav id="sprunglinks" aria-label="Sprunglinks">
+       <ul>
+        <li><a class="sprung" href="#main">Hauptinhalt</a></li>
+       </ul>
+      </nav><!-- BEGIN Sticky-Wrapper -->
+      <div class="sticky-wrapper">
+       <header id="header">
         <div class="inside">
-           <div id="mhead-meta" class="block">
-            <div id="mhead-meta-inside">
-               <nav id="mnav" class="mod_navigation block" aria-label="An-/Abmelden am Bibliothekssystem">
-                <ul>
-                  <li class="nav-login"><!-- An-/Abmelde-Button als input --><input type="button" name="S1W5_AUTHFU_1" value="Abmelden" onclick="setHiddenField('S1W5_AUTHFU_1', 'S1W5_AUTHFU_1_hidden', 'L2');"/><input type="hidden" name="S1W5_AUTHFU_1_hidden" value=""/> </li>
-                  <li class="nav-konto"><a href="javascript:top.htmlOnLink('*SBK')" title="Mein Konto"><span>Mein Konto</span></a></li>
-                  <li class="nav-logout"><a href="javascript:top.htmlOnLink('*SE')" title="Sitzung beenden"><span>Sitzung beenden</span></a></li>
-                </ul>
-              </nav>
-              <nav id="lnav" class="mod_navigation block" aria-label="Service-Men&uuml;">
-                <ul>
-                  <li class="nav-kontakt"><a href="javascript:top.htmlOnLink('*SW335')" title="Kontakt"><span>Kontakt</span></a></li>
-                  <li class="nav-leichte-sprache"><a href="javascript:top.htmlOnLink('*SW140')"></a></li>
-                  <li class="nav-gebaerdensprache"><a href="javascript:top.htmlOnLink('*SW338')"></a></li>
-                </ul>
-              </nav>
-             </div>
+         <div id="mhead-meta" class="block">
+          <div id="mhead-meta-inside">
+           <nav id="mnav" class="mod_navigation block" aria-label="An-/Abmelden am Bibliothekssystem">
+            <ul>
+             <li class="nav-login"><!-- An-/Abmelde-Button als input --> <input id="onscriptbuttonScriptButton" type="button" name="S1W5_AUTHFU_1" value="Abmelden"></li>
+             <li class="nav-konto"><a href="#" title="Mein Konto" id="idfn2"><span>Mein Konto</span></a></li>
+             <li class="nav-logout"><a href="#" title="Sitzung beenden" id="idfn3"><span>Sitzung beenden</span></a></li>
+            </ul>
+           </nav>
+           <nav id="lnav" class="mod_navigation block" aria-label="Service-Menü">
+            <ul>
+             <li class="nav-kontakt"><a href="#" title="Kontakt" id="idfn4"><span>Kontakt</span></a></li>
+             <li class="nav-leichte-sprache"><a href="#" id="idfn5"></a></li>
+             <li class="nav-gebaerdensprache"><a href="#" id="idfn6"></a></li>
+            </ul>
+           </nav>
           </div>
-           <div id="mhead" class="block">
-            <div id="mhead-inside">
-               <div id="logo">
-                <a href="javascript:top.htmlOnLink('*SW4')" title="Startseite der Stadtbibliothek" aria-label="Startseite der Stadtbibliothek">
-                  <img class="img-standard" src="/aDISWeb_stu/images/logo.svg" width="147" height="168" alt="Logo">
-                  <img class="img-fixed" src="/aDISWeb_stu/images/logo-fixed.svg" alt="Logo" width="73" height="84">
-                </a>
-              </div>
-               <div id="slogan-wrapper">
-                <div id="spruch"><a href="javascript:top.htmlOnLink('*SW42')"><span>Stadtbibliothek Stuttgart</span></a></div>
-              </div>
-               <nav id="fontsizer" aria-label="Schriftgr&ouml;&szlig;e">
-                <ul>
-                  <li><a href="#" id="small" data-set-font-size="small"><span class="schrift">Schrift</span> <span class="schriftgroesse">klein</span></a></li>
-                  <li><a href="#" id="normal" data-set-font-size="medium" class="selected"><span class="schrift">Schrift</span> <span class="schriftgroesse">normal</span></a></li>
-                  <li><a href="#" id="big" data-set-font-size="large"><span class="schrift">Schrift</span> <span class="schriftgroesse">gro&szlig;</span></a></li>
-                </ul>
-              </nav>
-             </div>
+         </div>
+         <div id="mhead" class="block">
+          <div id="mhead-inside">
+           <div id="logo">
+            <a href="#" title="Startseite der Stadtbibliothek" aria-label="Startseite der Stadtbibliothek" id="idfn7"> <img class="img-standard" src="/aDISWeb_stu/images/logo.svg?v=6a3d6c3-0" width="147" height="168" alt="Logo"> <img class="img-fixed" src="/aDISWeb_stu/images/logo-fixed.svg?v=6a3d6c3-0" alt="Logo" width="73" height="84"> </a>
+           </div>
+           <div id="slogan-wrapper">
+            <div id="spruch">
+             <a href="#" id="idfn8"><span>Stadtbibliothek Stuttgart</span></a>
+            </div>
+           </div>
+           <nav id="fontsizer" aria-label="Schriftgröße">
+            <ul>
+             <li><a href="#" id="small" data-set-font-size="small"><span class="schrift">Schrift</span> <span class="schriftgroesse">klein</span></a></li>
+             <li><a href="#" id="normal" data-set-font-size="medium" class="selected"><span class="schrift">Schrift</span> <span class="schriftgroesse">normal</span></a></li>
+             <li><a href="#" id="big" data-set-font-size="large"><span class="schrift">Schrift</span> <span class="schriftgroesse">groß</span></a></li>
+            </ul>
+           </nav>
           </div>
-           <div class="nav-wrapper">
-            <nav id="hnav" class="mod_navigation block" aria-label="Hauptnavigation">
-              <button id="main-menu-state" type="button" data-menu-state="hidden">
-                <span class="main-menu-btn-icon" aria-hidden="true"></span>
-                <span class="main-menu-btn-text">Navigation</span>
-              </button>
-              <ul class="cssmenu_ul sm sm-style" id="main-menu">
-<li class="cssmenu_button"><a href="/aDISWeb/app;jsessionid=0123456789ABCDEF0123456789ABCDEF?service=direct/1/POOLM02QPRODXYZ@_00000015_00000015/$InternalLink.directlink&amp;sp=S%24%24GFBO_41&amp;sp=SW41&amp;requestCount=3" data-fld="$$GFBO_41" title="">Bibliotheken</a></li>
-<li class="cssmenu_ul"><a href="#">Bestand</a>
-<ul class="menufts">
-<li class="cssmenu_button"><a href="/aDISWeb/app;jsessionid=0123456789ABCDEF0123456789ABCDEF?service=direct/1/POOLM02QPRODXYZ@_00000015_00000015/$InternalLink$0.directlink&amp;sp=S%24%24GFBO_42&amp;sp=SW301&amp;requestCount=3" data-fld="$$GFBO_42" title="">Neuerwerbungen</a></li>
-<li class="cssmenu_button"><a href="/aDISWeb/app;jsessionid=0123456789ABCDEF0123456789ABCDEF?service=direct/1/POOLM02QPRODXYZ@_00000015_00000015/$InternalLink$1.directlink&amp;sp=S%24%24GFBO_43&amp;sp=SW303&amp;requestCount=3" data-fld="$$GFBO_43" title="">Themenwelten</a></li>
-<li class="cssmenu_button"><a href="/aDISWeb/app;jsessionid=0123456789ABCDEF0123456789ABCDEF?service=direct/1/POOLM02QPRODXYZ@_00000015_00000015/$InternalLink$2.directlink&amp;sp=S%24%24GFBO_44&amp;sp=SW304&amp;requestCount=3" data-fld="$$GFBO_44" title="">Wir empfehlen</a></li>
-</ul></li>
-<li class="cssmenu_button"><a href="/aDISWeb/app;jsessionid=0123456789ABCDEF0123456789ABCDEF?service=direct/1/POOLM02QPRODXYZ@_00000015_00000015/$InternalLink$3.directlink&amp;sp=S%24%24GFBO_45&amp;sp=SW5&amp;requestCount=3" data-fld="$$GFBO_45" title="">eBibliothek</a></li>
-<li class="cssmenu_button"><a href="/aDISWeb/app;jsessionid=0123456789ABCDEF0123456789ABCDEF?service=direct/1/POOLM02QPRODXYZ@_00000015_00000015/$InternalLink$4.directlink&amp;sp=S%24%24GFBO_46&amp;sp=SW8&amp;requestCount=3" data-fld="$$GFBO_46" title="">Veranstaltungen</a></li>
-<li class="cssmenu_ul"><a href="#">Service</a>
-<ul class="menufts">
-<li class="cssmenu_button"><a href="/aDISWeb/app;jsessionid=0123456789ABCDEF0123456789ABCDEF?service=direct/1/POOLM02QPRODXYZ@_00000015_00000015/$InternalLink$5.directlink&amp;sp=S%24%24GFBO_47&amp;sp=SW335&amp;requestCount=3" data-fld="$$GFBO_47" title="">Kontakt</a></li>
-<li class="cssmenu_button"><a href="/aDISWeb/app;jsessionid=0123456789ABCDEF0123456789ABCDEF?service=direct/1/POOLM02QPRODXYZ@_00000015_00000015/$InternalLink$6.directlink&amp;sp=S%24%24GFBO_48&amp;sp=SW333&amp;requestCount=3" data-fld="$$GFBO_48" title="">Über uns</a></li>
-<li class="cssmenu_button"><a href="/aDISWeb/app;jsessionid=0123456789ABCDEF0123456789ABCDEF?service=direct/1/POOLM02QPRODXYZ@_00000015_00000015/$InternalLink$7.directlink&amp;sp=S%24%24GFBO_49&amp;sp=SW201&amp;requestCount=3" data-fld="$$GFBO_49" title="">Nutzung, Gebühren, Ausleihe</a></li>
-<li class="cssmenu_button"><a href="/aDISWeb/app;jsessionid=0123456789ABCDEF0123456789ABCDEF?service=direct/1/POOLM02QPRODXYZ@_00000015_00000015/$InternalLink$8.directlink&amp;sp=S%24%24GFBO_50&amp;sp=SW202&amp;requestCount=3" data-fld="$$GFBO_50" title="">Leseplätze</a></li>
-<li class="cssmenu_button"><a href="/aDISWeb/app;jsessionid=0123456789ABCDEF0123456789ABCDEF?service=direct/1/POOLM02QPRODXYZ@_00000015_00000015/$InternalLink$9.directlink&amp;sp=S%24%24GFBO_51&amp;sp=SW203&amp;requestCount=3" data-fld="$$GFBO_51" title="">Newsletter</a></li>
-<li class="cssmenu_button"><a href="/aDISWeb/app;jsessionid=0123456789ABCDEF0123456789ABCDEF?service=direct/1/POOLM02QPRODXYZ@_00000015_00000015/$InternalLink$10.directlink&amp;sp=S%24%24GFBO_52&amp;sp=SW204&amp;requestCount=3" data-fld="$$GFBO_52" title="">WLAN</a></li>
-<li class="cssmenu_button"><a href="/aDISWeb/app;jsessionid=0123456789ABCDEF0123456789ABCDEF?service=direct/1/POOLM02QPRODXYZ@_00000015_00000015/$InternalLink$11.directlink&amp;sp=S%24%24GFBO_53&amp;sp=SW205&amp;requestCount=3" data-fld="$$GFBO_53" title="">Auskunft und Beratung</a></li>
-<li class="cssmenu_button"><a href="/aDISWeb/app;jsessionid=0123456789ABCDEF0123456789ABCDEF?service=direct/1/POOLM02QPRODXYZ@_00000015_00000015/$InternalLink$12.directlink&amp;sp=S%24%24GFBO_54&amp;sp=SW206&amp;requestCount=3" data-fld="$$GFBO_54" title="">Downloads</a></li>
-<li class="cssmenu_button"><a href="/aDISWeb/app;jsessionid=0123456789ABCDEF0123456789ABCDEF?service=direct/1/POOLM02QPRODXYZ@_00000015_00000015/$InternalLink$13.directlink&amp;sp=S%24%24GFBO_55&amp;sp=SW207&amp;requestCount=3" data-fld="$$GFBO_55" title="">Barrierefreiheit</a></li>
-<li class="cssmenu_button"><a href="/aDISWeb/app;jsessionid=0123456789ABCDEF0123456789ABCDEF?service=direct/1/POOLM02QPRODXYZ@_00000015_00000015/$InternalLink$14.directlink&amp;sp=S%24%24GFBO_56&amp;sp=SW208&amp;requestCount=3" data-fld="$$GFBO_56" title="">Führungen</a></li>
-<li class="cssmenu_button"><a href="/aDISWeb/app;jsessionid=0123456789ABCDEF0123456789ABCDEF?service=direct/1/POOLM02QPRODXYZ@_00000015_00000015/$InternalLink$15.directlink&amp;sp=S%24%24GFBO_57&amp;sp=SW209&amp;requestCount=3" data-fld="$$GFBO_57" title="">Für Institutionen</a></li>
-</ul></li>
-<li class="cssmenu_button"><a href="/aDISWeb/app;jsessionid=0123456789ABCDEF0123456789ABCDEF?service=direct/1/POOLM02QPRODXYZ@_00000015_00000015/$InternalLink$16.directlink&amp;sp=S%24%24GFBO_58&amp;sp=SW7&amp;requestCount=3" data-fld="$$GFBO_58" title="">Kinder</a></li>
-<li class="cssmenu_button"><a href="/aDISWeb/app;jsessionid=0123456789ABCDEF0123456789ABCDEF?service=direct/1/POOLM02QPRODXYZ@_00000015_00000015/$InternalLink$17.directlink&amp;sp=S%24%24GFBO_59&amp;sp=SW9&amp;requestCount=3" data-fld="$$GFBO_59" title="">Jugendliche</a></li>
-<li class="cssmenu_button"><button type="button" name="$ScriptButton" onclick="setHiddenField('$ScriptButton', '$ScriptButton_hidden', 'BK');" rawLabel="true">Mein Konto</button><input type="hidden" name="$ScriptButton_hidden" value=""/></li>
-</ul>
-            </nav>
-          </div>
+         </div>
+         <div class="nav-wrapper">
+          <nav id="hnav" class="mod_navigation block" aria-label="Hauptnavigation">
+           <button id="main-menu-state" type="button" data-menu-state="hidden"> <span class="main-menu-btn-icon" aria-hidden="true"></span> <span class="main-menu-btn-text">Navigation</span> </button>
+           <ul class="cssmenu_ul sm sm-style" id="main-menu">
+            <li class="cssmenu_button"><a href="#" id="$InternalLink" data-fld="$$GFBO_41">Bibliotheken</a></li>
+            <li class="cssmenu_ul"><a href="#">Bestand</a>
+             <ul class="menufts">
+              <li class="cssmenu_button"><a href="#" id="$InternalLink$0" data-fld="$$GFBO_42">Neuerwerbungen</a></li>
+              <li class="cssmenu_button"><a href="#" id="$InternalLink$1" data-fld="$$GFBO_43">Themenwelten</a></li>
+              <li class="cssmenu_button"><a href="#" id="$InternalLink$2" data-fld="$$GFBO_44">Wir empfehlen</a></li>
+             </ul></li>
+            <li class="cssmenu_button"><a href="#" id="$InternalLink$3" data-fld="$$GFBO_45">eBibliothek</a></li>
+            <li class="cssmenu_button"><a href="#" id="$InternalLink$4" data-fld="$$GFBO_46">Veranstaltungen</a></li>
+            <li class="cssmenu_ul"><a href="#">Service</a>
+             <ul class="menufts">
+              <li class="cssmenu_button"><a href="#" id="$InternalLink$5" data-fld="$$GFBO_47">Kontakt</a></li>
+              <li class="cssmenu_button"><a href="#" id="$InternalLink$6" data-fld="$$GFBO_48">Über uns</a></li>
+              <li class="cssmenu_button"><a href="#" id="$InternalLink$7" data-fld="$$GFBO_49">Nutzung, Gebühren, Ausleihe</a></li>
+              <li class="cssmenu_button"><a href="#" id="$InternalLink$8" data-fld="$$GFBO_50">Leseplätze</a></li>
+              <li class="cssmenu_button"><a href="#" id="$InternalLink$9" data-fld="$$GFBO_51">Newsletter</a></li>
+              <li class="cssmenu_button"><a href="#" id="$InternalLink$10" data-fld="$$GFBO_52">WLAN</a></li>
+              <li class="cssmenu_button"><a href="#" id="$InternalLink$11" data-fld="$$GFBO_53">Auskunft und Beratung</a></li>
+              <li class="cssmenu_button"><a href="#" id="$InternalLink$12" data-fld="$$GFBO_54">Downloads</a></li>
+              <li class="cssmenu_button"><a href="#" id="$InternalLink$13" data-fld="$$GFBO_55">Barrierefreiheit</a></li>
+              <li class="cssmenu_button"><a href="#" id="$InternalLink$14" data-fld="$$GFBO_56">Führungen</a></li>
+              <li class="cssmenu_button"><a href="#" id="$InternalLink$15" data-fld="$$GFBO_57">Für Institutionen</a></li>
+             </ul></li>
+            <li class="cssmenu_button"><a href="#" id="$InternalLink$16" data-fld="$$GFBO_58">Kinder</a></li>
+            <li class="cssmenu_button"><a href="#" id="$InternalLink$17" data-fld="$$GFBO_59">Jugendliche</a></li>
+            <li class="cssmenu_button"><a href="#" id="$InternalLink$18" data-fld="$$GFBO_60">Mein Konto</a></li>
+           </ul>
+          </nav>
+         </div>
         </div>
-    </header>
-     <div class="search-wrapper">
-      <div id="search">
-        &nbsp;
-      </div>
-    </div>
-  </div>
-
-<!-- END Sticky-Wrapper -->
-<div id="container" class="container-wrapper">
-      <div id="container-inside">
+       </header>
+       <div class="search-wrapper">
+        <div id="search">
+         &nbsp;
+        </div>
+       </div>
+      </div><!-- END Sticky-Wrapper -->
+      <div id="container" class="container-wrapper">
+       <div id="container-inside">
         <main id="main" aria-label="Hauptbereich">
-          <div class="inside"><div id="adis-timeout-counter">
-	<p class="adis-timeout-counter">
-		<span id="adis-timeoutcounter-text">Sitzungsende bei Inaktivit&#228;t: </span>
-        <span id="adis-timeoutcounter-label" class="timeoutcounter-label"></span>
-	</p>	<div id="adis-timeout-alert-modal" class="adis-modal adis-alert-inactive" role="dialog" aria-live="assertive" aria-modal="true" aria-labelledby="adis-timeout-alert-heading" aria-describedby="adis-alert-text">
-			<div id="adis-timeout-alert-modal-wrapper" class="adis-hidden">
-				<h1 id="adis-timeout-alert-heading">Bevorstehendes Sitzungsende!</h1>
-				<p id="adis-alert-text">
-					<span id="intro">Ihre Sitzung wird bei Inaktivit&#228;t beendet um: </span><span id="adis-timeout-modal-endtime"></span>
-					<button id="adis-timeoutcounter-reloader" class="adis-img-button adis-timeout-counter-reloader" type="button">Sitzung verl&#228;ngern	</button>
-				</p>
-			</div>
-		</div>
-</div>
-<!-- START aDISPage Styling -->
-            <div class="aDISPage">
-              <div class="grid-wrapper">
-                <div class="grid-row">
-
-<!-- START: KOPFBEREICH -->
-                  <div class="grid-col col-12 col-sm-12 col-md-9 col-lg-9 col-xl-9">
-                    <div class="grid-inside">
-                      <h1>
-                        <span class="invisible">Aktuelle Seite: </span><span class="txtinsert">Mein Konto - Ausleihen</span> </h1>
-                    </div>
-                  </div>
-
-<!-- START Druckbutton -->
-                  <div class="grid-col col-12 col-sm-12 col-md-3 col-lg-3 col-xl-3 adis-printv">
-                    <div class="grid-inside">
-                      <div class="wissen">
-                        <p id="druckversion"><input type="submit" name="textButton" value="Druckversion" data-fld="$$GFBO_88"/> </p>
-                        </div>
-                      </div>
-                    </div>
-
-<!-- START: HAUPTBEREICH-Spalte -->
-                  <div class="grid-col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 arena-all">
-                    <div class="grid-inside">
-                       <div id="OPACLI" style="   width:99%;" class="aDISListe"><div class="html_div" style="width:99%; height:100%;">Hier sehen Sie Ihre aktuellen Ausleihen und die fälligen Leihfristen.<br> Für einen Verlängerungsversuch klicken Sie auf "Verlängern" und danach wieder auf "zur Übersicht" .<br> <b>Prüfen Sie dort zwingend, ob die gewünschten Leihfristen verlängert werden konnten.<br/>Konto - Ausleihen für Herrn Mustermann, Max - Abholcode: Mu1234
-                       <div id="R04">
-  <p class="widget-submit block"> <input type="submit" name="textButton$0" value="Alle verl&#228;ngern" data-fld="$$GFBO_3" class="imp-button verlaengern"/><input type="submit" name="textButton$1" value="Markierte Medien verl&#228;ngern" data-fld="$$GFBO_4" class="imp-button verlaengern"/><input type="submit" name="textButton$2" value="Zur &#220;bersicht" data-fld="$$GFBO_11" class="uebersicht"/> </p>
-</div>
-<div id="R05">
-<div style="   width:99%; ">	<div class="rTable_div"><table colDisable="[true, true, true, true, true]" width="100%" colCase="[, , , , ]" class="rTable_table">	<colgroup><col width="04%"></col><col width="11%"></col><col width="22%"></col><col width="34%"></col><col width="29%"></col>	</colgroup>	<thead class="rTable_thead">
-				<tr><th scope="col" class="rTable_th"><span class="invisible">Markieren</span></th><th scope="col" class="rTable_th">Fällig am</th><th scope="col" class="rTable_th">Bibliothek</th><th scope="col" class="rTable_th">Titel</th><th scope="col" class="rTable_th">Hinweis</th>	</tr>	
-			</thead>
-			<tbody><tr class="rTable_tr_even"><td class="rTable_td_check"><input type="checkbox" name="cellCheck" data-fld="###CHK_1" id="cellCheck"/><label for="cellCheck"><span class="invisible">Markieren</span></label></td><td class="rTable_td_text">14.09.2026</td><td class="rTable_td_text">Stadtbibliothek am Mailänder Platz</td><td class="rTable_td_text">Wolli Trolly - Komme was WOLLE, ich SCHAF (F) das! / Isabella Halbeisen<br/>1<br/>16796244</td><td class="rTable_td_text">verlängerbar - Stand 31.08.2026<br/>2 Verlängerungen</td></tr><tr class="rTable_tr_odd"><td class="rTable_td_check"><input type="checkbox" name="cellCheck$0" data-fld="###CHK_2" id="cellCheck_0"/><label for="cellCheck_0"><span class="invisible">Markieren</span></label></td><td class="rTable_td_text">14.09.2026</td><td class="rTable_td_text">Stadtbibliothek am Mailänder Platz</td><td class="rTable_td_text">¬Der¬ Koboldmaki und der große Sturm / Michaela Küpper ; Karoline Jakubik<br/>1<br/>16614860</td><td class="rTable_td_text">verlängerbar - Stand 31.08.2026<br/>2 Verlängerungen</td></tr><tr class="rTable_tr_even"><td class="rTable_td_check"><input type="checkbox" name="cellCheck$1" data-fld="###CHK_3" id="cellCheck_1"/><label for="cellCheck_1"><span class="invisible">Markieren</span></label></td><td class="rTable_td_text">14.09.2026</td><td class="rTable_td_text">Stadtbibliothek am Mailänder Platz</td><td class="rTable_td_text">[Konventionelles Spiel]<br/> Medical Mysteries - Miami Flatline / Nicholas Cravotta, Rebecca Bleau<br/>Yc Med<br/>16798037</td><td class="rTable_td_text">verlängerbar - Stand 31.08.2026<br/>5 Verlängerungen</td></tr><tr class="rTable_tr_odd"><td class="rTable_td_check"><input type="checkbox" name="cellCheck$2" data-fld="###CHK_4" id="cellCheck_2"/><label for="cellCheck_2"><span class="invisible">Markieren</span></label></td><td class="rTable_td_text">14.09.2026</td><td class="rTable_td_text">Stadtbibliothek am Mailänder Platz</td><td class="rTable_td_text">Mama, bist du's? / Liz Wong ; aus dem Englischen von Ingmarie Flimm<br/>1<br/>16365806</td><td class="rTable_td_text">verlängerbar - Stand 31.08.2026<br/>2 Verlängerungen</td></tr><tr class="rTable_tr_even"><td class="rTable_td_check"><input type="checkbox" name="cellCheck$3" data-fld="###CHK_5" id="cellCheck_3"/><label for="cellCheck_3"><span class="invisible">Markieren</span></label></td><td class="rTable_td_text">14.09.2026</td><td class="rTable_td_text">Freiberg</td><td class="rTable_td_text">¬Das¬ große Buch von Kasimir / Lars Klinting ; deutsch von Angelika Kutsch<br/>4.1 Klin<br/>16589365</td><td class="rTable_td_text">verlängerbar - Stand 31.08.2026<br/>3 Verlängerungen</td></tr><tr class="rTable_tr_odd"><td class="rTable_td_check"><input type="checkbox" name="cellCheck$4" data-fld="###CHK_6" id="cellCheck_4"/><label for="cellCheck_4"><span class="invisible">Markieren</span></label></td><td class="rTable_td_text">14.09.2026</td><td class="rTable_td_text">Stadtbibliothek am Mailänder Platz</td><td class="rTable_td_text">[Konventionelles Spiel]<br/> Unlock! : Die Noside-Show / Yohan Servais<br/>Ycm Unl<br/>15706619</td><td class="rTable_td_text">verlängerbar - Stand 31.08.2026<br/>2 Verlängerungen</td></tr><tr class="rTable_tr_even"><td class="rTable_td_check"><input type="checkbox" name="cellCheck$5" data-fld="###CHK_7" id="cellCheck_5"/><label for="cellCheck_5"><span class="invisible">Markieren</span></label></td><td class="rTable_td_text">14.09.2026</td><td class="rTable_td_text">Stadtbibliothek am Mailänder Platz</td><td class="rTable_td_text">[Konventionelles Spiel]<br/> Unlock! Legendary Adventures : Robin Hood: Tot oder lebendig / Autorin: Marion du Faouet ; Illustrator: Cyrille Bertin, Arnaud Demaegd<br/>Ycm Unl<br/>16499886</td><td class="rTable_td_text">verlängerbar - Stand 31.08.2026<br/>2 Verlängerungen</td></tr><tr class="rTable_tr_odd"><td class="rTable_td_check"><input type="checkbox" name="cellCheck$6" data-fld="###CHK_8" id="cellCheck_6"/><label for="cellCheck_6"><span class="invisible">Markieren</span></label></td><td class="rTable_td_text">14.09.2026</td><td class="rTable_td_text">Freiberg</td><td class="rTable_td_text">[Konventionelles Spiel]<br/> Kraken-Alarm / Spielidee: Oliver Igelhaut. Ill.: Michael Menzel<br/>Spiel<br/>15363079</td><td class="rTable_td_text">verlängerbar - Stand 31.08.2026<br/>3 Verlängerungen</td></tr><tr class="rTable_tr_even"><td class="rTable_td_check"><input type="checkbox" name="cellCheck$7" data-fld="###CHK_9" id="cellCheck_7"/><label for="cellCheck_7"><span class="invisible">Markieren</span></label></td><td class="rTable_td_text">15.09.2026</td><td class="rTable_td_text">Zuffenhausen</td><td class="rTable_td_text">[CD]<br/> Wer lebt im Garten? [CD] / Gesprochen von Niklas Heinecke und Lea Sprick. Text: Patricia Mennen. Hörspielbearb.: Anna Bergner. Musik: Ulrich Maske<br/>JU Garten<br/>15633842</td><td class="rTable_td_text">verlängerbar - Stand 31.08.2026<br/>4 Verlängerungen</td></tr><tr class="rTable_tr_odd"><td class="rTable_td_check"><input type="checkbox" name="cellCheck$8" data-fld="###CHK_10" id="cellCheck_8"/><label for="cellCheck_8"><span class="invisible">Markieren</span></label></td><td class="rTable_td_text">15.09.2026</td><td class="rTable_td_text">Zuffenhausen</td><td class="rTable_td_text">[CD]<br/> ¬An¬ und aus, wie geht das? [CD] / Text: Frauke Nahrgang. Gesprochen von Niklas Heinecke und Lea Sprick. Hörspielbearb. und Regie: Anna Bergner ... Musik: Ulrich Maske ...<br/>JW Technik<br/>15828940</td><td class="rTable_td_text">verlängerbar - Stand 31.08.2026<br/>4 Verlängerungen</td></tr><tr class="rTable_tr_even"><td class="rTable_td_check"><input type="checkbox" name="cellCheck$9" data-fld="###CHK_11" id="cellCheck_9"/><label for="cellCheck_9"><span class="invisible">Markieren</span></label></td><td class="rTable_td_text">15.09.2026</td><td class="rTable_td_text">Zuffenhausen</td><td class="rTable_td_text">[CD]<br/> ¬An¬ Teich und Fluss [CD] / Text: Patricia Mennen. Hörspielbearb. und Regie: Inga Reuters ... Musik: Ulrich Maske. Gesprochen von Marion Elskis und Lea Sprick<br/>JU Tiere<br/>15490663</td><td class="rTable_td_text">verlängerbar - Stand 31.08.2026<br/>4 Verlängerungen</td></tr>	</tbody></table>	</div></div>
-</div>
-<div id="R06">
-  <p class="widget-submit block">  <input type="submit" name="textButton$3" value="Alle verl&#228;ngern" data-fld="$$GFBO_13" class="imp-button verlaengern"/> <input type="submit" name="textButton$4" value="Markierte Medien verl&#228;ngern" data-fld="$$GFBO_14" class="imp-button verlaengern"/>    <input type="submit" name="textButton$5" value="Zur &#220;bersicht" data-fld="$$GFBO_21" class="uebersicht"/> </p>
-</div>
-                     </div>
-                  </div>
-                </div>
+         <div class="inside">
+          <div id="adis-timeout-counter"><p class="adis-timeout-counter"><span id="adis-timeoutcounter-text">Sitzungsende bei Inaktivität:</span><span id="adis-timeoutcounter-label" class="timeoutcounter-label"> 23:30</span></p><div id="adis-timeout-alert-modal" class="adis-modal adis-alert-inactive" role="dialog" aria-live="assertive" aria-modal="true" aria-labelledby="adis-timeout-alert-heading" aria-describedby="adis-alert-text"><div id="adis-timeout-alert-modal-wrapper" class="adis-hidden"><h2 id="adis-timeout-alert-heading">Bevorstehendes Sitzungsende!</h2><p id="adis-alert-text"><span id="intro">Sitzungsende bei Inaktivität:</span><span id="adis-timeout-modal-endtime"></span><button id="adis-timeoutcounter-reloader" class="adis-img-button adis-timeout-counter-reloader" type="button">Sitzung verlängern</button></p></div></div></div><!-- START aDISPage Styling -->
+          <div class="aDISPage">
+           <div class="grid-wrapper">
+            <div class="grid-row">
+             <!-- START: KOPFBEREICH -->
+             <div class="grid-col col-12 col-sm-12 col-md-9 col-lg-9 col-xl-9">
+              <div class="grid-inside">
+               <h1><span class="invisible">Aktuelle Seite: </span> <span>Mein Konto - Ausleihen</span></h1>
               </div>
+             </div><!-- START Druckbutton -->
+             <div class="grid-col col-12 col-sm-12 col-md-3 col-lg-3 col-xl-3 adis-printv">
+              <div class="grid-inside">
+               <div class="wissen">
+                <p id="druckversion"><input type="submit" value="Druckversion" id="$$GFBO_88" name="$Button" data-fld="$$GFBO_88" title=""></p>
+               </div>
+              </div>
+             </div><!-- START: HAUPTBEREICH-Spalte -->
+             <div class="grid-col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 arena-all">
+              <div class="grid-inside">
+               <div id="OPACLI" style="  margin-left:17%; width:99%;" class="aDISListe">
+                <div class="html_div" style="width:99%; height:100%;">Ihre ausgeliehenen Titel: Bitte beachten Sie das Fälligkeitsdatum. Bei verspäteter Rückgabe entstehen Ihnen Kosten!
+<br>
+Nutzen Sie rechtzeitig das Verlängerungsangebot. <b>Zur Verlängerung gebührenpflichtiger Medien markieren Sie diese bitte einzeln und klicken dann auf "Markierte Titel verlängern".</b>
+<br>
+Konto - Ausleihen für Herrn Mustermann, Max - Abholcode: Mu1234
+<br>
+Sie haben heute für einige Medien eine Verlängerung durchgeführt.
+<br>
+Für abgelehnte Verlängerungen bitte die Spalte "Hinweis" beachten.
+<br>
+Eine nochmalige Verlängerung ist heute nicht möglich.</div></div>
+               <div id="R04">
+                <p class="widget-submit block"><input type="submit" class="imp-button verlaengern" value="Alle verlängern" id="$$GFBO_3" name="$Button$0" data-fld="$$GFBO_3" title=""><input type="submit" class="imp-button verlaengern" value="Markierte Medien verlängern" id="$$GFBO_4" name="$Button$1" data-fld="$$GFBO_4" title=""><input type="submit" class="uebersicht" value="Zur Übersicht" id="$$GFBO_11" name="$Button$2" data-fld="$$GFBO_11" title=""></p>
+               </div>
+               <div id="R05">
+                <div>
+                 <div class="rTable_div"><table class="rTable_table" id="resptable-1" width="100%" role="table"><colgroup><col width="4%"><col width="11%"><col width="22%"><col width="34%"><col width="29%"></colgroup><thead class="rTable_head" role="rowgroup"><tr role="row"><th scope="col" role="columnheader" class="rTable_th"><span class="invisible">Markieren</span></th><th scope="col" role="columnheader" class="rTable_th">Fällig am</th><th scope="col" role="columnheader" class="rTable_th">Bibliothek</th><th scope="col" role="columnheader" class="rTable_th">Titel</th><th scope="col" role="columnheader" class="rTable_th">Hinweis</th></tr></thead><tbody role="rowgroup"><tr class=" rTable_tr_even " role="row"><td class=" rTable_td_check"><input type="checkbox" name="$RTable_checkbox[]" value="CheckCell" id="CheckCell" data-fld="###CHK_1"><label for="CheckCell"><span class="invisible">Markieren</span></label></td><td class=" rTable_td_text">09.10.2026</td><td class=" rTable_td_text">Stadtbibliothek am Mailänder Platz</td><td class=" rTable_td_text">¬Der¬ Koboldmaki und der große Sturm / Michaela Küpper ; Karoline Jakubik<br>1<br>16614860</td><td class=" rTable_td_text">verlängerbar - Stand 05.10.2026<br>3 Verlängerungen</td></tr><tr class=" rTable_tr_odd " role="row"><td class=" rTable_td_check"><input type="checkbox" name="$RTable_checkbox[]" value="CheckCell_0" id="CheckCell_0" data-fld="###CHK_2"><label for="CheckCell_0"><span class="invisible">Markieren</span></label></td><td class=" rTable_td_text">09.10.2026</td><td class=" rTable_td_text">Stadtbibliothek am Mailänder Platz</td><td class=" rTable_td_text">¬Die¬ drei ??? - Kids - Schülerwitze zum Schrottlachen / Kim Schmidt Illustrator/in<br>5.1 Schuele<br>16341953</td><td class=" rTable_td_text">verlängerbar - Stand 05.10.2026<br>1 Verlängerung</td></tr><tr class=" rTable_tr_even " role="row"><td class=" rTable_td_check"><input type="checkbox" name="$RTable_checkbox[]" value="CheckCell_1" id="CheckCell_1" data-fld="###CHK_3"><label for="CheckCell_1"><span class="invisible">Markieren</span></label></td><td class=" rTable_td_text">09.10.2026</td><td class=" rTable_td_text">Stadtbibliothek am Mailänder Platz</td><td class=" rTable_td_text">Ekki Eichhorns Krims und Kram - Einmal Beerenmus mit guter Laune<br>1<br>16503686</td><td class=" rTable_td_text">verlängerbar - Stand 05.10.2026<br>1 Verlängerung</td></tr><tr class=" rTable_tr_odd " role="row"><td class=" rTable_td_check"><input type="checkbox" name="$RTable_checkbox[]" value="CheckCell_2" id="CheckCell_2" data-fld="###CHK_4"><label for="CheckCell_2"><span class="invisible">Markieren</span></label></td><td class=" rTable_td_text">09.10.2026</td><td class=" rTable_td_text">Stadtbibliothek am Mailänder Platz</td><td class=" rTable_td_text">Mein Gute-Nacht-Boot / Sital Gorasia Chapman ; Anastasia Suvorova ; aus dem Englischen von Ingrid Ickler<br>1<br>16795909</td><td class=" rTable_td_text">verlängerbar - Stand 05.10.2026<br>1 Verlängerung</td></tr><tr class=" rTable_tr_even " role="row"><td class=" rTable_td_check"><input type="checkbox" name="$RTable_checkbox[]" value="CheckCell_3" id="CheckCell_3" data-fld="###CHK_5"><label for="CheckCell_3"><span class="invisible">Markieren</span></label></td><td class=" rTable_td_text">09.10.2026</td><td class=" rTable_td_text">Stadtbibliothek am Mailänder Platz</td><td class=" rTable_td_text">¬Der¬ supergeniale Zeitverdreher : 2. Klasse / Barbara van den Speulhof ; Sandra Reckers Künstler/in<br>4.1 Speu<br>15968169</td><td class=" rTable_td_text">verlängerbar - Stand 05.10.2026<br>1 Verlängerung</td></tr><tr class=" rTable_tr_odd " role="row"><td class=" rTable_td_check"><input type="checkbox" name="$RTable_checkbox[]" value="CheckCell_4" id="CheckCell_4" data-fld="###CHK_6"><label for="CheckCell_4"><span class="invisible">Markieren</span></label></td><td class=" rTable_td_text">09.10.2026</td><td class=" rTable_td_text">Stadtbibliothek am Mailänder Platz</td><td class=" rTable_td_text">[Konventionelles Spiel]<br> Unlock! Legendary Adventures : Sherlock Holmes: Der Fall der Feuerengel / Autor: Dave Neale ; Illustrator: Arnaud Demaegd<br>Ycm Unl<br>16499888</td><td class=" rTable_td_text">verlängerbar - Stand 05.10.2026<br>1 Verlängerung</td></tr><tr class=" rTable_tr_even " role="row"><td class=" rTable_td_check"><input type="checkbox" name="$RTable_checkbox[]" value="CheckCell_5" id="CheckCell_5" data-fld="###CHK_7"><label for="CheckCell_5"><span class="invisible">Markieren</span></label></td><td class=" rTable_td_text">09.10.2026</td><td class=" rTable_td_text">Stadtbibliothek am Mailänder Platz</td><td class=" rTable_td_text">¬Der¬ Ernst des Lebens : eine Stunde voller Wörterwunder und Zahlenzauber / Sabine Jörg ; mit Bildern von Anne-Kathrin Behl<br>1<br>16644469</td><td class=" rTable_td_text">verlängerbar - Stand 05.10.2026<br>1 Verlängerung</td></tr><tr class=" rTable_tr_odd " role="row"><td class=" rTable_td_check"><input type="checkbox" name="$RTable_checkbox[]" value="CheckCell_6" id="CheckCell_6" data-fld="###CHK_8"><label for="CheckCell_6"><span class="invisible">Markieren</span></label></td><td class=" rTable_td_text">09.10.2026</td><td class=" rTable_td_text">Zuffenhausen</td><td class=" rTable_td_text">[CD]<br> ¬An¬ Teich und Fluss [CD] / Text: Patricia Mennen. Hörspielbearb. und Regie: Inga Reuters ... Musik: Ulrich Maske. Gesprochen von Marion Elskis und Lea Sprick<br>JU Tiere<br>15490663</td><td class=" rTable_td_text">verlängerbar - Stand 05.10.2026<br>5 Verlängerungen</td></tr><tr class=" rTable_tr_even " role="row"><td class=" rTable_td_check"><input type="checkbox" name="$RTable_checkbox[]" value="CheckCell_7" id="CheckCell_7" data-fld="###CHK_9"><label for="CheckCell_7"><span class="invisible">Markieren</span></label></td><td class=" rTable_td_text">09.10.2026</td><td class=" rTable_td_text">Zuffenhausen</td><td class=" rTable_td_text">[CD]<br> Wer lebt im Garten? [CD] / Gesprochen von Niklas Heinecke und Lea Sprick. Text: Patricia Mennen. Hörspielbearb.: Anna Bergner. Musik: Ulrich Maske<br>JU Garten<br>15633842</td><td class=" rTable_td_text">verlängerbar - Stand 05.10.2026<br>5 Verlängerungen</td></tr><tr class=" rTable_tr_odd " role="row"><td class=" rTable_td_check"><input type="checkbox" name="$RTable_checkbox[]" value="CheckCell_8" id="CheckCell_8" data-fld="###CHK_10"><label for="CheckCell_8"><span class="invisible">Markieren</span></label></td><td class=" rTable_td_text">09.10.2026</td><td class=" rTable_td_text">Stadtbibliothek am Mailänder Platz</td><td class=" rTable_td_text">Im Schloss des Grafen : [mit Spielen, Rätseln, Labyrinthen und mehr] / Hervé Éparvier ;Paul Picard ; Übersetzung: Karen Lühning<br>JY Rätsel<br>16483713</td><td class=" rTable_td_text">verlängerbar - Stand 05.10.2026<br>1 Verlängerung</td></tr><tr class=" rTable_tr_even " role="row"><td class=" rTable_td_check"><input type="checkbox" name="$RTable_checkbox[]" value="CheckCell_9" id="CheckCell_9" data-fld="###CHK_11"><label for="CheckCell_9"><span class="invisible">Markieren</span></label></td><td class=" rTable_td_text">09.10.2026</td><td class=" rTable_td_text">Freiberg</td><td class=" rTable_td_text">¬Das¬ große Buch von Kasimir / Lars Klinting ; deutsch von Angelika Kutsch<br>4.1 Klin<br>16589365</td><td class=" rTable_td_text">verlängerbar - Stand 05.10.2026<br>4 Verlängerungen</td></tr><tr class=" rTable_tr_odd " role="row"><td class=" rTable_td_check"><input type="checkbox" name="$RTable_checkbox[]" value="CheckCell_10" id="CheckCell_10" data-fld="###CHK_12"><label for="CheckCell_10"><span class="invisible">Markieren</span></label></td><td class=" rTable_td_text">09.10.2026</td><td class=" rTable_td_text">Stadtbibliothek am Mailänder Platz</td><td class=" rTable_td_text">Mein Töpfchen / Anita Bijsterbosch ; aus dem Niederländischen von Marion Ellen Plieger<br>1<br>16009181</td><td class=" rTable_td_text">verlängerbar - Stand 05.10.2026<br>1 Verlängerung</td></tr><tr class=" rTable_tr_even " role="row"><td class=" rTable_td_check"><input type="checkbox" name="$RTable_checkbox[]" value="CheckCell_11" id="CheckCell_11" data-fld="###CHK_13"><label for="CheckCell_11"><span class="invisible">Markieren</span></label></td><td class=" rTable_td_text">09.10.2026</td><td class=" rTable_td_text">Stadtbibliothek am Mailänder Platz</td><td class=" rTable_td_text">Wolli Trolly - Komme was WOLLE, ich SCHAF (F) das! / Isabella Halbeisen<br>1<br>16796244</td><td class=" rTable_td_text">verlängerbar - Stand 05.10.2026<br>3 Verlängerungen</td></tr><tr class=" rTable_tr_odd " role="row"><td class=" rTable_td_check"><input type="checkbox" name="$RTable_checkbox[]" value="CheckCell_12" id="CheckCell_12" data-fld="###CHK_14"><label for="CheckCell_12"><span class="invisible">Markieren</span></label></td><td class=" rTable_td_text">09.10.2026</td><td class=" rTable_td_text">Stadtbibliothek am Mailänder Platz</td><td class=" rTable_td_text">[Konventionelles Spiel]<br> Unlock! Legendary Adventures : Robin Hood: Tot oder lebendig / Autorin: Marion du Faouet ; Illustrator: Cyrille Bertin, Arnaud Demaegd<br>Ycm Unl<br>16499886</td><td class=" rTable_td_text">verlängerbar - Stand 05.10.2026<br>3 Verlängerungen</td></tr><tr class=" rTable_tr_even " role="row"><td class=" rTable_td_check"><input type="checkbox" name="$RTable_checkbox[]" value="CheckCell_13" id="CheckCell_13" data-fld="###CHK_15"><label for="CheckCell_13"><span class="invisible">Markieren</span></label></td><td class=" rTable_td_text">09.10.2026</td><td class=" rTable_td_text">Stadtbibliothek am Mailänder Platz</td><td class=" rTable_td_text">Charlie und der Mutmachwald / Eva Wagner ; Mareike Ammersken<br>1<br>16837378</td><td class=" rTable_td_text">verlängerbar - Stand 05.10.2026<br>1 Verlängerung</td></tr><tr class=" rTable_tr_odd " role="row"><td class=" rTable_td_check"><input type="checkbox" name="$RTable_checkbox[]" value="CheckCell_14" id="CheckCell_14" data-fld="###CHK_16"><label for="CheckCell_14"><span class="invisible">Markieren</span></label></td><td class=" rTable_td_text">09.10.2026</td><td class=" rTable_td_text">Stadtbibliothek am Mailänder Platz</td><td class=" rTable_td_text">[Konventionelles Spiel]<br> Unlock! : Die Noside-Show / Yohan Servais<br>Ycm Unl<br>15706619</td><td class=" rTable_td_text">verlängerbar - Stand 05.10.2026<br>3 Verlängerungen</td></tr><tr class=" rTable_tr_even " role="row"><td class=" rTable_td_check"><input type="checkbox" name="$RTable_checkbox[]" value="CheckCell_15" id="CheckCell_15" data-fld="###CHK_17"><label for="CheckCell_15"><span class="invisible">Markieren</span></label></td><td class=" rTable_td_text">09.10.2026</td><td class=" rTable_td_text">Stadtbibliothek am Mailänder Platz</td><td class=" rTable_td_text">¬Der¬ kleine Traktor und Oskar / Natalie Quintart ; Philippe Goossens<br>1<br>16791578</td><td class=" rTable_td_text">verlängerbar - Stand 05.10.2026<br>1 Verlängerung</td></tr><tr class=" rTable_tr_odd " role="row"><td class=" rTable_td_check"><input type="checkbox" name="$RTable_checkbox[]" value="CheckCell_16" id="CheckCell_16" data-fld="###CHK_18"><label for="CheckCell_16"><span class="invisible">Markieren</span></label></td><td class=" rTable_td_text">09.10.2026</td><td class=" rTable_td_text">Zuffenhausen</td><td class=" rTable_td_text">[CD]<br> ¬An¬ und aus, wie geht das? [CD] / Text: Frauke Nahrgang. Gesprochen von Niklas Heinecke und Lea Sprick. Hörspielbearb. und Regie: Anna Bergner ... Musik: Ulrich Maske ...<br>JW Technik<br>15828940</td><td class=" rTable_td_text">verlängerbar - Stand 05.10.2026<br>5 Verlängerungen</td></tr><tr class=" rTable_tr_even " role="row"><td class=" rTable_td_check"><input type="checkbox" name="$RTable_checkbox[]" value="CheckCell_17" id="CheckCell_17" data-fld="###CHK_19"><label for="CheckCell_17"><span class="invisible">Markieren</span></label></td><td class=" rTable_td_text">09.10.2026</td><td class=" rTable_td_text">Freiberg</td><td class=" rTable_td_text">[Konventionelles Spiel]<br> Kraken-Alarm / Spielidee: Oliver Igelhaut. Ill.: Michael Menzel<br>Spiel<br>15363079</td><td class=" rTable_td_text">verlängerbar - Stand 05.10.2026<br>4 Verlängerungen</td></tr><tr class=" rTable_tr_odd " role="row"><td class=" rTable_td_check"><input type="checkbox" name="$RTable_checkbox[]" value="CheckCell_18" id="CheckCell_18" data-fld="###CHK_20"><label for="CheckCell_18"><span class="invisible">Markieren</span></label></td><td class=" rTable_td_text">09.10.2026</td><td class=" rTable_td_text">Stadtbibliothek am Mailänder Platz</td><td class=" rTable_td_text">[Konventionelles Spiel]<br> Medical Mysteries - Miami Flatline / Nicholas Cravotta, Rebecca Bleau<br>Yc Med<br>16798037</td><td class=" rTable_td_text">verlängerbar - Stand 05.10.2026<br>6 Verlängerungen</td></tr><tr class=" rTable_tr_even " role="row"><td class=" rTable_td_check"><input type="checkbox" name="$RTable_checkbox[]" value="CheckCell_19" id="CheckCell_19" data-fld="###CHK_21"><label for="CheckCell_19"><span class="invisible">Markieren</span></label></td><td class=" rTable_td_text">09.10.2026</td><td class=" rTable_td_text">Stadtbibliothek am Mailänder Platz</td><td class=" rTable_td_text">Schauriger Gruselspaß : geheimnisvolle Fälle für Vampirjäger / Paul Martin ; illustriert von Camille Roy [und 2 andere] ; aus dem Französischen übertragen von Beate Huth<br>JY Rätsel<br>16352855</td><td class=" rTable_td_text">verlängerbar - Stand 05.10.2026<br>1 Verlängerung</td></tr><tr class=" rTable_tr_odd " role="row"><td class=" rTable_td_check"><input type="checkbox" name="$RTable_checkbox[]" value="CheckCell_20" id="CheckCell_20" data-fld="###CHK_22"><label for="CheckCell_20"><span class="invisible">Markieren</span></label></td><td class=" rTable_td_text">09.10.2026</td><td class=" rTable_td_text">Stadtbibliothek am Mailänder Platz</td><td class=" rTable_td_text">Max entdeckt das Weltall / eine Geschichte von Christian Tielmann ; mit Bildern von Sabine Kraushaar<br>1<br>16617001</td><td class=" rTable_td_text">verlängerbar - Stand 05.10.2026<br>1 Verlängerung</td></tr><tr class=" rTable_tr_even " role="row"><td class=" rTable_td_check"><input type="checkbox" name="$RTable_checkbox[]" value="CheckCell_21" id="CheckCell_21" data-fld="###CHK_23"><label for="CheckCell_21"><span class="invisible">Markieren</span></label></td><td class=" rTable_td_text">09.10.2026</td><td class=" rTable_td_text">Stadtbibliothek am Mailänder Platz</td><td class=" rTable_td_text">Mission Schulstart / eine Geschichte von Katja Reider ; mit Bildern von Nikolai Renger<br>1<br>16483750</td><td class=" rTable_td_text">verlängerbar - Stand 05.10.2026<br>1 Verlängerung</td></tr><tr class=" rTable_tr_odd " role="row"><td class=" rTable_td_check"><input type="checkbox" name="$RTable_checkbox[]" value="CheckCell_22" id="CheckCell_22" data-fld="###CHK_24"><label for="CheckCell_22"><span class="invisible">Markieren</span></label></td><td class=" rTable_td_text">09.10.2026</td><td class=" rTable_td_text">Stadtbibliothek am Mailänder Platz</td><td class=" rTable_td_text">¬Der¬ große und der kleine Igel. - 1. Warte doch mal!<br>1<br>16477990</td><td class=" rTable_td_text">verlängerbar - Stand 05.10.2026<br>1 Verlängerung</td></tr><tr class=" rTable_tr_even " role="row"><td class=" rTable_td_check"><input type="checkbox" name="$RTable_checkbox[]" value="CheckCell_23" id="CheckCell_23" data-fld="###CHK_25"><label for="CheckCell_23"><span class="invisible">Markieren</span></label></td><td class=" rTable_td_text">09.10.2026</td><td class=" rTable_td_text">Stadtbibliothek am Mailänder Platz</td><td class=" rTable_td_text">Benno und das Mondscheinauto / Salah Naoura. Mit Bildern von Susanne Wechdorn<br>4.1 Benn<br>15850725</td><td class=" rTable_td_text">verlängerbar - Stand 05.10.2026<br>1 Verlängerung</td></tr><tr class=" rTable_tr_odd " role="row"><td class=" rTable_td_check"><input type="checkbox" name="$RTable_checkbox[]" value="CheckCell_24" id="CheckCell_24" data-fld="###CHK_26"><label for="CheckCell_24"><span class="invisible">Markieren</span></label></td><td class=" rTable_td_text">09.10.2026</td><td class=" rTable_td_text">Stadtbibliothek am Mailänder Platz</td><td class=" rTable_td_text">Mama, bist du's? / Liz Wong ; aus dem Englischen von Ingmarie Flimm<br>1<br>16365806</td><td class=" rTable_td_text">verlängerbar - Stand 05.10.2026<br>3 Verlängerungen</td></tr><tr class=" rTable_tr_even " role="row"><td class=" rTable_td_check"><input type="checkbox" name="$RTable_checkbox[]" value="CheckCell_25" id="CheckCell_25" data-fld="###CHK_27"><label for="CheckCell_25"><span class="invisible">Markieren</span></label></td><td class=" rTable_td_text">26.10.2026</td><td class=" rTable_td_text">Neugereut</td><td class=" rTable_td_text">Treppe rauf, Treppe runter - folge der Spur! / Pina Gertenbach<br>1<br>16403714</td><td class=" rTable_td_text">verlängerbar - Stand 05.10.2026</td></tr><tr class=" rTable_tr_odd " role="row"><td class=" rTable_td_check"><input type="checkbox" name="$RTable_checkbox[]" value="CheckCell_26" id="CheckCell_26" data-fld="###CHK_28"><label for="CheckCell_26"><span class="invisible">Markieren</span></label></td><td class=" rTable_td_text">26.10.2026</td><td class=" rTable_td_text">Neugereut</td><td class=" rTable_td_text">Buddy Gator : schön dich zu sehen / Chow Hon Lam ; Übersetzung aus dem Englischen: Diana Steinbrede<br>4.1 Comic<br>16851664</td><td class=" rTable_td_text">verlängerbar - Stand 05.10.2026</td></tr><tr class=" rTable_tr_even " role="row"><td class=" rTable_td_check"><input type="checkbox" name="$RTable_checkbox[]" value="CheckCell_27" id="CheckCell_27" data-fld="###CHK_29"><label for="CheckCell_27"><span class="invisible">Markieren</span></label></td><td class=" rTable_td_text">26.10.2026</td><td class=" rTable_td_text">Neugereut</td><td class=" rTable_td_text">Lotta liebt : die Natur / Fotografie und Illustration: Katja Senner ; Text: Sandra Grimm<br>1<br>16673874</td><td class=" rTable_td_text">verlängerbar - Stand 05.10.2026</td></tr><tr class=" rTable_tr_odd " role="row"><td class=" rTable_td_check"><input type="checkbox" name="$RTable_checkbox[]" value="CheckCell_28" id="CheckCell_28" data-fld="###CHK_30"><label for="CheckCell_28"><span class="invisible">Markieren</span></label></td><td class=" rTable_td_text">26.10.2026</td><td class=" rTable_td_text">Neugereut</td><td class=" rTable_td_text">Und wie schläfst du so? / Gundi Herget<br>1<br>16242305</td><td class=" rTable_td_text">verlängerbar - Stand 05.10.2026</td></tr><tr class=" rTable_tr_even " role="row"><td class=" rTable_td_check"><input type="checkbox" name="$RTable_checkbox[]" value="CheckCell_29" id="CheckCell_29" data-fld="###CHK_31"><label for="CheckCell_29"><span class="invisible">Markieren</span></label></td><td class=" rTable_td_text">26.10.2026</td><td class=" rTable_td_text">Neugereut</td><td class=" rTable_td_text">Auch zu zweit ein tolles Team : der erste Urlaub nach der Trennung / geschrieben von Lena S. Berger ; illustriert von Lea Melcher<br>1<br>16730264</td><td class=" rTable_td_text">verlängerbar - Stand 05.10.2026</td></tr><tr class=" rTable_tr_odd " role="row"><td class=" rTable_td_check"><input type="checkbox" name="$RTable_checkbox[]" value="CheckCell_30" id="CheckCell_30" data-fld="###CHK_32"><label for="CheckCell_30"><span class="invisible">Markieren</span></label></td><td class=" rTable_td_text">26.10.2026</td><td class=" rTable_td_text">Neugereut</td><td class=" rTable_td_text">Boje hebt ab : wer sagt, dass Pinguine nicht fliegen können? / Nina Dulleck ; Nina Dulleck Illustrator/in<br>1<br>16201516</td><td class=" rTable_td_text">verlängerbar - Stand 05.10.2026</td></tr><tr class=" rTable_tr_even " role="row"><td class=" rTable_td_check"><input type="checkbox" name="$RTable_checkbox[]" value="CheckCell_31" id="CheckCell_31" data-fld="###CHK_33"><label for="CheckCell_31"><span class="invisible">Markieren</span></label></td><td class=" rTable_td_text">26.10.2026</td><td class=" rTable_td_text">Neugereut</td><td class=" rTable_td_text">Du bist der beste Bär der Welt! / Christian Merveille ; Laurent Simon ; Irmtraut Fröse-Schreer<br>1<br>16456457</td><td class=" rTable_td_text">verlängerbar - Stand 05.10.2026</td></tr><tr class=" rTable_tr_odd " role="row"><td class=" rTable_td_check"><input type="checkbox" name="$RTable_checkbox[]" value="CheckCell_32" id="CheckCell_32" data-fld="###CHK_34"><label for="CheckCell_32"><span class="invisible">Markieren</span></label></td><td class=" rTable_td_text">26.10.2026</td><td class=" rTable_td_text">Neugereut</td><td class=" rTable_td_text">Pilze : verrückte Fakten über Fliegenpilz, Hefe und Co. / Liliana Fabisińska ; Asia Gwis Illustrator/in ; Thomas Weiler Übersetzer/in<br>JU Pflanzen<br>16321325</td><td class=" rTable_td_text">verlängerbar - Stand 05.10.2026</td></tr><tr class=" rTable_tr_even " role="row"><td class=" rTable_td_check"><input type="checkbox" name="$RTable_checkbox[]" value="CheckCell_33" id="CheckCell_33" data-fld="###CHK_35"><label for="CheckCell_33"><span class="invisible">Markieren</span></label></td><td class=" rTable_td_text">26.10.2026</td><td class=" rTable_td_text">Neugereut</td><td class=" rTable_td_text">Rettung für Hund Pepe : 1. Klasse / Annette Moser ; mit Bildern von Sabine Rothmund<br>4.1 Mose<br>16702746</td><td class=" rTable_td_text">verlängerbar - Stand 05.10.2026</td></tr><tr class=" rTable_tr_odd " role="row"><td class=" rTable_td_check"><input type="checkbox" name="$RTable_checkbox[]" value="CheckCell_34" id="CheckCell_34" data-fld="###CHK_36"><label for="CheckCell_34"><span class="invisible">Markieren</span></label></td><td class=" rTable_td_text">26.10.2026</td><td class=" rTable_td_text">Neugereut</td><td class=" rTable_td_text">Was fehlt dir, kleiner Roboter? / Przemysław Wechterowicz ; Emilia Dziubak ; Deutsch von Thomas Weiler<br>1<br>16851558</td><td class=" rTable_td_text">verlängerbar - Stand 05.10.2026</td></tr><tr class=" rTable_tr_even " role="row"><td class=" rTable_td_check"><input type="checkbox" name="$RTable_checkbox[]" value="CheckCell_35" id="CheckCell_35" data-fld="###CHK_37"><label for="CheckCell_35"><span class="invisible">Markieren</span></label></td><td class=" rTable_td_text">26.10.2026</td><td class=" rTable_td_text">Neugereut</td><td class=" rTable_td_text">Bär ist krank! / Karma Wilson ; Jane Chapman. Aus d. Englischen übers. von Linde Zwerg<br>1<br>15594832</td><td class=" rTable_td_text">verlängerbar - Stand 05.10.2026</td></tr><tr class=" rTable_tr_odd " role="row"><td class=" rTable_td_check"><input type="checkbox" name="$RTable_checkbox[]" value="CheckCell_36" id="CheckCell_36" data-fld="###CHK_38"><label for="CheckCell_36"><span class="invisible">Markieren</span></label></td><td class=" rTable_td_text">26.10.2026</td><td class=" rTable_td_text">Neugereut</td><td class=" rTable_td_text">Wer hat den Mond gestohlen? / Richard Byrne. Aus dem Engl. übers. von Anna-Lena Paignigiannes<br>1<br>15831877</td><td class=" rTable_td_text">verlängerbar - Stand 05.10.2026</td></tr><tr class=" rTable_tr_even " role="row"><td class=" rTable_td_check"><input type="checkbox" name="$RTable_checkbox[]" value="CheckCell_37" id="CheckCell_37" data-fld="###CHK_39"><label for="CheckCell_37"><span class="invisible">Markieren</span></label></td><td class=" rTable_td_text">26.10.2026</td><td class=" rTable_td_text">Neugereut</td><td class=" rTable_td_text">Ivy und Bärlock Holmes. - 1. ¬Die¬ rätselhafte Blume<br>4.1 Litt<br>16703002</td><td class=" rTable_td_text">verlängerbar - Stand 05.10.2026</td></tr><tr class=" rTable_tr_odd " role="row"><td class=" rTable_td_check"><input type="checkbox" name="$RTable_checkbox[]" value="CheckCell_38" id="CheckCell_38" data-fld="###CHK_40"><label for="CheckCell_38"><span class="invisible">Markieren</span></label></td><td class=" rTable_td_text">26.10.2026</td><td class=" rTable_td_text">Neugereut</td><td class=" rTable_td_text">Wie der kleine Maulwurf zu seiner Hose kam / Zdeněk Miler ; Übersetzung: Barbora Šrámková ; Originaltext: Eduard Petiška<br>1<br>16730440</td><td class=" rTable_td_text">verlängerbar - Stand 05.10.2026</td></tr><tr class=" rTable_tr_even " role="row"><td class=" rTable_td_check"><input type="checkbox" name="$RTable_checkbox[]" value="CheckCell_39" id="CheckCell_39" data-fld="###CHK_41"><label for="CheckCell_39"><span class="invisible">Markieren</span></label></td><td class=" rTable_td_text">26.10.2026</td><td class=" rTable_td_text">Neugereut</td><td class=" rTable_td_text">Jeder kann ein Glücksschwein sein! / Laura Bednarski<br>1<br>16312702</td><td class=" rTable_td_text">verlängerbar - Stand 05.10.2026</td></tr><tr class=" rTable_tr_odd " role="row"><td class=" rTable_td_check"><input type="checkbox" name="$RTable_checkbox[]" value="CheckCell_40" id="CheckCell_40" data-fld="###CHK_42"><label for="CheckCell_40"><span class="invisible">Markieren</span></label></td><td class=" rTable_td_text">26.10.2026</td><td class=" rTable_td_text">Neugereut</td><td class=" rTable_td_text">¬Der¬ Maulwurf auf großer Reise / Chris Saunders ; Übersetzung: Gregory C. Zäch<br>1<br>16677798</td><td class=" rTable_td_text">verlängerbar - Stand 05.10.2026</td></tr><tr class=" rTable_tr_even " role="row"><td class=" rTable_td_check"><input type="checkbox" name="$RTable_checkbox[]" value="CheckCell_41" id="CheckCell_41" data-fld="###CHK_43"><label for="CheckCell_41"><span class="invisible">Markieren</span></label></td><td class=" rTable_td_text">26.10.2026</td><td class=" rTable_td_text">Neugereut</td><td class=" rTable_td_text">Komm mit, kleiner Frosch / Loes Riphagen ; aus dem Niederländischen von Eva Schweikart<br>1<br>16851590</td><td class=" rTable_td_text">verlängerbar - Stand 05.10.2026</td></tr><tr class=" rTable_tr_odd " role="row"><td class=" rTable_td_check"><input type="checkbox" name="$RTable_checkbox[]" value="CheckCell_42" id="CheckCell_42" data-fld="###CHK_44"><label for="CheckCell_42"><span class="invisible">Markieren</span></label></td><td class=" rTable_td_text">26.10.2026</td><td class=" rTable_td_text">Neugereut</td><td class=" rTable_td_text">Nobbi, der Mutmachhase. - 2. Zusammen schaffen wir das!<br>1<br>16382584</td><td class=" rTable_td_text">verlängerbar - Stand 05.10.2026</td></tr><tr class=" rTable_tr_even " role="row"><td class=" rTable_td_check"><input type="checkbox" name="$RTable_checkbox[]" value="CheckCell_43" id="CheckCell_43" data-fld="###CHK_45"><label for="CheckCell_43"><span class="invisible">Markieren</span></label></td><td class=" rTable_td_text">26.10.2026</td><td class=" rTable_td_text">Neugereut</td><td class=" rTable_td_text">¬Ein¬ Geschenk für dich oder das schönste Geschenk bist du / Julia Volmert ; Julia Volmert Illustrator/in<br>1<br>16122733</td><td class=" rTable_td_text">verlängerbar - Stand 05.10.2026</td></tr><tr class=" rTable_tr_odd " role="row"><td class=" rTable_td_check"><input type="checkbox" name="$RTable_checkbox[]" value="CheckCell_44" id="CheckCell_44" data-fld="###CHK_46"><label for="CheckCell_44"><span class="invisible">Markieren</span></label></td><td class=" rTable_td_text">26.10.2026</td><td class=" rTable_td_text">Neugereut</td><td class=" rTable_td_text">Bella pflanzt einen Baum : mit Klappen und Pop-up Überraschung / Axel Scheffler ; William Petty ; aus dem Englischen von Adélie und Axel Scheffler<br>1<br>16512365</td><td class=" rTable_td_text">verlängerbar - Stand 05.10.2026</td></tr><tr class=" rTable_tr_even " role="row"><td class=" rTable_td_check"><input type="checkbox" name="$RTable_checkbox[]" value="CheckCell_45" id="CheckCell_45" data-fld="###CHK_47"><label for="CheckCell_45"><span class="invisible">Markieren</span></label></td><td class=" rTable_td_text">26.10.2026</td><td class=" rTable_td_text">Neugereut</td><td class=" rTable_td_text">¬Die¬ geheimnisvolle Höhle : 1. Klasse / Thilo ; Dominik Rupp Illustrator/in<br>4.1 Thil<br>15869781</td><td class=" rTable_td_text">verlängerbar - Stand 05.10.2026</td></tr><tr class=" rTable_tr_odd " role="row"><td class=" rTable_td_check"><input type="checkbox" name="$RTable_checkbox[]" value="CheckCell_46" id="CheckCell_46" data-fld="###CHK_48"><label for="CheckCell_46"><span class="invisible">Markieren</span></label></td><td class=" zellgb">02.11.2026</td><td class=" rTable_td_text">Stadtbibliothek am Mailänder Platz</td><td class=" rTable_td_text">Gesucht und Gefunden - Geschichte zum Entdecken / Clara Booth ; Übersetzung: Claudia Koch<br>JE Geschichte<br>16655118</td><td class=" rTable_td_text">Heute verlängert<br>2 Verlängerungen</td></tr><tr class=" rTable_tr_even " role="row"><td class=" rTable_td_check"><input type="checkbox" name="$RTable_checkbox[]" value="CheckCell_47" id="CheckCell_47" data-fld="###CHK_49"><label for="CheckCell_47"><span class="invisible">Markieren</span></label></td><td class=" zellgb">02.11.2026</td><td class=" rTable_td_text">Stadtbibliothek am Mailänder Platz</td><td class=" rTable_td_text">¬Ein¬ Delfin für Theo : 2. Klasse / Sabine Stehr ; Katharina Wieker Illustrator/in<br>4.1 Stehr<br>16016073</td><td class=" rTable_td_text">Heute verlängert<br>2 Verlängerungen</td></tr></tbody></table></div></div>
+               </div>
+               <div id="R06">
+                <p class="widget-submit block"><input type="submit" class="imp-button verlaengern" value="Alle verlängern" id="$$GFBO_13" name="$Button$3" data-fld="$$GFBO_13" title=""><input type="submit" class="imp-button verlaengern" value="Markierte Medien verlängern" id="$$GFBO_14" name="$Button$4" data-fld="$$GFBO_14" title=""><input type="submit" class="uebersicht" value="Zur Übersicht" id="$$GFBO_21" name="$Button$5" data-fld="$$GFBO_21" title=""></p>
+               </div>
+              </div>
+             </div>
             </div>
-
-<!-- STOP aDISPage Styling -->
-          </div>
+           </div>
+          </div><!-- STOP aDISPage Styling -->
+         </div>
         </main>
-      </div>
-    </div>
-
-<!-- STOP Container -->
-    <footer id="footer">
-      <div class="inside">
-         <div class="grid-wrapper">
-          <div class="grid-row">
-            <div class="grid-col col-12 col-md-6 col-lg-6 col-xl-6">
-              <nav id="legal" class="mod_navigation block" aria-label="Rechtliche Links">
-                <ul>
-                  <li><a href="https://stadtbibliothek-stuttgart.de/content/info/impressum.html" target="_blank" rel="noopener" aria-label="Impressum (neues Browser-Fenster)">Impressum</a></li>
-                  <li><a href="https://stadtbibliothek-stuttgart.de/content/info/datenschutz.html" target="_blank" rel="noopener" aria-label="Datenschutz (neues Browser-Fenster)">Datenschutz</a></li>
-                  <li><a href="https://stadtbibliothek-stuttgart.de/content/info/gebuehren.html" target="_blank" rel="noopener" aria-label="Benutzungs- und Geb&uuml;hrenverordnung (neues Browser-Fenster)">Benutzungs- und Geb&uuml;hrenordnung</a></li>
-
-<!-- <li><a href="https://[ Bitte eintragen ]" target="_blank" rel="noopener" aria-label="Hinweis zur Barrierefreiheit (neues Browser-Fenster)">Barrierefreiheit</a></li> -->
-                </ul>
-              </nav>
-            </div>
-             <div class="grid-col col-12 col-md-6 col-lg-6 col-xl-6">
-              <p id="goingup" class="block">
-                <a href="#wrapper">Seitenanfang</a>
-              </p>
-            </div>
-             <div class="grid-col col-12 col-md-6 col-lg-4 col-xl-4">
-              <nav id="social" class="mod_navigation block" aria-label="Die Bibliothek in den soziale Medien">
-                <ul>
-                  <li class="nav-facebook"><a href="https://www.facebook.com/Stadtbibliothek.Stuttgart" target="_blank" rel="noopener" aria-label="Die Bibliothek auf facebook (neues Browser-Fenster)"><img src="/aDISWeb_stu/images/icons/facebook.svg" width="26" height="26" alt="facebook" title="facebook"></a></li>
-                  <li class="nav-youtube"><a href="https://www.youtube.com/c/StadtbibliothekStuttgartYT" target="_blank" rel="noopener" aria-label="Die Bibliothek auf YouTube (neues Browser-Fenster)"><img src="/aDISWeb_stu/images/icons/youtube.svg" width="26" height="26" alt="YouTube" title="YouTube"></a></li>
-                  <li class="nav-instagram"><a href="https://www.instagram.com/stadtbibliothekstuttgart/" target="_blank" rel="noopener" aria-label="Die Bibliothek auf Instagram(neues Browser-Fenster)"><img src="/aDISWeb_stu/images/icons/instagram.svg" width="26" height="26" alt="Instagram" title="Instagram"></a></li>
-                  <li class="nav-mastodon"><a href="https://xn--baw-joa.social/@stadtbibliothekstuttgart" target="_blank" rel="noopener" aria-label="Die Bibliothek auf Mastodon (neues Browser-Fenster)"><img src="/aDISWeb_stu/images/icons/mastodon.svg" width="26" height="26" alt="Mastodon" title="Mastodon"></a></li>
-                </ul>
-              </nav>
-            </div>
-             <div class="grid-col col-12 col-md-6 col-lg-4 col-xl-4">
-              <p id="roessle">
-                <a href="https://www.stuttgart.de" target="_blank" rel="noopener"><img src="/aDISWeb_stu/images/roessle.svg" width="135" height="35" alt="Stuttgart.de" title="Stuttgart.de"></a>
-              </p>
-            </div>
-             <div class="grid-col col-12 col-md-12 col-lg-4 col-xl-4">
-              <p id="credits">
-                <a href="https://www.astec.de" target="_blank" rel="noopener" aria-label="Barrierefreie Bibliotheksoftware der astec eG (neues Browser-Fenster)">Barrierefreie Bibliothekssoftware der |a|S|tec| eG</a>
-              </p>
-            </div>
+       </div>
+      </div><!-- STOP Container -->
+      <footer id="footer">
+       <div class="inside">
+        <div class="grid-wrapper">
+         <div class="grid-row">
+          <div class="grid-col col-12 col-md-6 col-lg-6 col-xl-6">
+           <nav id="legal" class="mod_navigation block" aria-label="Rechtliche Links">
+            <ul>
+             <li><a href="https://stadtbibliothek-stuttgart.de/content/info/impressum.html" target="_blank" rel="noopener" aria-label="Impressum (neues Browser-Fenster)">Impressum</a></li>
+             <li><a href="https://stadtbibliothek-stuttgart.de/content/info/datenschutz.html" target="_blank" rel="noopener" aria-label="Datenschutz (neues Browser-Fenster)">Datenschutz</a></li>
+             <li><a href="https://stadtbibliothek-stuttgart.de/content/info/gebuehren.html" target="_blank" rel="noopener" aria-label="Benutzungs- und Gebührenverordnung (neues Browser-Fenster)">Benutzungs- und Gebührenordnung</a></li>
+             <li><a href="https://stadtbibliothek-stuttgart.de/content/info/presse.html" target="_blank" rel="noopener" aria-label="Presse (neues Browser-Fenster)">Presse</a></li>
+            </ul>
+           </nav>
           </div>
+          <div class="grid-col col-12 col-md-6 col-lg-6 col-xl-6">
+           <p id="goingup" class="block"><a href="#wrapper">Seitenanfang</a></p>
+          </div>
+          <div class="grid-col col-12 col-md-6 col-lg-4 col-xl-4">
+           <nav id="social" class="mod_navigation block" aria-label="Die Bibliothek in den soziale Medien">
+            <ul>
+             <li class="nav-facebook"><a href="https://www.facebook.com/Stadtbibliothek.Stuttgart" target="_blank" rel="noopener" aria-label="Die Bibliothek auf facebook (neues Browser-Fenster)"><img src="/aDISWeb_stu/images/icons/facebook.svg?v=6a3d6c3-0" width="26" height="26" alt="facebook" title="facebook"></a></li>
+             <li class="nav-youtube"><a href="https://www.youtube.com/c/StadtbibliothekStuttgartYT" target="_blank" rel="noopener" aria-label="Die Bibliothek auf YouTube (neues Browser-Fenster)"><img src="/aDISWeb_stu/images/icons/youtube.svg?v=6a3d6c3-0" width="26" height="26" alt="YouTube" title="YouTube"></a></li>
+             <li class="nav-instagram"><a href="https://www.instagram.com/stadtbibliothekstuttgart/" target="_blank" rel="noopener" aria-label="Die Bibliothek auf Instagram(neues Browser-Fenster)"><img src="/aDISWeb_stu/images/icons/instagram.svg?v=6a3d6c3-0" width="26" height="26" alt="Instagram" title="Instagram"></a></li>
+             <li class="nav-mastodon"><a href="https://xn--baw-joa.social/@stadtbibliothekstuttgart" target="_blank" rel="noopener" aria-label="Die Bibliothek auf Mastodon (neues Browser-Fenster)"><img src="/aDISWeb_stu/images/icons/mastodon.svg?v=6a3d6c3-0" width="26" height="26" alt="Mastodon" title="Mastodon"></a></li>
+            </ul>
+           </nav>
+          </div>
+          <div class="grid-col col-12 col-md-6 col-lg-4 col-xl-4">
+           <p id="roessle"><a href="https://www.stuttgart.de" target="_blank" rel="noopener"><img src="/aDISWeb_stu/images/roessle.svg?v=6a3d6c3-0" width="135" height="35" alt="Stuttgart.de" title="Stuttgart.de"></a></p>
+          </div>
+          <div class="grid-col col-12 col-md-12 col-lg-4 col-xl-4">
+           <p id="credits"><a href="https://www.astec.de" target="_blank" rel="noopener" aria-label="Barrierefreie Bibliotheksoftware der astec eG (neues Browser-Fenster)">Barrierefreie Bibliothekssoftware der |a|S|tec| eG</a></p>
+          </div>
+         </div>
         </div>
         <div class="clear"></div>
-      </div>
-    </footer>
-  </div>
-</div>
-<script src="/aDISWeb_kopac86/js/scripts-main.js"></script></form> </div></body>
-</html>
+       </div>
+      </footer>
+     </div>
+    </div>
+    <script src="/aDISWeb_kopac86/js/scripts-main.js?v=6a3d6c3-0" nonce="xUgp4bDp7-eNeXn3VJ_KDuCtbNnYp2nc"></script>
+   </form></div>
+ <script nonce="xUgp4bDp7-eNeXn3VJ_KDuCtbNnYp2nc">
+function adisInit(){
+IdleTimer.init('/aDISWeb/_8idf5zo0xjqhctzp1a2iugtfu4twz142/timeout/opac', 30);
+document.getElementById("onscriptbuttonScriptButton")?.addEventListener("click", fn1, false);
+document.getElementById("$InternalLink")?.addEventListener("click", intlinkInternalLink, false);
+document.getElementById("$InternalLink$0")?.addEventListener("click", intlinkInternalLink0, false);
+document.getElementById("$InternalLink$1")?.addEventListener("click", intlinkInternalLink1, false);
+document.getElementById("$InternalLink$2")?.addEventListener("click", intlinkInternalLink2, false);
+document.getElementById("$InternalLink$3")?.addEventListener("click", intlinkInternalLink3, false);
+document.getElementById("$InternalLink$4")?.addEventListener("click", intlinkInternalLink4, false);
+document.getElementById("$InternalLink$5")?.addEventListener("click", intlinkInternalLink5, false);
+document.getElementById("$InternalLink$6")?.addEventListener("click", intlinkInternalLink6, false);
+document.getElementById("$InternalLink$7")?.addEventListener("click", intlinkInternalLink7, false);
+document.getElementById("$InternalLink$8")?.addEventListener("click", intlinkInternalLink8, false);
+document.getElementById("$InternalLink$9")?.addEventListener("click", intlinkInternalLink9, false);
+document.getElementById("$InternalLink$10")?.addEventListener("click", intlinkInternalLink10, false);
+document.getElementById("$InternalLink$11")?.addEventListener("click", intlinkInternalLink11, false);
+document.getElementById("$InternalLink$12")?.addEventListener("click", intlinkInternalLink12, false);
+document.getElementById("$InternalLink$13")?.addEventListener("click", intlinkInternalLink13, false);
+document.getElementById("$InternalLink$14")?.addEventListener("click", intlinkInternalLink14, false);
+document.getElementById("$InternalLink$15")?.addEventListener("click", intlinkInternalLink15, false);
+document.getElementById("$InternalLink$16")?.addEventListener("click", intlinkInternalLink16, false);
+document.getElementById("$InternalLink$17")?.addEventListener("click", intlinkInternalLink17, false);
+document.getElementById("$InternalLink$18")?.addEventListener("click", intlinkInternalLink18, false);
+TimeoutCounter.init('/aDISWeb/_8idf5zo0xjqhctzp1a2iugtfu4twz142/refresh', 30, 2);
+mjsInitButtonWithDataFld('$$GFBO_88','$Button');
+mjsInitButtonWithDataFld('$$GFBO_3','$Button$0');
+mjsInitButtonWithDataFld('$$GFBO_4','$Button$1');
+mjsInitButtonWithDataFld('$$GFBO_11','$Button$2');
+mjsInitButtonWithDataFld('$$GFBO_13','$Button$3');
+mjsInitButtonWithDataFld('$$GFBO_14','$Button$4');
+mjsInitButtonWithDataFld('$$GFBO_21','$Button$5');
+document["Form0"].addEventListener("submit", (e) => window.prepareFormSubmission(e) );
+document.getElementById("idfn2")?.addEventListener("click", fn2, false);
+document.getElementById("idfn3")?.addEventListener("click", fn3, false);
+document.getElementById("idfn4")?.addEventListener("click", fn4, false);
+document.getElementById("idfn5")?.addEventListener("click", fn5, false);
+document.getElementById("idfn6")?.addEventListener("click", fn6, false);
+document.getElementById("idfn7")?.addEventListener("click", fn7, false);
+document.getElementById("idfn8")?.addEventListener("click", fn8, false);
+
+} // end adisInit
+
+function fn1(e) { e.preventDefault(); mjsOnScriptButtonClicked(e, 'S1W5_AUTHFU_1','$ScriptButton');}
+function intlinkInternalLink(e) { e.preventDefault();  mjsOnInternalLinkClicked(e, '$InternalLink'); }
+function intlinkInternalLink0(e) { e.preventDefault();  mjsOnInternalLinkClicked(e, '$InternalLink$0'); }
+function intlinkInternalLink1(e) { e.preventDefault();  mjsOnInternalLinkClicked(e, '$InternalLink$1'); }
+function intlinkInternalLink2(e) { e.preventDefault();  mjsOnInternalLinkClicked(e, '$InternalLink$2'); }
+function intlinkInternalLink3(e) { e.preventDefault();  mjsOnInternalLinkClicked(e, '$InternalLink$3'); }
+function intlinkInternalLink4(e) { e.preventDefault();  mjsOnInternalLinkClicked(e, '$InternalLink$4'); }
+function intlinkInternalLink5(e) { e.preventDefault();  mjsOnInternalLinkClicked(e, '$InternalLink$5'); }
+function intlinkInternalLink6(e) { e.preventDefault();  mjsOnInternalLinkClicked(e, '$InternalLink$6'); }
+function intlinkInternalLink7(e) { e.preventDefault();  mjsOnInternalLinkClicked(e, '$InternalLink$7'); }
+function intlinkInternalLink8(e) { e.preventDefault();  mjsOnInternalLinkClicked(e, '$InternalLink$8'); }
+function intlinkInternalLink9(e) { e.preventDefault();  mjsOnInternalLinkClicked(e, '$InternalLink$9'); }
+function intlinkInternalLink10(e) { e.preventDefault();  mjsOnInternalLinkClicked(e, '$InternalLink$10'); }
+function intlinkInternalLink11(e) { e.preventDefault();  mjsOnInternalLinkClicked(e, '$InternalLink$11'); }
+function intlinkInternalLink12(e) { e.preventDefault();  mjsOnInternalLinkClicked(e, '$InternalLink$12'); }
+function intlinkInternalLink13(e) { e.preventDefault();  mjsOnInternalLinkClicked(e, '$InternalLink$13'); }
+function intlinkInternalLink14(e) { e.preventDefault();  mjsOnInternalLinkClicked(e, '$InternalLink$14'); }
+function intlinkInternalLink15(e) { e.preventDefault();  mjsOnInternalLinkClicked(e, '$InternalLink$15'); }
+function intlinkInternalLink16(e) { e.preventDefault();  mjsOnInternalLinkClicked(e, '$InternalLink$16'); }
+function intlinkInternalLink17(e) { e.preventDefault();  mjsOnInternalLinkClicked(e, '$InternalLink$17'); }
+function intlinkInternalLink18(e) { e.preventDefault();  mjsOnInternalLinkClicked(e, '$InternalLink$18'); }
+function fn2(e){  e.preventDefault(); top.htmlOnLink("*SBK");} 
+function fn3(e){  e.preventDefault(); top.htmlOnLink("*SE");} 
+function fn4(e){  e.preventDefault(); top.htmlOnLink("*SW335");} 
+function fn5(e){  e.preventDefault(); top.htmlOnLink("*SW140");} 
+function fn6(e){  e.preventDefault(); top.htmlOnLink("*SW338");} 
+function fn7(e){  e.preventDefault(); top.htmlOnLink("*SW4");} 
+function fn8(e){  e.preventDefault(); top.htmlOnLink("*SW42");} 
+addEventListener("DOMContentLoaded", (e) => adisInit());</script></body></html>

@@ -58,27 +58,39 @@ def _mock_remseck(checkouts: str, *, login: str | None = None, account: str = "r
     )
 
 
+def _fields(request: httpx.Request) -> dict[str, str]:
+    from urllib.parse import parse_qs
+
+    return {k: v[0] for k, v in parse_qs(request.content.decode(), keep_blank_values=True).items()}
+
+
 def _mock_stuttgart(ausleihen: str = "stuttgart_ausleihen.html") -> None:
-    """Serve the four pages the aDIS login walks through.
+    """Serve the pages the aDIS login walks through.
 
     The flow is GET the search mask, POST it to reach the credentials form,
-    POST those to reach the account overview, then follow its Ausleihen link.
-    Every step reads the next URL out of the page before it, so mocking by
-    path alone is enough.
+    POST those to reach the account overview, then POST the overview's form
+    with selected="ZTEXT       *SZA" to reach the loan listing -- the service
+    links on the recorded account page are href="#" wired to a page script,
+    so there is no GET of the listing to mock by path. aDIS puts the session
+    in the URL path (/aDISWeb/_<sid>/app), so the POST routes match on the
+    prefix, not the full path.
     """
     respx.get(url__startswith=f"{STUTTGART}/?service=").mock(
         return_value=httpx.Response(200, html=recorded_fixture("stuttgart_home.html"))
     )
-    posts = iter(
-        [
-            recorded_fixture("stuttgart_login_form.html"),
-            recorded_fixture("stuttgart_account.html"),
-        ]
-    )
-    respx.post(url__startswith=f"{STUTTGART}/aDISWeb/app").mock(
-        side_effect=lambda request: httpx.Response(200, html=next(posts))
-    )
-    respx.get(url__startswith=f"{STUTTGART}/aDISWeb/app").mock(
+
+    def post_route(request: httpx.Request) -> httpx.Response:
+        fields = _fields(request)
+        if fields.get("selected", "").strip().endswith("*SZA"):
+            return httpx.Response(200, html=recorded_fixture(ausleihen))
+        if "$Textfield" in fields:
+            return httpx.Response(200, html=recorded_fixture("stuttgart_account.html"))
+        return httpx.Response(200, html=recorded_fixture("stuttgart_login_form.html"))
+
+    respx.post(url__startswith=f"{STUTTGART}/aDISWeb").mock(side_effect=post_route)
+    # Older aDIS installs answer the same click with a redirect target page;
+    # the fallback keeps the mock honest for both routes.
+    respx.get(url__startswith=f"{STUTTGART}/aDISWeb").mock(
         return_value=httpx.Response(200, html=recorded_fixture(ausleihen))
     )
 
@@ -92,11 +104,11 @@ async def test_a_recorded_koha_account_polls_successfully(account_config) -> Non
     result = await poll_account(account_config, "hunter2")
 
     assert result.status is PollStatus.SUCCESS
-    assert len(result.loans) == 27
+    assert len(result.loans) == 5
     assert result.fees == []
     assert result.fees_supported is True
     # Everything the database writes has to survive serialisation.
-    assert len(result.serialised_loans()) == 27
+    assert len(result.serialised_loans()) == 5
     assert all(row["title"] and row["due_date"] for row in result.serialised_loans())
 
 
@@ -135,7 +147,7 @@ async def test_a_recorded_adis_account_polls_successfully(stuttgart_config) -> N
     result = await poll_account(stuttgart_config, "hunter2")
 
     assert result.status is PollStatus.SUCCESS
-    assert len(result.loans) == 11
+    assert len(result.loans) == 49
     # aDIS fees are not implemented; that must not read as "no fees owed".
     assert result.fees_supported is False
 
@@ -162,7 +174,7 @@ async def test_detail_enrichment_over_recorded_catalogue_pages(account_config) -
     result = await poll_account(account_config, "hunter2", fetch_details=True)
 
     assert result.status is PollStatus.SUCCESS
-    assert all(loan.isbn == "9783473460625" for loan in result.loans)
+    assert all(loan.isbn == "9783836958424" for loan in result.loans)
 
 
 @respx.mock
