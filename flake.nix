@@ -87,6 +87,8 @@
               ps.apscheduler
               ps.pydantic
               ps.pydantic-settings
+              ps.pyyaml
+              ps.types-pyyaml
               ps.python-multipart
               ps.pillow
               ps.structlog
@@ -121,6 +123,8 @@
             ps.apscheduler
             ps.pydantic
             ps.pydantic-settings
+            ps.pyyaml
+            ps.types-pyyaml
             ps.pillow
             ps.structlog
             ps.ha-stadtbibliothek

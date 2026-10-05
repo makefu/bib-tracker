@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 from collections.abc import Iterator
 from pathlib import Path
 
@@ -32,8 +33,14 @@ def db(db_path: Path) -> Iterator[Database]:
 
 
 @pytest.fixture
-def settings(db_path: Path):
-    from bib_tracker.config import Settings
+def settings(db_path: Path, monkeypatch: pytest.MonkeyPatch):
+    from bib_tracker.config import SETTINGS_ENV_PREFIX, Settings
+
+    # A BIB_TRACKER_* var exported in the developer's shell must not leak
+    # into a test.
+    for key in list(os.environ):
+        if key.startswith(SETTINGS_ENV_PREFIX):
+            monkeypatch.delenv(key)
 
     return Settings(db_path=db_path, metadata_enabled=False)
 
@@ -98,28 +105,12 @@ def recorded_fixture(name: str) -> str:
 @pytest.fixture
 async def api(settings, account_config, tmp_path):
     """An app with one account, pointed at a respx-mocked OPAC."""
-    import json
-
     import httpx
     from asgi_lifespan import LifespanManager
 
     from bib_tracker.app import create_app
 
-    accounts_file = tmp_path / "accounts.json"
-    accounts_file.write_text(
-        json.dumps(
-            [
-                {
-                    "name": account_config.name,
-                    "library_type": account_config.library_type,
-                    "username": account_config.username,
-                    "base_url": account_config.base_url,
-                    "password_file": str(account_config.password_file),
-                }
-            ]
-        )
-    )
-    settings.accounts_file = accounts_file
+    settings.accounts = [account_config]
     settings.poll_on_startup = False
     settings.metadata_enabled = True
 

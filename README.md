@@ -72,6 +72,76 @@ pretend otherwise.
 There is no authentication: put it behind a reverse proxy. Passwords are read
 through systemd's credential store and never enter the Nix store.
 
+### Config files
+
+Outside NixOS the settings come from YAML config files. Every key of the
+settings model may appear in a file; several files are merged, later ones
+winning key by key, which is how the open configuration and the account
+credentials are kept apart:
+
+```yaml
+# config.yaml — safe to commit
+db_path: /var/lib/bib-tracker/bib-tracker.db
+host: 127.0.0.1
+port: 8099
+log_level: info
+
+poll_interval_minutes: 360
+metadata_providers: [openlibrary, dnb, wikidata]
+price_providers: [vlb, dnb, googlebooks]
+default_prices:
+  book: 15.0
+  game: 35.0
+
+accounts:
+  stuttgart:
+    library_type: stuttgart
+    username: "123456"
+  remseck:
+    library_type: remseck
+    username: "654321"
+```
+
+```yaml
+# .secrets.yml — git-ignored, merged second
+accounts:
+  stuttgart:
+    password: "hunter2"
+  remseck:
+    password: "hunter3"
+
+metadata_api_keys:
+  bgg: "…"
+```
+
+Accounts merge *per account*: the second file completes the account the
+first one declared instead of replacing it, and an account accepts
+`password` (inline), `password_file` (path), or `password_credential` (the
+name of a systemd credential, which is how the NixOS unit passes secrets
+without ever putting them in a file). Provider tokens work the same way:
+`metadata_api_keys` holds them inline, `metadata_api_key_files` points at
+files, and a file wins when both name the same provider.
+
+```sh
+bib-tracker config.yaml .secrets.yml
+```
+
+The files are found in this order:
+
+1. `CONFIG ...` — config files as plain arguments, merged left to right,
+  accepted by every command (`bib-tracker`, `-migrate`, `-poll`,
+  `-rebuild`); a named file must exist.
+2. `BIB_TRACKER_CONFIG_FILES` — `os.pathsep`-separated, for setups that
+  cannot pass arguments (systemd units, containers); every named file must
+  exist. The NixOS module generates a public and a secrets file and passes
+  exactly this pair.
+3. `$XDG_CONFIG_HOME/bib-tracker/config.yaml` (`~/.config/...` when unset);
+   this default need not exist.
+
+`BIB_TRACKER_*` environment variables always beat every file. Files carry
+values in YAML; env vars carry complex values as JSON or, for lists, a
+comma-separated string.
+
 ### Metadata providers
 
 | Provider | Needs a key | Gives |

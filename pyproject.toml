@@ -15,6 +15,7 @@ dependencies = [
     "apscheduler",
     "pydantic",
     "pydantic-settings",
+    "pyyaml",
     "python-multipart",
     "pillow",
     "structlog",

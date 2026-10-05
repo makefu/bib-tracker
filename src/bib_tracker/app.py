@@ -44,7 +44,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         app.state.db = db
         app.state.settings = settings
 
-        accounts = settings.load_accounts()
+        accounts = settings.accounts
         await queries.sync_accounts(db, accounts)
 
         service = PollService(db, settings, accounts)

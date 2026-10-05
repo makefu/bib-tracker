@@ -20,6 +20,7 @@ python313Packages.buildPythonApplication {
     apscheduler
     pydantic
     pydantic-settings
+    pyyaml
     python-multipart
     pillow
     structlog

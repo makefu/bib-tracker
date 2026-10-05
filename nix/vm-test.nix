@@ -156,11 +156,11 @@ pkgs.testers.nixosTest {
 
     with subtest("history can be recomputed from the stored observations"):
         before = machine.succeed("curl -fsS localhost:8099/api/history")
-        # Reuse the unit's own environment so the rebuild sees the same
-        # database and account settings the service does.
+        # Reuse the unit's own environment so the rebuild reads the same
+        # merged config files the service does.
         machine.succeed(
             "export $(systemctl show bib-tracker.service -p Environment --value"
-            " | xargs -n1 | grep -E '^BIB_TRACKER_(DB_PATH|ACCOUNTS_FILE)=' | xargs)"
+            " | xargs -n1 | grep -E '^BIB_TRACKER_CONFIG_FILES=' | xargs)"
             " && bib-tracker-rebuild"
         )
         after = machine.succeed("curl -fsS localhost:8099/api/history")
@@ -175,7 +175,7 @@ pkgs.testers.nixosTest {
         machine.succeed("systemctl show bib-tracker.service -p ProtectSystem | grep -q strict")
 
     with subtest("the password never entered the Nix store"):
-        machine.fail("grep -rq hunter2 /nix/store/*bib-tracker*accounts.json")
+        machine.fail("grep -rq hunter2 /nix/store/*bib-tracker*.yaml")
 
     with subtest("nothing crashed along the way"):
         machine.fail("journalctl -u bib-tracker.service | grep -q Traceback")

@@ -1,0 +1,20 @@
+# Local development config (safe to commit: no secrets, only file pointers).
+# Secrets live in .secrets.yml; the two files are merged, later ones winning:
+#   bib-tracker --config-file config.yaml --config-file .secrets.yml
+# BIB_TRACKER_* environment variables override anything in either file.
+db_path: bib-tracker.db
+host: 127.0.0.1
+port: 8099
+log_level: info
+
+poll_interval_minutes: 360
+metadata_providers: [openlibrary, dnb, wikidata]
+price_providers: [vlb, dnb, googlebooks]
+
+accounts:
+  stuttgart:
+    library_type: stuttgart
+    username: "5980610"
+  remseck:
+    library_type: remseck
+    username: "103167"

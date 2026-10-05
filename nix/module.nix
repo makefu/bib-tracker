@@ -12,23 +12,58 @@ let
 
   credentialName = name: "account-${name}-password";
 
-  # Secrets stay out of this file: an account names a systemd credential, and
-  # the unit exposes it under $CREDENTIALS_DIRECTORY at runtime.
-  accountsJson = pkgs.writeText "bib-tracker-accounts.json" (
-    builtins.toJSON (
-      lib.mapAttrsToList (name: a: {
-        inherit name;
-        library_type = a.libraryType;
-        username = a.username;
-        base_url = a.baseUrl;
-        display_name = a.displayName;
-        colour = a.colour;
-        enabled = true;
-        password_credential = credentialName name;
-        loan_period_days = a.loanPeriodDays;
-      }) enabledAccounts
-    )
+  # The unit's configuration is two merged YAML files rather than a pile of
+  # environment variables: one that may be world-readable, and one holding
+  # the account credentials. A secret is never inline; an account names a
+  # systemd credential, which the unit exposes under $CREDENTIALS_DIRECTORY
+  # at runtime, so nothing here can carry a password into the store.
+  yamlFormat = pkgs.formats.yaml { };
+
+  # Everything except the accounts, which go in the secrets file: an account
+  # names its credential there, and merging happens per account name, so the
+  # public file may stay public while the names stay where the secret is.
+  publicConfigYaml = yamlFormat.generate "bib-tracker-config.yaml" (
+    {
+      db_path = toString cfg.dbPath;
+      host = cfg.listenAddress;
+      port = cfg.port;
+      log_level = cfg.logLevel;
+      poll_interval_minutes = cfg.poll.intervalMinutes;
+      poll_jitter_seconds = cfg.poll.jitterSeconds;
+      poll_max_concurrent = cfg.poll.maxConcurrent;
+      poll_on_startup = cfg.poll.onStartup;
+      zero_result_confirmations = cfg.poll.zeroResultConfirmations;
+      renew_threshold_days = cfg.renewThresholdDays;
+      metadata_enabled = cfg.metadata.enable;
+      metadata_providers = cfg.metadata.providers;
+      price_providers = cfg.metadata.priceProviders;
+      metadata_base_urls = cfg.metadata.baseUrls;
+      metadata_rate_limits = cfg.metadata.rateLimits;
+      # Credential names, resolved against $CREDENTIALS_DIRECTORY at runtime.
+      metadata_api_key_files = lib.mapAttrs' (name: _: lib.nameValuePair name "provider-${name}-key") cfg.metadata.apiKeyFiles;
+      user_agent_contact = cfg.metadata.userAgentContact;
+      default_prices = cfg.defaultPrices;
+    }
+    // cfg.extraConfig
   );
+
+  accountsYaml = lib.mapAttrs (name: a: {
+    name = name;
+    library_type = a.libraryType;
+    username = a.username;
+    base_url = a.baseUrl;
+    display_name = a.displayName;
+    colour = a.colour;
+    enabled = true;
+    password_credential = credentialName name;
+    loan_period_days = a.loanPeriodDays;
+  }) enabledAccounts;
+
+  # The generated file carries no secret text, only credential names, but
+  # the split mirrors the standalone layout: open config plus secrets file.
+  secretsConfigYaml = yamlFormat.generate "bib-tracker-secrets.yaml" {
+    accounts = accountsYaml;
+  };
 in
 {
   options.services.bib-tracker = {
@@ -324,10 +359,10 @@ in
       description = "Assumed purchase price in EUR per media class, used for \"money saved\" when no list price could be found. Figures derived from these are always labelled as estimates.";
     };
 
-    settings = lib.mkOption {
-      type = lib.types.attrsOf lib.types.str;
+    extraConfig = lib.mkOption {
+      type = lib.types.attrsOf lib.types.raw;
       default = { };
-      description = "Extra BIB_TRACKER_* environment variables, for settings without a dedicated option.";
+      description = "Extra keys for the generated config file, for settings without a dedicated option.";
     };
   };
 
@@ -351,31 +386,9 @@ in
       after = [ "network-online.target" ];
       wants = [ "network-online.target" ];
 
-      environment = {
-        BIB_TRACKER_DB_PATH = toString cfg.dbPath;
-        BIB_TRACKER_HOST = cfg.listenAddress;
-        BIB_TRACKER_PORT = toString cfg.port;
-        BIB_TRACKER_LOG_LEVEL = cfg.logLevel;
-        BIB_TRACKER_ACCOUNTS_FILE = toString accountsJson;
-        BIB_TRACKER_POLL_INTERVAL_MINUTES = toString cfg.poll.intervalMinutes;
-        BIB_TRACKER_POLL_JITTER_SECONDS = toString cfg.poll.jitterSeconds;
-        BIB_TRACKER_POLL_MAX_CONCURRENT = toString cfg.poll.maxConcurrent;
-        BIB_TRACKER_POLL_ON_STARTUP = lib.boolToString cfg.poll.onStartup;
-        BIB_TRACKER_ZERO_RESULT_CONFIRMATIONS = toString cfg.poll.zeroResultConfirmations;
-        BIB_TRACKER_RENEW_THRESHOLD_DAYS = toString cfg.renewThresholdDays;
-        BIB_TRACKER_METADATA_ENABLED = lib.boolToString cfg.metadata.enable;
-        BIB_TRACKER_METADATA_PROVIDERS = builtins.toJSON cfg.metadata.providers;
-        BIB_TRACKER_PRICE_PROVIDERS = builtins.toJSON cfg.metadata.priceProviders;
-        BIB_TRACKER_METADATA_BASE_URLS = builtins.toJSON cfg.metadata.baseUrls;
-        BIB_TRACKER_METADATA_RATE_LIMITS = builtins.toJSON cfg.metadata.rateLimits;
-        # Credential names, resolved against $CREDENTIALS_DIRECTORY at runtime.
-        BIB_TRACKER_METADATA_API_KEY_FILES = builtins.toJSON (
-          lib.mapAttrs (name: _: "provider-${name}-key") cfg.metadata.apiKeyFiles
-        );
-        BIB_TRACKER_USER_AGENT_CONTACT = cfg.metadata.userAgentContact;
-        BIB_TRACKER_DEFAULT_PRICES = builtins.toJSON cfg.defaultPrices;
-      }
-      // cfg.settings;
+      # The application merges these two YAML files; the unit no longer
+      # needs a BIB_TRACKER_* variable for anything.
+      environment.BIB_TRACKER_CONFIG_FILES = "${publicConfigYaml}:${secretsConfigYaml}";
 
       serviceConfig = {
         Type = "exec";
