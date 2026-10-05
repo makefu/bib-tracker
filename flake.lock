@@ -7,18 +7,18 @@
         ]
       },
       "locked": {
-        "lastModified": 1788214649,
-        "narHash": "sha256-1Nl/m39sZIN0Hx690USiK8ZDlJ01e7F5YSbYBU7noa4=",
-        "ref": "main",
-        "rev": "46ced1382af24d60086408754abb8b7fcf94cd9c",
-        "revCount": 76,
-        "type": "git",
-        "url": "file:///home/makefu/r/ha_stadtbibliothek"
+        "lastModified": 1791205201,
+        "narHash": "sha256-Vrpm7tZhXeb5cdE6mvWi6xIaZrcso9GmJuEIcL4ij6k=",
+        "owner": "makefu",
+        "repo": "ha_stadtbibliothek",
+        "rev": "b6fefff0da98ab6d0312d505c9e09aa63a2782c1",
+        "type": "github"
       },
       "original": {
-        "ref": "main",
-        "type": "git",
-        "url": "file:///home/makefu/r/ha_stadtbibliothek"
+        "owner": "makefu",
+        "ref": "v1.4.1",
+        "repo": "ha_stadtbibliothek",
+        "type": "github"
       }
     },
     "nixpkgs": {

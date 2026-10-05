@@ -3,7 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    ha-stadtbibliothek.url = "git+file:///home/makefu/r/ha_stadtbibliothek?ref=main";
+    ha-stadtbibliothek.url = "github:makefu/ha_stadtbibliothek/v1.4.1";
     ha-stadtbibliothek.inputs.nixpkgs.follows = "nixpkgs";
   };
 
