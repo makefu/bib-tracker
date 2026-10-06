@@ -36,16 +36,24 @@ PLACEHOLDER_MARKERS = ("no-image", "no_image", "nocover", "blank")
 MIN_DIMENSION = 40
 
 
-async def store_cover(db: Database, http: Any, media_id: int, url: str) -> bool:
+async def has_cover(db: Database, media_id: int) -> bool:
+    """Whether a work already has a stored cover.
+
+    The ladders' shared guard: once one source answered, nobody else is asked.
+    """
+    existing = await db.fetch_one("SELECT cover_sha256 FROM media WHERE id = ?", (media_id,))
+    return existing is not None and bool(existing["cover_sha256"])
+
+
+async def store_cover(db: Database, http: Any, media_id: int, url: str, provider: str = "covers") -> bool:
     """Fetch, thumbnail and store a cover. Returns whether one was stored."""
     if any(marker in url.lower() for marker in PLACEHOLDER_MARKERS):
         return False
 
-    existing = await db.fetch_one("SELECT cover_sha256 FROM media WHERE id = ?", (media_id,))
-    if existing is not None and existing["cover_sha256"]:
+    if await has_cover(db, media_id):
         return False
 
-    response = await http.get(url, provider="covers", rate_limit_per_minute=120)
+    response = await http.get(url, provider=provider, rate_limit_per_minute=120)
     if not response.ok or not response.body:
         return False
     if len(response.body) > MAX_BYTES:
@@ -71,7 +79,7 @@ async def store_cover(db: Database, http: Any, media_id: int, url: str) -> bool:
                 INSERT INTO images (sha256, variant, mime, byte_size, width, height,
                                     source_url, provider, fetched_at, data)
                 VALUES (:sha, :variant, 'image/webp', :size, :width, :height,
-                        :url, 'covers', :now, :data)
+                        :url, :provider, :now, :data)
                 ON CONFLICT (sha256, variant) DO NOTHING
                 """,
                 {
@@ -81,6 +89,7 @@ async def store_cover(db: Database, http: Any, media_id: int, url: str) -> bool:
                     "width": size[0],
                     "height": size[1],
                     "url": url,
+                    "provider": provider,
                     "now": now,
                     "data": data,
                 },

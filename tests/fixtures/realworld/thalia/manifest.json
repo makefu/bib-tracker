@@ -1,0 +1,24 @@
+{
+ "provider": "thalia",
+ "recorded_at": "2026-10-06T17:01:03+00:00",
+ "corpus_entry": {
+  "class": "book",
+  "title": "So geht Technik! : Warum Toaster toasten, Flugzeuge fliegen und Wasser aus dem Hahn kommt",
+  "author": "Farndon, John",
+  "isbn": "9783836958424"
+ },
+ "captures": [
+  {
+   "file": "00-suche-9783836958424-403.html",
+   "method": "GET",
+   "url": "https://www.thalia.de/suche",
+   "params": {
+    "sq": "9783836958424"
+   },
+   "payload": null,
+   "status": 403
+  }
+ ],
+ "expected": {},
+ "blocked": "thalia: bot challenge (status 403)"
+}

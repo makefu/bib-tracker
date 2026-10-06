@@ -27,6 +27,7 @@ bib-tracker = "bib_tracker.cli:main"
 bib-tracker-migrate = "bib_tracker.cli:migrate"
 bib-tracker-poll = "bib_tracker.cli:poll_once"
 bib-tracker-rebuild = "bib_tracker.cli:rebuild"
+bib-tracker-lookup = "bib_tracker.cli_lookup:lookup"
 
 [tool.setuptools.packages.find]
 where = ["src"]

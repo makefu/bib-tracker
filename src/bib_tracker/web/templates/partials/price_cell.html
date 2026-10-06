@@ -3,14 +3,23 @@
   the swap: the row include renders it, and the price endpoint re-renders this
   same file, so a swap back is self-consistent. Click the value, type, leave
   the field to save; Escape discards.
+
+  The table must not grow, so the comparison list and the provider name live
+  in the tooltip instead of the cell. Callers that do not pass price_options
+  (an older include, a fragment swap without context) render unchanged.
 #}
+{% set price_options = price_options | default([]) %}
 <td class="nums cell-price" x-data="{ edit: false, cancel: false }">
   <button
     type="button"
+    {% if exhausted is defined and exhausted %}
+    class="cell-price__view cell-price--exhausted"
+    {% else %}
     class="cell-price__view"
+    {% endif %}
     x-show="!edit"
     @click="edit = true; $nextTick(() => $refs.input.focus())"
-    title="{{ media.price_basis | price_basis_label }} — zum Bearbeiten klicken"
+    title="{{ media.price_basis | price_provider_label(media.price_provider) }}{% for opt in price_options %} · {{ opt.provider | provider_label }} {{ opt.cents | eur }}{% endfor %}{% if exhausted is defined and exhausted %} — keine Preisquelle gefunden{% endif %} — zum Bearbeiten klicken"
   >
     {{ media.effective_price_cents | eur }}{% if media.price_basis and media.price_basis != 'manual' %}*{% endif %}
   </button>

@@ -1,0 +1,1599 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+	
+    	<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="apple-touch-fullscreen" content="YES">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#ffffff">
+<link rel="preconnect" href="//app.usercentrics.eu">
+<link rel="preconnect" href="//api.usercentrics.eu">
+<link rel="preload" href="//app.usercentrics.eu/browser-ui/latest/loader.js" as="script">
+<script>window.kameleoonQueue = window.kameleoonQueue || [];</script>
+<link rel="preload" href="//vqkseaalcr.kameleoon.io/engine.js" as="script" fetchpriority="high" />
+<script type="text/plain" data-usercentrics="Kameleoon" src="//vqkseaalcr.kameleoon.io/engine.js" async fetchpriority="high"></script>
+
+<link rel="icon" type="image/png" href="/assets/images/favicons/thalia/favicon-96x96.png" sizes="96x96">
+<link rel="icon" type="image/svg+xml" href="/assets/images/favicons/thalia/favicon.svg">
+<link rel="shortcut icon" href="/assets/images/favicons/thalia/favicon.ico">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/images/favicons/thalia/apple-touch-icon.png">
+<link rel="manifest" href="/assets/images/favicons/thalia/site.webmanifest">
+
+<meta name="ga-measurementId" content="G-E9KFHF4FDJ">
+<meta name="ga-measurementId-staging" content="G-YR5VVE1G1T">
+<meta name="mandant" content="2">
+<meta name="braze-sdk-url" content="/assets/static/braze.8550b611aee2.js">
+
+<meta name="origin-country" content="DE">
+
+
+
+
+<script>
+    // Alte Engines (z.B. Chromium 61 auf eReadern) kennen globalThis nicht,
+    // gtag.js referenziert es aber ungeschützt.
+    window.globalThis = window.globalThis || window;
+
+    document.cookie = "sgtm_mandantid=2; path=/; max-age=31536000" + (location.protocol === 'https:' ? "; secure" : "") + "; SameSite=Lax";
+    window.GA_MEASUREMENT_ID = "G-E9KFHF4FDJ";
+    window.dataLayer = window.dataLayer || [];
+    window.newDataLayer = window.newDataLayer || [];
+
+    // Für externe Skripte beibehalten: DataLayer-Restructuring ist dauerhaft aktiv
+    window.DATALAYER_RESTRUCTURING_ENABLED = true;
+
+    // Drei DataLayer für klare Trennung:
+    // - dataLayer:     GTM
+    // - ga4DataLayer:  GA4-Events (von DataLayerService gepusht, vom tracking-google-analytics Listener konsumiert)
+    // - gtagDataLayer: gtag-internal (gtag-Auto-Pushes, isoliert von GTM und Listener)
+    window.ga4DataLayer = window.ga4DataLayer || [];
+    window.gtagDataLayer = window.gtagDataLayer || [];
+
+    // gtag-Funktion definieren, falls noch nicht vorhanden
+    window.gtag = window.gtag || function() {
+        window.gtagDataLayer.push(arguments);
+    };
+</script>
+
+    <script type="text/javascript" async src="/tag/gtag/js?id=G-E9KFHF4FDJ&l=gtagDataLayer"></script>
+    <script src="/merkur/resources/tracking-gtag/main.nomodule.d32725ebe78d8eb191aa.js" data-measurement-id="G-E9KFHF4FDJ"></script>
+
+<link rel="stylesheet" crossorigin="anonymous" href="/assets/static/shell.aabb693f6878.css">
+<script nomodule crossorigin="anonymous" src="/assets/static/polyfills.fdc217f99720.js"></script>
+<script crossorigin="anonymous" src="/assets/static/shell.d23a48e9de7a.js"></script>
+        <script type="module" src="/heimdall/resources/app-webview-uc-suppress/main.module.abe191f3ec00d267c088.js"></script>
+        <script defer="" nomodule="" src="/heimdall/resources/app-webview-uc-suppress/main.nomodule.b85557b832619256d301.js"></script>        <script type="module" src="/heimdall/resources/set-consent-cookie/main.module.04c09caaf145188fd426.js"></script>
+        <script defer="" nomodule="" src="/heimdall/resources/set-consent-cookie/main.nomodule.02cec877c050c1eb4cec.js"></script>
+        <script id="usercentrics-cmp" src="https://app.usercentrics.eu/browser-ui/latest/loader.js" data-settings-id="l0wZml9R6lVXGX" async></script>
+    <style>
+        .uc-embed button {
+            outline: revert !important;
+        }
+        .uc-embed p,
+        .uc-embed a,
+        .uc-embed li {
+            font-size: 1rem !important;
+        }
+        .uc-embed ul {
+            padding-left: 40px !important;
+        }
+    </style>
+<script async="" src="/heimdall/resources/sentry-heimdall/main.nomodule.9a08c31f00a358b7abf8.js" data-project-name="heimdall" data-project-dsn="4de45a9289468d24c6955827664580b7" data-project-id="69" data-project-files=".*heimdall/resources.*js" data-release-version="0-SNAPSHOT"></script>
+<script>
+    // Alte Engines (z.B. Chromium 61 auf eReadern) kennen globalThis nicht.
+    window.globalThis = window.globalThis || window;
+</script>
+
+<script type="module" src="/merkur/resources/sentry-config-merkur/main.module.c666aa77b4d1e5ea1ba6.js"></script>
+<template id="sentry-config-merkur">
+    <sentry-config project-name="merkur" project-dsn="6c7a52cfe061cbb2efc5a589fc0b0462" project-id="74" project-files=".*merkur\/resources.*\.js" release-version=""></sentry-config>
+</template>
+    <script type="module" src="/merkur/resources/data-layer/main.module.b39f2cb70eec915fa60d.js"></script>
+    <script nomodule="" defer="" src="/merkur/resources/data-layer/main.nomodule.93de9214ca004e8c576c.js"></script>
+<script type="module" src="/merkur/resources/product-attribution/main.module.54fe9a0c576cb2090c77.js"></script>
+<script defer="" nomodule="" src="/merkur/resources/product-attribution/main.nomodule.3c9c9e35a8f837d67ba4.js"></script>
+<script>
+    window.ga4MerkurActive = true;
+</script>
+<script type="text/plain" data-usercentrics="Google Analytics" src="/merkur/resources/tracking-google-analytics/main.nomodule.c300b60da7adb413358f.js"></script><script type="script-consent" src="/merkur/resources/tracking-google-analytics-legacy/main.nomodule.c300b60da7adb413358f.js"></script>
+    <!--  defer nicht nutzen, da sonst DataLayer nicht korrekt gefüllt wird!  -->
+    <script defer="" src="/affiliate/resources/affiliate-header-script/main.nomodule.c8ff2706cfff21ebf1de.js"></script>
+<script defer="" src="/affiliate/resources/affiliate-sentry/main.nomodule.3fe9ae59ca20704f8e14.js"></script>
+<script type="module" src="/filialservice/components/buchhandlung-global-header/src/main.module.6bf2f5f3f22e88ee7596.js" data-filialcookie="abholfiliale" data-overlay-url="/include/buchhandlung/{sapId}"></script>
+<script defer="" nomodule="" src="/filialservice/components/buchhandlung-global-header/src/main.nomodule.d7b1106d87bc9e6672d1.js" data-filialcookie="abholfiliale" data-overlay-url="/include/buchhandlung/{sapId}"></script>
+
+<script defer="" src="/club/kunde/components/club-cookie/src/.nomodule.5f2730c4d8db89663cd8.js"></script>
+
+    
+<script type="text/plain" cms-livebuy-snippet-id="eyJhIjoiMWJkZWE2ZDQiLCJsIjoiaHR0cHM6Ly9hcGkubGl2ZWJ1eS5pbyJ9"></script>
+<script type="module" src="https://assets.thalia.media/red/cms/components/content-livebuy-popup/src/main.module.5417622ba9e343c82451.js"></script>
+<script defer="" nomodule="" src="https://assets.thalia.media/red/cms/components/content-livebuy-popup/src/main.nomodule.d7adc20632da5f0ede32.js"></script>
+
+
+<script type="template" id="cookiemonster-tracking-code" data-tracking-code-url="/cookiemonster/v1/sprite03.png"></script>
+<script type="script-consent" src="https://assets.thalia.media/ocsassets/cookiemonster/cookiemonster-tracking-code/main-heimdall.nomodule.3e55357b8fbd60e9ca75.js"></script>
+<script type="text/plain" data-usercentrics="Cookiemonster" src="https://assets.thalia.media/ocsassets/cookiemonster/cookiemonster-tracking-code/main.nomodule.cac674ef9d20ff945ad9.js"></script>
+
+<script type="module" src="/filialauswahl-resources/kundenfiliale-zuordnung/main.module.009bc57fe1f9d317ba17.js"></script>
+<script defer="" nomodule="" src="/filialauswahl-resources/kundenfiliale-zuordnung/main.nomodule.e79b2231ea4f92e4b0b2.js"></script>
+
+        <script defer="" src="/login/resources/header-login-trigger/main.nomodule.d7a002ce1b03cc663708.js"></script>
+    
+<script type="module" src="/merkur/resources/tracking-merkur/main.module.20a6e44d1c6463c06e3e.js"></script>
+<script defer="" nomodule="" src="/merkur/resources/tracking-merkur/main.nomodule.5eb3478dcae76d0c56c8.js"></script>
+
+<script type="module" src="/merkzettel/resources/global-header-merkzettel/main.module.c7a1562e2a1ebbad3969.js"></script>
+<script defer="" nomodule="" src="/merkzettel/resources/global-header-merkzettel/main.nomodule.29af89c8d9932809f943.js"></script>
+
+
+
+<noscript>
+    <style>
+        artikel-merken-herz {
+            display: none
+        }
+    </style>
+</noscript>
+<link rel="stylesheet" href="/merkzettel/resources/artikel-merken-herz/style.67a3b1629bb3a1fcb839.thalia.css">
+<script type="module" src="/merkzettel/resources/artikel-merken-herz/main.module.baa7ece12fb861ba312e.js"></script>
+<script defer="" nomodule="" src="/merkzettel/resources/artikel-merken-herz/main.nomodule.a3a3a6d797ff2df70c9f.js"></script>
+<template id="sbe-merkenherz">
+    
+    <artikel-merken id="sbe-merkenherz-unmarked" data-overlay-url="/kundenliste/include/overlay">
+        <form action="/api/rest/public/merkzettel/admin/artikeldetails/v2/__ARTIKELNUMMER__.html" method="POST">
+            <button class="element-button-select-bookmark" dl-event="add_to_wishlist">
+                Auf meinen Merkzettel
+            </button>
+        </form>
+        <app-webview-detector></app-webview-detector>
+    </artikel-merken>
+    
+    <artikel-entfernen id="sbe-merkenherz-marked" data-list-type="merkzettel" data-full-delete-action="/api/rest/public/merkzettel/admin/artikel-global/__ARTIKELNUMMER__">
+        <form action="/api/rest/public/merkzettel/admin/artikeldetails/v2/__ARTIKELNUMMER__.html?pruefeAufKundenListe=true" method="DELETE">
+            <button class="element-button-select-bookmark" dl-event="remove_from_wishlist" selected>
+                Von meinem Merkzettel entfernen
+            </button>
+        </form>
+        <app-webview-detector></app-webview-detector>
+    </artikel-entfernen>
+    <div class="element-button-select-bookmark"></div>
+    <div class="element-button-select-bookmark-negative"></div>
+</template>
+
+<script type="module" src="/merkzettel/resources/artikel-entfernen-overlay/main.module.7f2e1e5f9eaf359ade8b.js"></script>
+<script defer="" nomodule="" src="/merkzettel/resources/artikel-entfernen-overlay/main.nomodule.b87f62a337b7e5ddc099.js"></script>
+<link rel="stylesheet" href="/merkzettel/resources/artikel-entfernen-overlay/style.dee90ace65a885aea3c0.thalia.css">
+<template id="sbe-merkzettel-template-artikel-entfernen-overlay">
+    <dialog class="element-overlay-slide-in" id="sbe-merkzettel-artikel-entfernen-overlay" closedby="any">
+        <header>
+            <h2 class="element-headline-medium">Artikel entfernen</h2>
+            <button class="element-button-primary-close" command="close" commandfor="sbe-merkzettel-artikel-entfernen-overlay" cta="close">
+                Artikel entfernen Popover schließen
+            </button>
+        </header>
+        <div>
+            <p class="element-text-standard" data-for="merkzettel" hidden>Soll der Artikel aus dem Merkzettel und allen Listen gelöscht werden?</p>
+            <p class="element-text-standard" data-for="kundenliste" hidden>Soll der Artikel aus der Liste entfernt, oder vom gesamten Merkzettel gelöscht werden?</p>
+        </div>
+        <footer class="button-group">
+            <button class="element-button-secondary" command="close" commandfor="sbe-merkzettel-artikel-entfernen-overlay">
+                Abbrechen
+            </button>
+            <form data-for="kundenliste" action="" data-action="delete-from-single-list" method="DELETE" hidden>
+                <button type="submit" class="element-button-primary" data-action="delete-from-single-list">
+                    Aus dieser Liste entfernen
+                </button>
+            </form>
+            <form action="" data-action="delete-from-merkzettel-and-all-lists" method="DELETE">
+                <button type="submit" class="element-button-primary" data-action="delete-from-merkzettel-and-all-lists">
+                    Löschen
+                </button>
+            </form>
+        </footer>
+    </dialog>
+</template>
+
+
+
+<script type="module" src="/merkzettel/resources/merkzettel-hinweis/main.module.16204c1f63a1d2d4f923.js"></script>
+<script defer="" nomodule="" src="/merkzettel/resources/merkzettel-hinweis/main.nomodule.1814ddad291033ffb0cd.js"></script>
+<link rel="stylesheet" href="/merkzettel/resources/merkzettel-hinweis/style.88dfeaff7462153e4d91.thalia.css">
+<template id="merkzettel-hinweis" component="merkzettel-hinweis">
+    <div data-typ="success" popover="manual" class="element-snackbar-success hinweis" data-animation="slidein-bottom">
+        <strong data-titel class="element-text-standard-strong"></strong>
+        
+    <button cta="close" class="element-button-quaternary-close">
+        Popover schließen
+    </button>
+
+    </div>
+    <div data-typ="warning" popover="manual" class="element-snackbar-warning hinweis" data-animation="slidein-bottom">
+        <strong data-titel class="element-text-standard-strong"></strong>
+        <p class="element-text-standard">Laden Sie die Seite neu und versuchen es noch einmal.</p>
+        
+    <button cta="close" class="element-button-quaternary-close">
+        Popover schließen
+    </button>
+
+    </div>
+    <div data-typ="success-cta" popover="manual" role="status" class="element-snackbar-success hinweis" data-animation="slidein-bottom">
+        <strong data-titel class="element-text-standard-strong"></strong>
+        <button class="element-link-standard" command="show-modal" commandfor="sbe-merkzettel-artikel-merken-overlay" aria-haspopup="dialog">
+            Zu Listen hinzufügen
+        </button>
+        
+    <button cta="close" class="element-button-quaternary-close">
+        Popover schließen
+    </button>
+
+    </div>
+</template>
+
+<script type="template" data-template="merkzettel-limit-hinweis">
+    <merkzettel-limit-hinweis component="merkzettel-limit-hinweis" >
+        <link rel="stylesheet" href="/merkzettel/resources/merkzettel-limit-hinweis/style.9dd19038d6ea483f67a9.thalia.css">
+        <dialog class="element-overlay-slide-in" id="sbe-merkzettel-limit-hinweis">
+            <header>
+                <h2 class="element-headline-medium">
+                    Merkzettel leider zu voll
+                </h2>
+                <button class="element-button-primary-close" command="close" commandfor="sbe-merkzettel-limit-hinweis" cta="close">
+                    Hinweis schliessen
+                </button>
+            </header>
+            <div class="content">
+                <p class="element-text-standard">Um weitere Artikel auf den Merkzettel zu legen und alle Vorteile zu nutzen!</p>
+                <a href="/shop/home/login/login/" class="element-button-primary" interaction="konto-anlegen">Jetzt Konto anlegen</a>
+                <p class="element-text-standard">Haben Sie bereits ein Konto?</p>
+                <a href="/shop/home/login/login/" class="element-link-standard-variant-strong" interaction="anmelden">
+                    jetzt anmelden
+                    <span class="element-icon-chevron-rechts" size="small" spacing="inline-start"></span>
+                </a>
+            </div>
+        </dialog>
+    </merkzettel-limit-hinweis>
+</script>
+<script type="module" src="/merkzettel/resources/merkzettel-limit-hinweis/main.module.83e6a63bf019eb865dba.js"></script>
+<script defer="" nomodule="" src="/merkzettel/resources/merkzettel-limit-hinweis/main.nomodule.16fa4b598d7e000b9799.js"></script>
+
+    
+        <script defer="" src="/warenkorb-resources/header-warenkorb/main.nomodule.391884b2fc65609839eb.js"></script>
+        <link rel="stylesheet" href="/warenkorb-resources/hinzugefuegt-overlay/style.a3f28650b79294a0129c.thalia.css">
+<script type="module" src="/warenkorb-resources/hinzugefuegt-overlay/main.module.f5894ba98d4184e4223e.js"></script>
+<script defer="" nomodule="" src="/warenkorb-resources/hinzugefuegt-overlay/main.nomodule.5c283fb4d1812902b288.js"></script>
+
+        <link rel="stylesheet" href="/warenkorb-resources/addtocart-button/style.d3a3a173eef4e219da60.thalia.css">
+<script name="addtocart" is-app="false" type="module" src="/warenkorb-resources/addtocart-button/main.module.18aa825ef51607d1a6b4.js"></script>
+
+
+    
+
+<script type="module" src="/kundeninteressen/resources/kundeninteressen-loader/main.module.86406662f744f534d15f.js" data-load-url="/kundeninteressen/include/abfragen"></script>
+<script defer="" nomodule="" src="/kundeninteressen/resources/kundeninteressen-loader/main.nomodule.b99c607cbe17da485eb0.js" data-load-url="/kundeninteressen/include/abfragen"></script>
+<script type="module" src="/abokaufen/resources/abodaten-loader/main.module.bc8e37d9379803ea6b0c.js" data-abodaten-url="/abokaufen/api/rest/abodaten"></script>
+<script defer="" nomodule="" src="/abokaufen/resources/abodaten-loader/main.nomodule.b52a7afa44d26c34b082.js" data-abodaten-url="/abokaufen/api/rest/abodaten"></script>
+
+<script type="module" src="/leseexemplarservice/components/leseexemplar-loginstatus/main.module.99cf921a745409edc134.js"></script>
+<script defer="" nomodule="" src="/leseexemplarservice/components/leseexemplar-loginstatus/main.nomodule.094ddf0f3d2b47faae1f.js"></script>
+
+<link rel="stylesheet" href="/fehler/static/website-redirect/style.39ef80348c15b8d76ae0.thalia.css">
+<script type="module" src="/fehler/static/website-redirect/main.module.36939b7442bb34393045.js"></script>
+<script defer="" nomodule="" src="/fehler/static/website-redirect/main.nomodule.82218b3e047a9c82a3f1.js"></script>
+<template id="website-redirect" component="website-redirect">
+    <dialog class="element-overlay-small" id="website-redirect-dialog" closedby="any">
+    <header>
+        <h2 class="element-headline-medium">Sie wurden von Weltbild.de zu Thalia.de umgeleitet</h2>
+        <button class="element-button-primary-close" command="close" commandfor="website-redirect-dialog" cta="close">Overlay schließen</button>
+    </header>
+    <p class="element-text-standard">Weltbild.de ist nicht mehr online – doch es gibt gute Nachrichten. Unter Thalia.de erwartet Sie ein neues Einkaufserlebnis. Weitere Informationen finden Sie auf unserer <a href='/vorteile/weltbild-umstellung/weltbild'>Hilfe-Seite</a>.</p>
+</dialog>
+</template>
+<link rel="stylesheet" href="/fehler/static/laender-weiche/style.2adc6efd3b0c2ef9c514.thalia.css">
+<script type="module" src="/fehler/static/laender-weiche/main.module.6cd337632fe10fdb6cb2.js"></script>
+<script defer="" nomodule="" src="/fehler/static/laender-weiche/main.nomodule.7350e384c6b26bf2c397.js"></script>
+<template id="laenderweiche" component="laender-weiche" data-expected-country="DE" data-hauptmandant-id="2">
+    <laender-weiche>
+        <dialog class="element-overlay-small" id="laenderweiche-dialog" dialog_name="laenderweiche" closedby="any">
+            <header>
+                <h2 class="element-headline-medium">Wählen Sie Ihren Shop</h2>
+                <button class="element-button-primary-close" command="close" commandfor="laenderweiche-dialog" interaction="button-laenderweiche-schliessen">Overlay schließen</button>
+            </header>
+            <p class="element-text-standard">Wählen Sie Ihr Land für verfügbare Lieferoptionen.</p>
+            <form class="laenderweiche-form" method="dialog">
+                <label class="laenderweiche-option">
+                    <input type="radio" class="element-input-radio" name="country" value="https://www.thalia.at" checked>
+                    <span class="element-text-standard-strong">Österreich – zu Thalia.at wechseln.</span>
+                    <span class="laenderweiche-flag laenderweiche-flag--at"></span>
+                </label>
+                <label class="laenderweiche-option">
+                    <input type="radio" class="element-input-radio" name="country" value="" >
+                    <span class="element-text-standard-strong">Deutschland – bei Thalia.de bleiben.</span>
+                    <span class="laenderweiche-flag laenderweiche-flag--de"></span>
+                </label>
+                <button type="submit" class="element-button-primary" interaction="button-laenderweiche-auswaehlen">Auswählen</button>
+            </form>
+        </dialog>
+    </laender-weiche>
+</template>
+
+<link rel="stylesheet" href="/fehler/static/osiander-redirect/style.d78de5d247a92914f15c.thalia.css">
+<script type="module" src="/fehler/static/osiander-redirect/main.module.5b9082f77e361df16910.js"></script>
+<script defer="" nomodule="" src="/fehler/static/osiander-redirect/main.nomodule.2d3cab876b5ac5eb05db.js"></script>
+<template id="osiander-redirect" component="osiander-redirect" data-hauptmandant-id="2">
+    <osiander-redirect>
+        <dialog class="element-overlay-small osiander-redirect" id="osiander-redirect-dialog" dialog_name="osiander-redirect" closedby="any">
+            <header>
+                <span class="osiander-redirect-logo" role="img" aria-label="Osiander"></span>
+                <button class="element-button-primary-close" command="close" commandfor="osiander-redirect-dialog" cta="close" interaction="button-osiander-redirect-schliessen">Overlay schließen</button>
+            </header>
+            <div class="osiander-redirect-body">
+                <h2 class="element-headline-medium">Ihr Einkaufs- und Lesevergnügen - jetzt noch besser.</h2>
+                <p class="element-text-standard">Osiander und Thalia arbeiten seit Jahren erfolgreich zusammen. Unsere digitalen Angebote bündeln wir nun gemeinsam unter einem Dach unter thalia.de. Ihre bisher erworbenen eBooks und Hörbücher sowie Ihr Kundenkonto bleiben selbstverständlich erhalten. Machen Sie einfach dort weiter, wo Sie aufgehört haben. Einfach und unkompliziert.</p>
+                <p class="element-text-standard">Eines bleibt unverändert: Osiander ist und bleibt Osiander – eigenständig, familiengeführt und mit über 60 Buchhandlungen vor Ort persönlich für Sie da.</p>
+                <div class="osiander-redirect-actions">
+                    <a class="element-button-secondary" href="/vorteile/osiander/informationen" interaction="button-osiander-redirect-faq">Weitere Informationen</a>
+                    <button class="element-button-primary" command="close" commandfor="osiander-redirect-dialog" interaction="button-osiander-redirect-weiter">Weiter einkaufen</button>
+                </div>
+                <footer>
+                    <span class="osiander-redirect-combo" role="img" aria-label="Osiander und Thalia">
+                        <span class="osiander-redirect-combo-osiander"></span>
+                        <span class="osiander-redirect-combo-times" aria-hidden="true">&times;</span>
+                        <span class="osiander-redirect-combo-thalia"></span>
+                    </span>
+                    <p class="element-text-standard">Ein Zugang. Mehr Möglichkeiten. Und genauso viel Freude am Lesen.</p>
+                </footer>
+            </div>
+        </dialog>
+    </osiander-redirect>
+</template>
+
+
+    	<!-- Anleitung Usercentrics: https://docs.usercentrics.com/#/consent-mode -->
+<script type="text/javascript">
+    window.dataLayer = window.dataLayer || [];
+    window.newDataLayer = window.newDataLayer || [];
+    window.gtagDataLayer = window.gtagDataLayer || [];
+
+    // Für abhängige Services: DataLayer-Restructuring ist dauerhaft aktiv
+    window.DATALAYER_RESTRUCTURING_ENABLED = true;
+
+    // gtag-Funktion definieren, falls noch nicht vorhanden
+    window.gtag = window.gtag || function() {
+        window.gtagDataLayer.push(arguments);
+    };
+
+    // gtag-Funktion für den dataLayer, damit Consent Signale in der GTM Preview erkannt werden
+    window.gtagGtm = window.gtagGtm || function() {
+        window.dataLayer.push(arguments);
+    };
+
+    // gtag-Funktion für den newDataLayer, damit Consent Signale in der GTM Preview erkannt werden
+    window.gtagGtmLegacy = window.gtagGtmLegacy || function() {
+        window.newDataLayer.push(arguments);
+    };
+
+    var services = {
+        ad_user_data: "denied",
+        ad_personalization: "denied",
+        ad_storage: "denied",
+        analytics_storage: "denied",
+        wait_for_update: 2000
+    }
+
+    // gtag verwenden (schreibt in gtagDataLayer)
+    window.gtag('consent', 'default', services);
+    window.gtag('set', 'ads_data_redaction', true);
+    window.gtagGtm('consent', 'default', services);
+    window.gtagGtm('set', 'ads_data_redaction', true);
+    window.dataLayer.push({ event: "como_default", services: services });
+    window.gtagGtmLegacy('consent', 'default', services);
+    window.gtagGtmLegacy('set', 'ads_data_redaction', true);
+    window.newDataLayer.push({ event: "como_default", services: services });
+</script>
+
+
+    <script src="/heimdall/resources/consent-mode-update/main.nomodule.03bc48d694ef2dc9bf73.js"></script>
+
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'/gtaggateway/?id='+i+dl+ '&gtm_auth=ar947Vw4nfrp-XzpGhDjag&gtm_preview=env-1&gtm_cookies_win=x';f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-TZ8MFS5P');</script>
+
+<script type="text/plain" data-usercentrics="Google Tag Manager">
+	(function (w, d, s, l, i) {
+    w[l] = w[l] || []; w[l].push({
+      'gtm.start':
+        new Date().getTime(), event: 'gtm.js'
+    }); var f = d.getElementsByTagName(s)[0],
+      j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
+        '/gtaggateway-legacy/?id=' + i + dl; f.parentNode.insertBefore(j, f);
+  })(window, document, 'script', 'newDataLayer', 'GTM-3TL3');
+</script>
+
+
+	
+
+	
+        <title>Suche - Jetzt nach Artikel, Autor oder ISBN suchen | Thalia</title>
+        <meta name="description" content="">
+	
+
+    
+
+    
+
+	
+        
+    
+	
+                    <meta name="robots" content="noindex,follow">
+
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+        }
+        header-prime {
+            margin-bottom: 25px!important;
+        }
+    </style>
+    <link rel="stylesheet" href="/suche/resources/layout-zentriert-suche/style.8563afd71d014f7f827a.thalia.css"><script> </script>
+</head>
+
+<body>
+	<layout-zentriert-suche>
+        <header class="header">
+			
+	            
+    
+<header-prime component="header-prime"  data-cs-override-id="header-prime">
+    <script type="module" src="https://assets.thalia.media/red/cms/components/header-prime/src/main.module.60a7ad326a2476d510e1.js" defer=""></script>
+    <script nomodule="" src="https://assets.thalia.media/red/cms/components/header-prime/src/main.nomodule.b3bce989b138b81727e9.js" defer=""></script>
+    <link rel="stylesheet" href="https://assets.thalia.media/red/cms/components/header-prime/style.1e956d20ad99c9541792.thalia.css">
+    <style>
+        .dialog-open header-prime {
+            padding-right: var(--scrollbar-width);
+        }
+        .dialog-open header-prime .header-prime-topbar-container {
+            margin-right: calc(-1 * var(--scrollbar-width));
+        }
+        #cCallcenterLoginReminder {
+            display: none;
+        }
+    </style>
+    <div class="skip-link">
+        <ul class="item-list element-background-grey" data-color="10">
+            <li class="list-item">
+                <a href="#content" class="element-link-standard" interaction="link-content">Direkt zum Inhalt</a>
+            </li>
+            <li class="list-item">
+                <a href="#suche-global-popover-searchbox-input" class="element-link-standard" interaction="link-suche">Weiter zur Suche</a>
+            </li>
+        </ul>
+    </div>
+    <div class="element-background-grey" data-color="00">
+            <div class="header-prime-scripts">
+                <div id="wt_refpoint"></div>
+                    
+                    
+            </div>
+        <div class="header-prime-topbar-container element-background-main-accent">
+            <div class="header-prime-topbar header-content">
+            </div>
+        </div>
+        <div class="header-prime-grid header-content">
+            <div class="header-prime-logo">
+<header-prime-logo component="header-prime-logo">
+    <link rel="stylesheet" href="https://assets.thalia.media/red/cms/components/header-prime-logo/style.b6dea12467b22c52f5d2.thalia.css">
+    <script> </script>
+    <a href="https://www.thalia.de/" class="element-icon-brandlogo logo-global" aria-label="Zur Startseite von Thalia" interaction="link-startseite"></a>
+</header-prime-logo>
+            </div>
+            <div class="header-prime-suche">
+<header-prime-suche component="header-prime-suche">
+
+    <style>
+        suche-slot[component="search-field"] {
+          width: 100%!important;
+          padding: 0!important;
+        }
+        suche-slot .foundation-fallback {
+          margin: 0!important;
+        }
+    </style>
+
+    
+    
+<suche-global component="search-field" data-asset-base-uri="/suche/resources">
+    <link rel="stylesheet" href="/suche/resources/suche-global/style.192df1e09b594a323b3d.thalia.css">
+    <script type="module" src="/suche/resources/suche-global/main.module.751892625d848c2a353c.js"></script>
+    <script defer="" nomodule="" src="/suche/resources/suche-global/main.nomodule.30019726fd210eb5bfa0.js"></script>
+        <suche-main data-api-suchergebnisse="/api/2/suggest/v1" data-api-vorschlaege="/suche/v1/suchhistorie.html">
+            <form action="/suche" method="GET" role="search" class="eingabefeld" custom-popoveranchor>
+                <label for="suche-global-popover-searchbox-input" class="screen-reader-only">Nach Titel, Autor, Stichwort oder ISBN suchen</label>
+                <button type="button" class="element-button-tertiary-small-icon" data-action="close-overlay" custom-popovertarget="suche-global-overlay" custom-popoveraction="hide">
+                    <span class="element-icon-pfeil-links" size="medium"></span>
+                    Suchoverlay schließen 
+                </button>
+                <input dl-event="click" type="search" id="suche-global-popover-searchbox-input" class="element-input-standalone" name="sq" autocomplete="off" autocorrect="off" spellcheck="off" required pattern=".*\S.*" placeholder="Titel, Autor, Stichwort, ISBN" aria-autocomplete="list" aria-haspopup="listbox" data-action="search" custom-popovertarget="suche-global-overlay" custom-popoveraction="show" custom-popoverinput custom-select-input>
+                <div class="call-to-action">
+                    <button type="reset" class="element-button-tertiary-small-icon" data-action="reset" interaction="suche-zuruecksetzen" hidden>
+                        <span class="element-icon-x" size="medium"></span>
+                        Suche zurücksetzen
+                    </button>
+                    <button type="submit" class="element-button-tertiary-small-icon" data-action="submit" interaction="suchanfrage-abschicken">
+                        <span class="element-icon-suche" size="medium"></span>
+                        Suche abschicken
+                    </button>
+                </div>
+                <custom-validation-message id="suche-global-validierungshinweis" popover="manual" role="alert">
+                    <div class="element-notification-urgent">
+                        <p data-text class="element-text-standard"></p>
+                    </div>
+                </custom-validation-message>
+            </form>
+            <custom-popover role="listbox" id="suche-global-overlay" class="element-background-grey" data-color="00" data-typ="rounded">
+                <div class="suchergebnis" custom-select-container>
+                    <custom-select suchvorschlaege aria-live="polite" hidden></custom-select>
+                    <custom-select suchergebnisse aria-live="polite" hidden></custom-select>
+                </div>
+            </custom-popover>
+        </suche-main>
+</suche-global>
+
+<script type="module" src="/suche/resources/suche-hinweis/main.module.3069c315bb3b49167601.js"></script>
+<script defer="" nomodule="" src="/suche/resources/suche-hinweis/main.nomodule.3059292d4d882dc6fe6c.js"></script>
+<link rel="stylesheet" href="/suche/resources/suche-hinweis/style.1fa18aecd16395d2317a.thalia.css">
+<template id="suche-snackbar">
+    <div id="warning-load-next-page" class="element-snackbar-warning" data-animation="slidein-bottom">
+        <strong class="element-text-standard-strong entfernen">Die Ergebnisliste konnte nicht aktualisiert werden</strong>
+    <p class="element-text-standard">Bitte laden Sie die Seite neu und versuchen es noch einmal.</p>
+        <button cta="close" class="element-button-quaternary-close">
+            Popover schließen
+        </button>
+    </div>
+    <div id="warning-content-update" class="element-snackbar-warning" data-animation="slidein-bottom">
+        <strong class="element-text-standard-strong entfernen">Die Suche konnte nicht aktualisiert werden.</strong>
+    <p class="element-text-standard">Bitte laden Sie die Seite neu und versuchen es noch einmal.</p>
+        <button cta="close" class="element-button-quaternary-close">
+            Popover schließen
+        </button>
+    </div>
+    <div id="info-null-treffer" class="element-snackbar-information" data-animation="slidein-bottom">
+        <strong class="element-text-standard-strong entfernen">Ihre Anfrage ergab keine Treffer</strong>
+    <p class="element-text-standard">Bitte laden Sie die Seite neu und versuchen es noch einmal.</p>
+        <button cta="close" class="element-button-quaternary-close">
+            Popover schließen
+        </button>
+    </div>
+    <div id="success-umfrage-kundencluster" class="element-snackbar-success" data-animation="slidein-bottom">
+        <strong class="element-text-standard-strong">Vielen Dank für Ihre Teilnahme</strong>
+        <p class="element-text-standard">Sie helfen uns damit, unseren Shop zu verbessern.</p>
+    </div>
+</template>
+<template id="suche-notification">
+    <div id="warning-load-next-page" class="element-notification-warning">
+        <strong class="element-text-standard-strong entfernen">Die Ergebnisliste konnte nicht aktualisiert werden</strong>
+    <p class="element-text-standard">Bitte laden Sie die Seite neu und versuchen es noch einmal.</p>
+    </div>
+    <div id="warning-content-update" class="element-notification-warning">
+        <strong class="element-text-standard-strong entfernen">Die Suche konnte nicht aktualisiert werden.</strong>
+    <p class="element-text-standard">Bitte laden Sie die Seite neu und versuchen es noch einmal.</p>
+    </div>
+    <div id="info-null-treffer" class="element-notification-information">
+        <strong class="element-text-standard-strong entfernen">Ihre Anfrage ergab keine Treffer</strong>
+    <p class="element-text-standard">Bitte laden Sie die Seite neu und versuchen es noch einmal.</p>
+    </div>
+    <div id="success-umfrage-kundencluster" class="element-notification-success">
+        <strong class="element-text-standard-strong">Vielen Dank für Ihre Teilnahme</strong>
+        <p class="element-text-standard">Sie helfen uns damit, unseren Shop zu verbessern.</p>
+    </div>
+</template><dl-search-redirect component="dl-search-redirect">
+    <script type="module" src="/suche/resources/dl-search-redirect/main.module.84b5cd4d4666799e9eb8.js"></script>
+    <script defer="" nomodule="" src="/suche/resources/dl-search-redirect/main.nomodule.2625e63e0bed7dde5c4e.js"></script>
+    <template>
+        <dl-event name="search" search_redirect="true"></dl-event>
+    </template>
+</dl-search-redirect>
+<minerva-suche-overlay component="minerva-suche-overlay">
+    <link rel="stylesheet" href="/suche/resources/minerva-suche-overlay/style.54cea5e43fe9efe8a70c.thalia.css">
+    <script type="module" src="/suche/resources/minerva-suche-overlay/main.module.d42ad9c552ceb416c9d4.js"></script>
+    <script nomodule="" defer="" src="/suche/resources/minerva-suche-overlay/main.nomodule.226223e13b99a54f504b.js"></script>
+
+    <dialog class="element-overlay-slide-in minerva-suche-overlay" dl-name="suche-minerva" id="sbe-suche-minerva-overlay">
+        <header class="header" data-position="sticky">
+            <span class="element-icon-brandlogo-small" aria-hidden="true"></span>
+            <h2 class="element-headline-medium">KI-Beratung <span class="element-text-standard">Beta</span></h2>
+            <button class="element-button-primary-close" command="close" commandfor="sbe-suche-minerva-overlay" cta="close" interaction="suche-minerva-schliessen">
+                Overlay schließen
+            </button>
+        </header>
+        <main></main>
+    </dialog>
+</minerva-suche-overlay>
+
+<sentry-config project-name="suche" project-dsn="312c4c6f87b9b71c0b19b9d439077001" project-id="4" project-files=".*ocsassets/suchocs.*js" release-version="0-SNAPSHOT"></sentry-config>
+
+</header-prime-suche>
+            </div>
+            <div class="header-prime-kunde">
+<header-prime-kunde component="header-prime-kunde">
+    <link rel="stylesheet" href="https://assets.thalia.media/red/cms/components/header-prime-kunde/style.1f77d05132cc71b270b3.thalia.css">
+    <script> </script>
+
+    <div class="kunde-items">
+
+<header-prime-filiale  component="header-prime-filiale">
+    <link rel="stylesheet" href="https://assets.thalia.media/red/cms/components/header-prime-filiale/style.410101f5613ddbb0a25c.thalia.css">
+    <script> </script>
+    <div class="filial-icon-wrapper">
+        <a href="/buchhandlung/uebersichtsseite" class="element-link-header-icon icon-location filial-link" interaction="link-location" aria-label="Vor Ort"><span class="caption">Vor Ort</span></a>
+    </div>
+</header-prime-filiale>
+
+        <header-global-login>
+            <a href="/shop/home/kunde/" class="element-link-header-icon icon-login" interaction="link-login" aria-label="Mein Konto"><span class="caption">Mein Konto</span></a>
+        </header-global-login>
+
+        <header-global-merkzettel>
+            <a href="/shop/home/merkliste/" class="element-link-header-icon icon-merkzettel" interaction="link-merkzettel" aria-label="Merkzettel" data-text="Merkzettel: ## Artikel"><span class="caption">Merkzettel</span></a>
+        </header-global-merkzettel>
+
+        <header-global-warenkorb>
+            <a href="/warenkorb/anzeigen" class="element-link-header-icon icon-warenkorb" interaction="link-warenkorb" aria-label="Warenkorb" data-text="Warenkorb: ## Artikel"><span class="caption">Warenkorb</span></a>
+        </header-global-warenkorb>
+        
+    </div>
+    
+</header-prime-kunde>
+            </div>
+            <div class="header-prime-navigation">
+                    
+                    <main-navigation-erste-ebene component="main-navigation-erste-ebene">
+    <link rel="stylesheet" href="/kategorieservice/components/main-navigation-erste-ebene/style.7cdb80f824d1ee79a5f4.thalia.css">
+    <script type="module" src="/kategorieservice/components/main-navigation-erste-ebene/src/main.module.f3eeef457f2650719d0d.js"></script>
+    <script defer="" nomodule="" src="/kategorieservice/components/main-navigation-erste-ebene/src/main.nomodule.259d06c232bde5df19ea.js"></script>
+
+        <div class="komponente-container komponente-container--mobile">
+            <button class="element-button-icon open-navi-overlay" aria-haspopup="dialog" open-overlay>
+                <span class="element-icon-hamburger" size="xlarge"></span>
+                Navigation öffnen
+            </button>
+            <dialog class="element-overlay-slide-in-fullsize overlay-navigation" data-orientation="left" id="overlay-navigation" closedby="any">
+                <form method="dialog">
+                    <header>
+                        <a href="/" class="element-icon-brandlogo brand-logo" aria-label="Zur Startseite von Thalia" interaction="link-startseite"></a>
+                        <button type="button" class="element-button-primary-close" command="close" commandfor="overlay-navigation" cta="close" autofocus>Overlay schließen</button>
+                    </header>
+                    <nav aria-label="Main">
+                        <ul class="item-list" role="menubar" aria-orientation="vertical">
+                                    <li class="item buttons-list" role="none">
+                                        <button class="element-link-standard-variant link kategorie-button" type="button" interaction="navigation-links" caption="Bücher" role="menuitem" data-kat-tool-id="2">
+                                            <span class="element-icon-kategorie" data-typ="buch" spacing="inline-end"></span>Bücher
+                                        </button>
+                                    </li>
+                                    <li class="item buttons-list" role="none">
+                                        <button class="element-link-standard-variant link kategorie-button" type="button" interaction="navigation-links" caption="Englische Bücher" role="menuitem" data-kat-tool-id="881">
+                                            <span class="element-icon-kategorie" data-typ="buch-englisch" spacing="inline-end"></span>Englische Bücher
+                                        </button>
+                                    </li>
+                                    <li class="item buttons-list" role="none">
+                                        <button class="element-link-standard-variant link kategorie-button" type="button" interaction="navigation-links" caption="Kalender" role="menuitem" data-kat-tool-id="31397">
+                                            <span class="element-icon-kategorie" data-typ="kalender" spacing="inline-end"></span>Kalender
+                                        </button>
+                                    </li>
+                                    <li class="item links-list" role="none">
+                                                <a href="/gebrauchtbuch/uebersicht" class="element-link-standard-variant link" interaction="navigation-links" caption="Gebrauchte Bücher" role="menuitem">
+                                                    <span class="element-icon-kategorie" data-typ="buch" spacing="inline-end"></span>Gebrauchte Bücher
+                                                </a>
+                                    </li>
+                                    <li class="item buttons-list" role="none">
+                                        <button class="element-link-standard-variant link kategorie-button" type="button" interaction="navigation-links" caption="eBooks" role="menuitem" data-kat-tool-id="4893">
+                                            <span class="element-icon-kategorie" data-typ="ebook" spacing="inline-end"></span>eBooks
+                                        </button>
+                                    </li>
+                                    <li class="item links-list" role="none">
+                                                <a href="/ereader/tolino" class="element-link-standard-variant link" interaction="navigation-links" caption="tolino" role="menuitem">
+                                                    <span class="element-icon-kategorie" data-typ="ereader" spacing="inline-end"></span>tolino
+                                                </a>
+                                    </li>
+                                    <li class="item buttons-list" role="none">
+                                        <button class="element-link-standard-variant link kategorie-button" type="button" interaction="navigation-links" caption="Hörbücher" role="menuitem" data-kat-tool-id="3714">
+                                            <span class="element-icon-kategorie" data-typ="hoerbuch" spacing="inline-end"></span>Hörbücher
+                                        </button>
+                                    </li>
+                                    <li class="item buttons-list" role="none">
+                                        <button class="element-link-standard-variant link kategorie-button" type="button" interaction="navigation-links" caption="Spielzeug" role="menuitem" data-kat-tool-id="4770">
+                                            <span class="element-icon-kategorie" data-typ="spielwaren" spacing="inline-end"></span>Spielzeug
+                                        </button>
+                                    </li>
+                                    <li class="item buttons-list" role="none">
+                                        <button class="element-link-standard-variant link kategorie-button" type="button" interaction="navigation-links" caption="Schreibwaren" role="menuitem" data-kat-tool-id="4038">
+                                            <span class="element-icon-kategorie" data-typ="schreibwaren" spacing="inline-end"></span>Schreibwaren
+                                        </button>
+                                    </li>
+                                    <li class="item links-list" role="none">
+                                            <a href="/themenwelten/sale/" class="element-link-standard-variant-sale link" interaction="navigation-links" caption="SALE" role="menuitem">
+                                                <span class="element-icon-kategorie" data-typ="sale" spacing="inline-end"></span>SALE
+                                            </a>
+                                    </li>
+                                    <li class="item buttons-list" role="none">
+                                        <button class="element-link-standard-variant link kategorie-button" type="button" interaction="navigation-links" caption="Geschenke" role="menuitem" data-kat-tool-id="17794">
+                                            <span class="element-icon-kategorie" data-typ="geschenk" spacing="inline-end"></span>Geschenke
+                                        </button>
+                                    </li>
+                                    <li class="item links-list" role="none">
+                                                <a href="/vorteile/club/club-aktion" class="element-link-standard-variant link" interaction="navigation-links" caption="Club" role="menuitem">
+                                                    <span class="element-icon-kategorie" data-typ="thalia-club" spacing="inline-end"></span>Club
+                                                </a>
+                                    </li>
+                                    <li class="item links-list" role="none">
+                                                <a href="/geschenkkarte/?gktyp&#x3D;DIGITAL" class="element-link-standard-variant link" interaction="navigation-links" caption="Gutschein" role="menuitem">
+                                                    <span class="element-icon-kategorie" data-typ="gutschein" spacing="inline-end"></span>Gutschein
+                                                </a>
+                                    </li>
+                                    <li class="item links-list" role="none">
+                                                <a href="/themenwelten/medien" class="element-link-standard-variant link" interaction="navigation-links" caption="Unterhaltung" role="menuitem">
+                                                    <span class="element-icon-kategorie" data-typ="film" spacing="inline-end"></span>Unterhaltung
+                                                </a>
+                                    </li>
+                                    <li class="item links-list" role="none">
+                                                <a href="/vorteile/inspiration" class="element-link-standard-variant link" interaction="navigation-links" caption="Inspiration" role="menuitem">
+                                                    <span class="element-icon-kategorie" data-typ="highlights" spacing="inline-end"></span>Inspiration
+                                                </a>
+                                    </li>
+                        </ul>
+                    </nav>
+                </form>
+            </dialog>
+        </div>
+
+        <div class="komponente-container komponente-container--desktop">
+            <nav aria-label="Main">
+                <ul class="item-list item-list--desktop scroll" role="menubar" aria-orientation="horizontal">
+                        <li class="item" role="none">
+                                    <a href="/kategorie/buecher-2/" class="element-link-standard-variant-strong link" interaction="navigation-links" caption="Bücher" role="menuitem">
+                                        Bücher
+                                    </a>
+                        </li>
+                        <li class="item" role="none">
+                                    <a href="/kategorie/englische-buecher-881/" class="element-link-standard-variant-strong link" interaction="navigation-links" caption="Englische Bücher" role="menuitem">
+                                        Englische Bücher
+                                    </a>
+                        </li>
+                        <li class="item" role="none">
+                                    <a href="/kategorie/kalender-31397/" class="element-link-standard-variant-strong link" interaction="navigation-links" caption="Kalender" role="menuitem">
+                                        Kalender
+                                    </a>
+                        </li>
+                        <li class="item" role="none">
+                                    <a href="/gebrauchtbuch/uebersicht" class="element-link-standard-variant-strong link" interaction="navigation-links" caption="Gebrauchte Bücher" role="menuitem">
+                                        Gebrauchte Bücher
+                                    </a>
+                        </li>
+                        <li class="item" role="none">
+                                    <a href="/kategorie/ebooks-4893/" class="element-link-standard-variant-strong link" interaction="navigation-links" caption="eBooks" role="menuitem">
+                                        eBooks
+                                    </a>
+                        </li>
+                        <li class="item" role="none">
+                                    <a href="/ereader/tolino" class="element-link-standard-variant-strong link" interaction="navigation-links" caption="tolino" role="menuitem">
+                                        tolino
+                                    </a>
+                        </li>
+                        <li class="item" role="none">
+                                    <a href="/kategorie/hoerbuch-downloads-3714/" class="element-link-standard-variant-strong link" interaction="navigation-links" caption="Hörbücher" role="menuitem">
+                                        Hörbücher
+                                    </a>
+                        </li>
+                        <li class="item" role="none">
+                                    <a href="/kategorie/spielzeug-4770/" class="element-link-standard-variant-strong link" interaction="navigation-links" caption="Spielzeug" role="menuitem">
+                                        Spielzeug
+                                    </a>
+                        </li>
+                        <li class="item" role="none">
+                                    <a href="/kategorie/schreibwaren-4038/" class="element-link-standard-variant-strong link" interaction="navigation-links" caption="Schreibwaren" role="menuitem">
+                                        Schreibwaren
+                                    </a>
+                        </li>
+                        <li class="item" role="none">
+                                <a href="/themenwelten/sale/" class="element-link-standard-variant-sale-strong link" interaction="navigation-links" caption="SALE" role="menuitem">
+                                    SALE
+                                </a>
+                        </li>
+                        <li class="item" role="none">
+                                    <a href="/kategorie/geschenke-trends-17794/" class="element-link-standard-variant-strong link" interaction="navigation-links" caption="Geschenke" role="menuitem">
+                                        Geschenke
+                                    </a>
+                        </li>
+                        <li class="item" role="none">
+                                    <a href="/vorteile/club/club-aktion" class="element-link-standard-variant-strong link" interaction="navigation-links" caption="Club" role="menuitem">
+                                        Club
+                                    </a>
+                        </li>
+                        <li class="item" role="none">
+                                    <a href="/geschenkkarte/?gktyp&#x3D;DIGITAL" class="element-link-standard-variant-strong link" interaction="navigation-links" caption="Gutschein" role="menuitem">
+                                        Gutschein
+                                    </a>
+                        </li>
+                        <li class="item" role="none">
+                                    <a href="/themenwelten/medien" class="element-link-standard-variant-strong link" interaction="navigation-links" caption="Unterhaltung" role="menuitem">
+                                        Unterhaltung
+                                    </a>
+                        </li>
+                        <li class="item" role="none">
+                                    <a href="/vorteile/inspiration" class="element-link-standard-variant-strong link" interaction="navigation-links" caption="Inspiration" role="menuitem">
+                                        Inspiration
+                                    </a>
+                        </li>
+                </ul>
+                <ul class="controls">
+                    <li>
+                        <button class="element-button-secondary-small-icon prev" caption="prev" tabindex="-1" aria-hidden="true">
+                            <span class="element-icon-chevron-links" data-size="medium"></span>
+                            Zurück
+                        </button>
+                    </li>
+                    <li>
+                        <button class="element-button-secondary-small-icon next" caption="next" tabindex="-1" aria-hidden="true">
+                            <span class="element-icon-chevron-rechts" data-size="medium"></span>
+                            Weiter
+                        </button>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+</main-navigation-erste-ebene>
+
+            </div>
+            <a href="/spielzeit" class="spielzeit-logo-lasche" hidden>Spielzeit</a>
+        </div>
+            <div class="header-prime-cclogin">
+                
+                
+        <cclogin-banner>
+    <link rel="stylesheet" href="/login/resources/cclogin-banner/style.7ba03e6b9b41d89f24d6.thalia.css">
+    <script defer="" src="/login/resources/cclogin-banner/main.nomodule.85dfb38caa798c256023.js"></script>
+    <b class="cclogin-banner-text"></b>
+</cclogin-banner>
+
+    
+            </div>
+    </div>
+</header-prime>
+
+
+
+			
+        </header>
+        <div class="layout-pre">
+            
+        </div>
+        <div class="layout-main">
+                    <null-treffer-suche-hinweis component="null-treffer-suche-hinweis">
+            <link rel="stylesheet" href="/suche/resources/null-treffer-suche-hinweis/style.26b7dfd50d9acb15856a.thalia.css">
+                <script type="module" src="/suche/resources/null-treffer-suche-hinweis/main.module.2c899bf9eff1f82324c7.js"></script>
+                    <h3 class="element-headline-large ueberschrift">Sie haben gesucht nach "9783462056344"</h3>
+                            <p class="element-text-standard">Versuchen Sie es mit einem anderen Suchbegriff oder prüfen Sie die Schreibweise.</p>
+                            <p class="element-text-standard buchanfrage">Sollte das gewünschte Buch vergriffen sein, können Sie hier eine <button class="element-link-standard" interaction="buchanfrageoverlay-oeffnen">unverbindliche Anfrage stellen</button>.</p>
+        
+        </null-treffer-suche-hinweis>
+                <beliebte-kategorien component="beliebte-kategorien">
+                    <link rel="stylesheet" href="/suche/resources/beliebte-kategorien/style.feb4d8ddf8ca0574fe6d.thalia.css">
+                    <script></script>
+                        <h2 class="element-headline-large ueberschrift">Beliebte Kategorien</h2>
+                        <ul class="beliebte-kategorien">
+                                <li>
+                                    <a class="element-chip-filter" href="/kategorie/spielwaren-4770/">
+                                        <span class="element-icon-kategorie" data-typ="spielwaren"></span>
+                                        Spielzeug
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="element-chip-filter" href="/themenwelten/sale/">
+                                        <span class="element-icon-kategorie" data-typ="sale"></span>
+                                        Sale
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="element-chip-filter" href="/kategorie/geschenke-trends-17794/">
+                                        <span class="element-icon-kategorie" data-typ="Geschenke"></span>
+                                        Geschenke &amp; Trends
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="element-chip-filter" href="/kategorie/kalender-31397/">
+                                        <span class="element-icon-kategorie" data-typ="Kalender"></span>
+                                        Kalender
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="element-chip-filter" href="/kategorie/englische-buecher-881/">
+                                        <span class="element-icon-kategorie" data-typ="buch-englisch"></span>
+                                        Englische B&uuml;cher
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="element-chip-filter" href="/kategorie/romane-erzaehlungen-3/">
+                                        <span class="element-icon-kategorie" data-typ="Romane"></span>
+                                        Romane &amp; Erz&auml;hlungen
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="element-chip-filter" href="/kategorie/krimis-thriller-14/">
+                                        <span class="element-icon-kategorie" data-typ="Krimis"></span>
+                                        Krimis &amp; Thriller
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="element-chip-filter" href="/kategorie/kinderbuecher-970/">
+                                        <span class="element-icon-kategorie" data-typ="Kinderbuecher"></span>
+                                        Kinderb&uuml;cher
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="element-chip-filter" href="/kategorie/jugendbuecher-10632/">
+                                        <span class="element-icon-kategorie" data-typ="Jugendbuecher"></span>
+                                        Jugendb&uuml;cher
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="element-chip-filter" href="/kategorie/schreibwaren-4038/">
+                                        <span class="element-icon-kategorie" data-typ="Schreibwaren"></span>
+                                        Schreibwaren
+                                    </a>
+                                </li>
+                        </ul>
+                </beliebte-kategorien>
+                
+                
+                
+                    <empfehlungen-slider-bootstrap data-empfehlungen-uri="/empfehlungen/v1/suchergebnisseite?darstellung=grid" data-suchbegriff="9783462056344" data-spacing="compact" aria-live="polite">
+                        <link rel="stylesheet" href="/suche/resources/empfehlungen-slider-bootstrap/style.96bbb9797481e49d6d65.thalia.css">
+                        <script type="module" src="/suche/resources/empfehlungen-slider-bootstrap/main.module.e2537beea56d2de2408b.js"></script>
+                        <script defer="" nomodule="" src="/suche/resources/empfehlungen-slider-bootstrap/main.nomodule.0af72db85fdf494c1e71.js"></script>
+                        
+                        <span class="ladespinner"></span>
+                    </empfehlungen-slider-bootstrap>
+        <buchanfrage-overlay component="buchanfrage-overlay" data-email="suchanfrage@thalia.de">
+            <link rel="stylesheet" href="/suche/resources/buchanfrage-overlay/style.68962380e94df9075595.thalia.css">
+            <script type="module" src="/suche/resources/buchanfrage-overlay/main.module.c81d65d5eec107864fcb.js"></script>
+            
+                <dialog class="element-overlay-slide-in">
+                    <button class="element-button-primary-close" interaction="overlay-schliessen">Buchanfrage Overlay schließen
+                    </button>
+                    <h2 class="element-headline-large headline">Ist das Buch, das Sie suchen, nicht mehr lieferbar?</h2>
+                    <p class="element-text-standard-strong subheadline">Kein Problem: Wir besorgen es für Sie.
+                        Versandkostenfrei*</p>
+                    <p class="element-text-standard text">Sollten Sie ein Buch einmal nicht finden, übernehmen wir gerne
+                        kostenlos die Suche für Sie. Füllen Sie einfach das Formular unten aus und Sie erhalten ein
+                        unverbindliches Angebot von uns. Egal ob es sich um aktuelle Artikel, ausländische oder in Deutschland
+                        nicht mehr lieferbare Titel handelt.</p>
+                    <form method="dialog">
+                        <fieldset class="fieldset buchangaben">
+                            <legend class="element-headline-small legende">gewünschtes Buch:</legend>
+                            <label class="element-input-floating-label flex-100">
+                                <input type="text" placeholder="Titel" name="buchangabe-titel"
+                                       data-required-group="titel-ean-isbn">
+                                <span data-floating-label>Titel**</span>
+                            </label>
+                            <label class="element-input-floating-label flex-100">
+                            <input type="text" placeholder="Autor*in" name="buchangabe-autor">
+                            <span data-floating-label>Autor*in</span>
+                        </label>
+                        <label class="element-input-floating-label flex-100">
+                            <input type="text" placeholder="EAN oder ISBN" name="buchangabe-ean-isbn" data-required-group="titel-ean-isbn">
+                            <span data-floating-label>EAN oder ISBN**</span>
+                        </label>
+                        <label class="element-input-floating-label flex-100">
+                            <input type="text" placeholder="Sprache" name="buchangabe-sprache">
+                            <span data-floating-label>Sprache</span>
+                        </label>
+                        <label class="element-input-floating-label flex-100">
+                            <input type="text" pattern="[0-9]*" placeholder="gewünschte Menge" name="buchangabe-menge" required>
+                            <span data-floating-label>gewünschte Menge</span>
+                        </label>
+                    </fieldset>
+                    <fieldset class="fieldset adressdaten">
+                        <legend class="element-headline-small legende">Adresse:</legend>
+                        <label class="element-input-floating-label flex-100">
+                            <input type="text" placeholder="Vorname" name="vorname" required>
+                            <span data-floating-label>Vorname</span>
+                        </label>
+                        <label class="element-input-floating-label flex-100">
+                            <input type="text" placeholder="Nachname" name="nachname" required>
+                            <span data-floating-label>Nachname</span>
+                        </label>
+                        <label class="element-input-floating-label flex-60">
+                            <input type="text" placeholder="Straße" name="straße" required>
+                            <span data-floating-label>Straße</span>
+                        </label>
+                        <label class="element-input-floating-label flex-40">
+                            <input type="text" placeholder="Hausnummer" name="hausnummer" required>
+                            <span data-floating-label>Hausnummer</span>
+                        </label>
+                        <label class="element-input-floating-label flex-40">
+                            <input type="text" pattern="[0-9]*" minlength="5" maxlength="5" placeholder="PLZ" name="plz" required>
+                            <span data-floating-label>PLZ</span>
+                        </label>
+                        <label class="element-input-floating-label flex-60">
+                            <input type="text" placeholder="Stadt" name="stadt" required>
+                            <span data-floating-label>Stadt</span>
+                        </label>
+                        <label class="element-input-floating-label flex-100">
+                            <input type="text" placeholder="Land" name="land" required>
+                            <span data-floating-label>Land</span>
+                        </label>
+                    </fieldset>
+                    <ul class="fussnoten">
+                        <li><small class="element-text-tiny">* Versandkostenfrei nur innerhalb Deutschlands</small></li>
+                        <li><small class="element-text-tiny">** Um ein bestmögliches Ergebnis zu erzielen, ist es erforderlich mindestens den Titel oder die ISBN/EAN zu nennen.</small></li>
+                    </ul>
+                    <div class="submitgroup">
+                        <button class="element-button-primary" interaction="anfrage-abschicken">Anfrage erstellen</button>
+                        <a class="element-link-standard" interaction="weitere-informationen" href="/shop/vergriffene-buecher-recherche/show/">Weitere Informationen</a> 
+                    </div>
+                    <div class="hinweis"></div>
+                </form>
+            </dialog>
+            <template data-type="success">
+                <h3 class="element-headline-small legende">Hinweise zu Ihrer Anfrage</h3>
+                <p class="element-text-standard">Wenn Sie die vorgefertigte E-Mail erfolgreich versendet haben, erhalten Sie in Kürze eine E-Mail mit Angaben zur Verfügbarkeit, Lieferzeit & Preis.</p>
+                <p class="element-text-standard">Innerhalb einer Woche können Sie sich per Mail entscheiden, ob Sie das Angebot verbindlich in Auftrag geben möchten. Wenn Sie das Angebot angenommen haben, kommt Ihr Wunschartikel in einigen Wochen bei Ihnen Zuhause an. Bezahlen Sie einfach bequem per Rechnung.</p>
+                <a class="element-link-standard" href="/shop/vergriffene-buecher-recherche/show/" interaction="weitere-informationen">Weitere Informationen</a>
+            </template>
+            <template data-type="warning">
+                <p class="element-notification-warning">
+                    <strong class="element-text-standard-strong">Ihre Anfrage konnte nicht ausgeführt werden.</strong> 
+                    <p class="element-text-standard">Bitte laden Sie die Seite neu und versuchen es noch einmal.</p>
+                </p>
+            </template>
+        </buchanfrage-overlay>
+        
+            <script>
+        
+                suchboxParameter = {
+                    sqHist: '9783462056344',
+                    gewaehlteKategorie: ''
+                }
+        
+            </script>
+
+        </div>
+        <div class="layout-post">
+                            
+                    <dl-pageview
+                        mandant="2"
+                        version="0-SNAPSHOT"
+                        environment="prod"
+                        seitentyp="suche"
+                        suchbegriff="9783462056344"
+                        suchtreffer="nein"
+                        darstellung="suchergebnis-grid"
+                        asnaktiv=""
+                        fusionqueryid=""
+                        coveopipeline="website_DACH"
+                        
+                        
+                        ab_test_search="suchergebnis-mit-rmt"
+                        data-content="empty">
+                    </dl-pageview>
+                
+
+        </div>
+        <footer>
+			
+            	
+    
+
+<newsletter-anmelden component="newsletter-anmelden">
+    <a id="ocsNewsletterContainer" style="visibility: hidden;"></a>
+    <section class="newsletter-anmeldung element-background-main" data-color="01c">
+        <link rel="stylesheet" href="/newsletter/resources/newsletter-anmelden/style.7b501e548cd38b645eb7.thalia.css">
+        <script defer="" src="/newsletter/resources/newsletter-anmelden/main.nomodule.47cea306504171be710a.js"></script>
+
+        <div class="newsletter-anmeldung-container">
+            <span class="element-icon-newsletter-anmelden icon-content"></span>
+            <div class="newsletter-content-container">
+                <span class="element-flag-info">Begeistert schon über 2,5 Mio. Mal </span>
+                <p class="element-headline-small newsletter-headline">Immer ein Kapitel voraus – mit dem Thalia Newsletter</p>
+                <div class="newsletter-incentive">
+                    <span class="newsletter-text-content element-text-standard">Jetzt anmelden und</span>
+                    <span class="newsletter-text-content element-text-standard-strong">10% Willkommensgutschein sichern! </span>
+                    <span class="newsletter-text-content element-text-standard">Freuen Sie sich auf exklusive Angebote, besondere Events und aktuelle Neuheiten</span>
+                    <span class="newsletter-text-content element-text-standard">– der Rabatt gilt bei Ihrer ersten Anmeldung</span>
+                    <span class="newsletter-text-content element-text-standard">(ausgenommen preisgebundene Artikel).</span>
+                </div>
+                <div class="rechtliche-hinweise-link">
+                    <button class="element-link-standard" interaction="rechtliche-hinweise-link">Rechtliche Hinweise</button>
+                </div>
+                <dialog class="element-overlay-small rechtliche-hinweise">
+                    <form method="dialog" class="rechtliche-hinweise-dialog">
+                        <button class="element-button-primary-close" aria-label="Rechtliche Hinweise schliessen" is="thalia-button" s2d-component="Button">
+                            Rechtliche Hinweise schließen
+                        </button>
+                    </form>
+                    <p class="element-headline-small rechtliche-hinweise-dialog-headline">Rechtliche Hinweise</p>
+                    <p>
+                        <span class="element-text-small">Mit dem Abschicken dieser Anmeldung erlauben Sie uns, Sie regelmäßig und kostenlos per E-Mail und/oder per personalisierter Anzeige auf fremden Kanälen (z.B. über soziale Medien) über uns (z.B. Produkte, (Buchhandlungs-)Aktionen, Gewinnspiele) sowie sortimentsnahe Angebote von unseren Partnern (Ihre Daten werden nicht an diese Partner weitergegeben) zu informieren und Sie im Rahmen von Kundenzufriedenheitsumfragen zu kontaktieren. Informationen zum jederzeitigen Abmelden vom Newsletter sowie zum Abmelden der personalisierten Anzeigen finden Sie in unserer </span>
+                        <a href="/hilfe/rechtliches/datenschutz" rel="noopener noreferrer" class="element-link-small">Datenschutzerklärung</a>.
+                    </p>
+                    <p>
+                        <span class="element-text-small">Mit der Anmeldung bestätige ich, die </span>
+                        <a href="/hilfe/rechtliches/agb" rel="noopener noreferrer" class="element-link-small">AGB</a>
+                        <span class="element-text-small">und </span>
+                        <a href="/hilfe/rechtliches/datenschutz" rel="noopener noreferrer" class="element-link-small">Datenschutzerklärung</a>
+                        <span class="element-text-small">gelesen und verstanden zu haben und stimme diesen zu.</span>
+                    </p>
+                </dialog>
+
+                <form name="newsletterAnmeldeformular" data-kunde-token-url="/kunde/api/rest/v1/token" class="anmelde-formular">
+                    <div class="container-input">
+                        <label for="email" class="element-text-standard-strong newsletter-anmeldung-email">
+                            E-Mail-Adresse
+                        </label>
+                        <div class="newsletter-anmeldung-input-container">
+                            <input
+                                    type="email"
+                                    id="email"
+                                    name="email"
+                                    placeholder="E-Mail-Adresse eingeben"
+                                    class="element-input-standard input-email"
+                                    autocomplete="email"
+                                    aria-invalid="false"
+                                    required
+                                    is="thalia-input"
+                            />
+                            <button class="element-button-primary newsletter-anmeldung-button submit" interaction="submit-form">Anmelden und sparen</button>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="email-error-container" role="alert" aria-live="assertive"></div>
+
+                <template id="error-email-missing-at">
+                    <div role="alert" class="element-notification-warning notification-spacing input-notification">
+                        <p id="error-email-missing-at-text" class="element-text-standard" aria-atomic="true">
+                            Die E-Mail-Adresse muss ein @-Zeichen enthalten.
+                        </p>
+                    </div>
+                </template>
+
+                <template id="error-email-missing-local">
+                    <div role="alert" class="element-notification-warning notification-spacing input-notification">
+                        <p id="error-email-missing-local-text" class="element-text-standard" aria-atomic="true">
+                            Der Teil vor dem @-Zeichen fehlt.
+                        </p>
+                    </div>
+                </template>
+
+                <template id="error-email-missing-domain">
+                    <div role="alert" class="element-notification-warning notification-spacing input-notification">
+                        <p id="error-email-missing-domain-text" class="element-text-standard" aria-atomic="true">
+                            Der Teil nach dem @-Zeichen fehlt.
+                        </p>
+                    </div>
+                </template>
+
+                <template id="error-email-invalid">
+                    <div role="alert" class="element-notification-warning notification-spacing input-notification">
+                        <p id="error-email-invalid-text" class="element-text-standard" aria-atomic="true">
+                            Die E-Mail-Adresse muss vollständig und gültig sein.
+                        </p>
+                    </div>
+                </template>
+
+                <div class="success-notification-container hidden">
+                    <div class="element-notification-success newsletter-meldung newsletter-anmeldung-erfolgreich"
+                         data-type="success"
+                         data-email-success-message
+                    >
+                        <p class="element-text-standard">Fast geschafft! Jetzt das E-Mail-Postfach prüfen und die Anmeldung zum Newsletter bestätigen.</p>
+                    </div>
+                </div>
+                <div class="warning-notification-container hidden">
+                    <div class="element-notification-warning newsletter-meldung newsletter-anmeldung-gescheitert"
+                         data-type="warning"
+                         data-email-error-message
+                    >
+                        <p class="element-text-standard">Beim Übermitteln der Eingabe ist ein Fehler aufgetreten. Bitte später erneut versuchen.</p>
+                    </div>
+                </div>
+                <div
+                    id="form-email-message"
+                    class="visually-hidden"
+                    aria-live="assertive"
+                    role="alert"
+                    tabindex="-1"
+                ></div>
+            </div>
+        </div>
+    </section>
+</newsletter-anmelden>
+<sentry-config
+        project-name="newsletter"
+        project-dsn="a54a1dff76b4b51ce4097433696ab767"
+        project-id="47"
+        project-files=".*/newsletter/resources\/.*js"
+        release-version="1.0.0"
+></sentry-config>
+<customer-contact component="customer-contact" interaction="Footer Contact"  >
+    <link rel="stylesheet" href="https://assets.thalia.media/red/cms/components/customer-contact/style.a9f31c0a58b3388aa968.thalia.css">
+    <script> </script>
+    <div class="element-background-footer contact-container">
+        <p class="element-text-standard-strong contact-headline">Haben Sie Fragen?</p>
+        <ul class="contact-notes">
+                <li class="element-text-small">Wir sind 24 Stunden für Sie da.</li>
+        </ul>
+        <ul class="contact-box">
+                <li class="box-wrapper element-card-standard">
+                    <div class="contact-box-card element-background-grey" data-color="00">
+                            <a class="contact-box-card-link" href="tel:+492515309330" caption="Allgemeine Anfragen">
+                                <span class="element-link-standard-variant contact-box-card-link-label">Allgemeine Anfragen</span>
+                                <span class="element-text-large-strong contact-box-card-link-text">+49 (0) 251 / 5 30 93 30</span>
+                            </a>
+                    </div>
+                </li>
+                <li class="box-wrapper element-card-standard">
+                    <div class="contact-box-card element-background-grey" data-color="00">
+                            <a class="contact-box-card-link" href="tel:+492515309444" caption="eBook & eReader: Mo-Fr 9-18, Sa 9:30-18 Uhr">
+                                <span class="element-link-standard-variant contact-box-card-link-label">eBook & eReader: Mo-Fr 9-18, Sa 9:30-18 Uhr</span>
+                                <span class="element-text-large-strong contact-box-card-link-text">+49 (0) 251 / 5 30 94 44</span>
+                            </a>
+                    </div>
+                </li>
+                <li class="box-wrapper element-card-standard">
+                    <div class="contact-box-card element-background-grey" data-color="00">
+                            <a class="contact-box-card-link" href="mailto:info@thalia.de" caption="Kontakt per E-Mail">
+                                <span class="element-link-standard-variant contact-box-card-link-label">Kontakt per E-Mail</span>
+                                <span class="element-text-large-strong contact-box-card-link-text">info@thalia.de</span>
+                            </a>
+                    </div>
+                </li>
+                <li class="box-wrapper element-card-standard">
+                    <div class="contact-box-card element-background-grey" data-color="00">
+                        <button commandfor="nm_chat" command="--open-service-chat" class="contact-box-card-link">
+                            <span
+                                class="element-link-standard-variant contact-box-card-link-label">Anfragen per Chat</span>
+                            <span
+                                class="element-text-large-strong contact-box-card-link-text">Service Chat starten</span>
+                        </button>
+                    </div>
+                </li>
+        </ul>
+            <div class="contact-widerruf">
+                <a href="/widerruf" class="element-link-standard-variant-focus-strong widerruf-link">Vertrag widerrufen</a>
+            </div>
+    </div>
+</customer-contact>
+<footer-sitemap component="footer-sitemap"  >
+    <link rel="stylesheet" href="https://assets.thalia.media/red/cms/components/footer-sitemap/style.a69242f1cf7241f469d6.thalia.css">
+    <script type="module" src="https://assets.thalia.media/red/cms/components/footer-sitemap/src/main.module.d91f4a05140b9fe8712f.js" defer=""></script>
+    <script nomodule="" src="https://assets.thalia.media/red/cms/components/footer-sitemap/src/main.nomodule.8a69f77bdbceae860ccf.js" defer=""></script>
+    <div class="sitemap-container element-background-grey" data-color="00">
+        <div class="sitemap-groups">
+    <details class="sitemap-group" interaction="Über uns" open>
+        <summary class="element-text-standard-strong sitemap-headline">Über uns <span class="accordion-handle"></span></summary>
+            <ul class="sitemap-links">
+
+                <li class="sitemap-entry">
+                    <a href="https://unternehmen.thalia.de/" target="_blank" class="element-link-standard-variant sitemap-link">
+                            Thalia als Unternehmen
+                    </a>
+                </li>
+                <li class="sitemap-entry">
+                    <a href="https://jobs.thalia.de?utm_source=online+shop&utm_medium=link&utm_campaign=karriere+footer" target="_blank" class="element-link-standard-variant sitemap-link">
+                            Karriere bei Thalia
+                    </a>
+                </li>
+                <li class="sitemap-entry">
+                    <a href="https://unternehmen.thalia.de/newsroom/" target="_blank" class="element-link-standard-variant sitemap-link">
+                            Presse
+                    </a>
+                </li>
+                <li class="sitemap-entry">
+                    <a href="https://www.lehmanns.de/page/fachbuchkompetenz?p=thalia2" target="_blank" class="element-link-standard-variant sitemap-link">
+                            Fachinformationen
+                    </a>
+                </li>
+                <li class="sitemap-entry">
+                    <a href="/buchhandlung/uebersichtsseite"  class="element-link-standard-variant sitemap-link">
+                            Standorte
+                    </a>
+                </li>
+                <li class="sitemap-entry">
+                    <a href="https://unternehmen.thalia.de/bildung-kultur/" target="_blank" class="element-link-standard-variant sitemap-link">
+                            Verantwortung
+                    </a>
+                </li>
+                <li class="sitemap-entry">
+                    <a href="/hilfe/barrierefreiheit/izb"  class="element-link-standard-variant sitemap-link">
+                            Barrierefreiheit
+                    </a>
+                </li>
+                <li class="sitemap-entry">
+                    <a href="/hilfe/rechtliches/impressum"  class="element-link-standard-variant sitemap-link">
+                            Impressum
+                    </a>
+                </li>
+                <li class="sitemap-entry">
+                    <a href="/hilfe/rechtliches/agb"  class="element-link-standard-variant sitemap-link">
+                            AGB
+                    </a>
+                </li>
+                <li class="sitemap-entry">
+                    <a href="/unternehmen/osiander"  class="element-link-standard-variant sitemap-link">
+                            Osiander als Unternehmen
+                    </a>
+                </li>
+                <li class="sitemap-entry">
+                    <a href="/unternehmen/osiander/karriere"  class="element-link-standard-variant sitemap-link">
+                            Karriere bei Osiander
+                    </a>
+                </li>
+        </ul>
+    </details>
+    <details class="sitemap-group" interaction="Service" open>
+        <summary class="element-text-standard-strong sitemap-headline">Service <span class="accordion-handle"></span></summary>
+            <ul class="sitemap-links">
+
+                <li class="sitemap-entry">
+                    <a href="/hilfe/navigation"  class="element-link-standard-variant sitemap-link">
+                            Hilfe
+                    </a>
+                </li>
+                <li class="sitemap-entry">
+                    <a href="/kontakt/uebersicht"  class="element-link-standard-variant sitemap-link">
+                            Kontakt
+                    </a>
+                </li>
+                <li class="sitemap-entry">
+                    <a href="/hilfe/sicherheit-umwelt/umwelt-entsorgung"  class="element-link-standard-variant sitemap-link">
+                            Batterienrücknahme
+                    </a>
+                </li>
+                <li class="sitemap-entry">
+                    <a href="/hilfe/kaufprozess/warenrueckgabe"  class="element-link-standard-variant sitemap-link">
+                            Rücksendungen 
+                    </a>
+                </li>
+                <li class="sitemap-entry">
+                    <a href="/vorteile/schule-bestellen/ausschreibungen"  class="element-link-standard-variant sitemap-link">
+                            Service für Schulen
+                    </a>
+                </li>
+                <li class="sitemap-entry">
+                    <a href="https://lehmannsbib.de" target="_blank" class="element-link-standard-variant sitemap-link">
+                            Service für Bibliotheken
+                    </a>
+                </li>
+                <li class="sitemap-entry">
+                    <a href="/vorteile/b2b/#bibliotheken"  class="element-link-standard-variant sitemap-link">
+                            Service für Bibliotheken Osiander
+                    </a>
+                </li>
+                <li class="sitemap-entry">
+                    <a href="https://lehmannspro.de/unternehmen/" target="_blank" class="element-link-standard-variant sitemap-link">
+                            Service für Unternehmen
+                    </a>
+                </li>
+                <li class="sitemap-entry">
+                    <a href="/vorteile/b2b"  class="element-link-standard-variant sitemap-link">
+                            Service für Geschäftskunden Osiander
+                    </a>
+                </li>
+                <li class="sitemap-entry">
+                    <a href="https://lehmannspro.de/oeffentliche-hand/" target="_blank" class="element-link-standard-variant sitemap-link">
+                            Service für öffentliche Verwaltung
+                    </a>
+                </li>
+                <li class="sitemap-entry">
+                    <a href="https://lehmannspro.de/kliniken/" target="_blank" class="element-link-standard-variant sitemap-link">
+                            Service für Kliniken
+                    </a>
+                </li>
+        </ul>
+    </details>
+    <details class="sitemap-group" interaction="Rund um den Einkauf " open>
+        <summary class="element-text-standard-strong sitemap-headline">Rund um den Einkauf  <span class="accordion-handle"></span></summary>
+            <ul class="sitemap-links">
+
+                <li class="sitemap-entry">
+                    <a href="/hilfe/kaufprozess/bestellen-gastbestellung"  class="element-link-standard-variant sitemap-link">
+                            Fragen zur Bestellung
+                    </a>
+                </li>
+                <li class="sitemap-entry">
+                    <a href="/hilfe/kaufprozess/kaufen-bezahlen"  class="element-link-standard-variant sitemap-link">
+                            Kaufen und Bezahlen
+                    </a>
+                </li>
+                <li class="sitemap-entry">
+                    <a href="/hilfe/kaufprozess/versand-lieferung"  class="element-link-standard-variant sitemap-link">
+                            Versand und Lieferung
+                    </a>
+                </li>
+                <li class="sitemap-entry">
+                    <a href="/hilfe/kaufprozess/geschenkkarte-gutscheine#gutschein"  class="element-link-standard-variant sitemap-link">
+                            Online-Gutscheine
+                    </a>
+                </li>
+                <li class="sitemap-entry">
+                    <a href="https://www.thalia.de/downloadcode"  class="element-link-standard-variant sitemap-link">
+                            Download-Code einlösen
+                    </a>
+                </li>
+                <li class="sitemap-entry">
+                    <a href="/vorteile/services"  class="element-link-standard-variant sitemap-link">
+                            Service
+                    </a>
+                </li>
+                <li class="sitemap-entry">
+                    <a href="https://www.thalia.de/aboverwalten/kuendigungs-anfrage"  class="element-link-standard-variant sitemap-link">
+                            Verträge kündigen
+                    </a>
+                </li>
+                <li class="sitemap-entry">
+                    <a href="/hilfe/rechtliches/datenschutz"  class="element-link-standard-variant sitemap-link">
+                            Datenschutzerklärung 
+                    </a>
+                </li>
+                <li class="sitemap-entry">
+                    <a href="/hilfe/rechtliches/data-act"  class="element-link-standard-variant sitemap-link">
+                            Informationen zum Data Act
+                    </a>
+                </li>
+        </ul>
+    </details>
+    <details class="sitemap-group" interaction="Ihre Vorteile" open>
+        <summary class="element-text-standard-strong sitemap-headline">Ihre Vorteile <span class="accordion-handle"></span></summary>
+            <ul class="sitemap-links">
+
+                <li class="sitemap-entry">
+                    <a href="/vorteile/thalia-app"  class="element-link-standard-variant sitemap-link">
+                            Thalia App
+                    </a>
+                </li>
+                <li class="sitemap-entry">
+                    <a href="/vorteile/thalia-lesen-und-hoeren-app"  class="element-link-standard-variant sitemap-link">
+                            Thalia – Lesen & Hören App
+                    </a>
+                </li>
+                <li class="sitemap-entry">
+                    <a href="/vorteile/lieblingsbuchhaendler"  class="element-link-standard-variant sitemap-link">
+                            Lieblingsbuchhändler*innen
+                    </a>
+                </li>
+                <li class="sitemap-entry">
+                    <a href="/vorteile/story-one"  class="element-link-standard-variant sitemap-link">
+                            story.one-Autor*in werden
+                    </a>
+                </li>
+                <li class="sitemap-entry">
+                    <a href="/geschenkkarte/"  class="element-link-standard-variant sitemap-link">
+                            Geschenkkarte 
+                    </a>
+                </li>
+                <li class="sitemap-entry">
+                    <a href="/vorteile/b2b-gk"  class="element-link-standard-variant sitemap-link">
+                            Geschenkkarte für Unternehmen 
+                    </a>
+                </li>
+                <li class="sitemap-entry">
+                    <a href="/vorteile/partnerprogramm"  class="element-link-standard-variant sitemap-link">
+                            Partnerprogramm (Affiliate) 
+                    </a>
+                </li>
+                <li class="sitemap-entry">
+                    <a href="/themenwelten/digitale-welt"  class="element-link-standard-variant sitemap-link">
+                            Digitale Welt
+                    </a>
+                </li>
+                <li class="sitemap-entry">
+                    <a href="/veranstaltung/veranstaltungskalender?monat=alle&stadt=alle"  class="element-link-standard-variant sitemap-link">
+                            Veranstaltungen 
+                    </a>
+                </li>
+                <li class="sitemap-entry">
+                    <a href="/vorteile/club/club-aktion"  class="element-link-standard-variant sitemap-link">
+                            KultClub
+                    </a>
+                </li>
+        </ul>
+    </details>
+        </div>
+    </div>
+</footer-sitemap>
+
+
+<footer-badges component="footer-badges" interaction="Footer Badges: Zahlungsmethoden, Payback, Trusted"  >
+    <link rel="stylesheet" href="https://assets.thalia.media/red/cms/components/footer-badges/style.12385db6fd9b026600f0.thalia.css">
+    <script> </script>
+    <div class="element-background-footer badges-container" data-color="light">
+            <a href="/hilfe/kaufprozess/kaufen-bezahlen#kreditkarte" target="" caption="VISA" aria-label="VISA" class="footer-badge-link">
+                <img class="footer-badge" src="https://images.thalia.media/Footer/-/62d2df7c259d44bf94d670f81c222181/VISA.png" alt="">
+            </a>
+            <a href="/hilfe/kaufprozess/kaufen-bezahlen#kreditkarte" target="" caption="Mastercard" aria-label="Mastercard" class="footer-badge-link">
+                <img class="footer-badge" src="https://images.thalia.media/Footer/-/da800919a9a340fba77e003a3c1ff5f2/Mastercard.png" alt="">
+            </a>
+            <a href="/hilfe/kaufprozess/kaufen-bezahlen#bankeinzug" target="" caption="SEPA Lastschrift" aria-label="SEPA Lastschrift" class="footer-badge-link">
+                <img class="footer-badge" src="https://images.thalia.media/Footer/-/b0542ec101e4437bab6384b8cf5b5ff7/SEPA Lastschrift.png" alt="">
+            </a>
+            <a href="/hilfe/kaufprozess/kaufen-bezahlen#google-pay" target="" caption="Google Pay" aria-label="Google Pay" class="footer-badge-link">
+                <img class="footer-badge" src="https://images.thalia.media/Footer/-/dec3b97a450f4668a2c2e10ed58d16d5/Google Pay.png" alt="">
+            </a>
+            <a href="/hilfe/kaufprozess/kaufen-bezahlen#apple-pay" target="" caption="Apple Pay" aria-label="Apple Pay" class="footer-badge-link">
+                <img class="footer-badge" src="https://images.thalia.media/Footer/-/4b2ed56d8b0f4210a573a09ff06adb3b/Apple Pay.png" alt="">
+            </a>
+            <a href="https://www.paypal.com/de/webapps/mpp/paypal-popup" target="_blank" caption="PayPal" aria-label="PayPal" class="footer-badge-link">
+                <img class="footer-badge" src="https://images.thalia.media/Footer/-/eb62f0aa0d6e49208d6175e932933cfa/PayPal.png" alt="">
+            </a>
+            <a href="/vorteile/payback" target="" caption="Payback" aria-label="Payback" class="footer-badge-link">
+                <img class="footer-badge" src="https://images.thalia.media/Footer/-/4436be7f06554ec495399d53025494d3/Payback.png" alt="">
+            </a>
+            <a href="/vorteile/club/club-aktion" target="" caption="KutlClub" aria-label="KutlClub" class="footer-badge-link">
+                <img class="footer-badge" src="https://images.thalia.media/Footer/-/858f9b8d01d549ae97bab4c3b1e4e715/KutlClub.png" alt="">
+            </a>
+            <a href="https://www.facebook.com/thalia.de" target="_blank" caption="facebook" aria-label="facebook" class="footer-badge-link">
+                <img class="footer-badge" src="https://images.thalia.media/Footer/-/f3ab2209619a458ab9f049e58fb45cbb/facebook.png" alt="">
+            </a>
+            <a href="https://www.instagram.com/thalia_buchhandlungen/" target="_blank" caption="instagram" aria-label="instagram" class="footer-badge-link">
+                <img class="footer-badge" src="https://images.thalia.media/Footer/-/323c0decad694b80bb019605c85d10d5/instagram.png" alt="">
+            </a>
+            <a href="https://www.pinterest.de/thaliabuecher/" target="_blank" caption="Pinterest" aria-label="Pinterest" class="footer-badge-link">
+                <img class="footer-badge" src="https://images.thalia.media/Footer/-/406f870d713e42ee871e174e7805f0d7/Pinterest.png" alt="">
+            </a>
+            <a href="https://www.tiktok.com/@thalia_buchhandlungen" target="_blank" caption="TikTok" aria-label="TikTok" class="footer-badge-link">
+                <img class="footer-badge" src="https://images.thalia.media/Footer/-/17b9a0625daf4e40aacffb34e371f803/TikTok.png" alt="">
+            </a>
+            <a href="https://www.youtube.com/@thalia_buchhandlungen" target="_blank" caption="YouTube" aria-label="YouTube" class="footer-badge-link">
+                <img class="footer-badge" src="https://images.thalia.media/Footer/-/49051d3f7b304907b07264b6c1d9217e/YouTube.png" alt="">
+            </a>
+    </div>
+</footer-badges>
+<footer-benefits component="footer-benefits"  >
+    <link rel="stylesheet" href="https://assets.thalia.media/red/cms/components/footer-benefits/style.94a025d750174f199794.thalia.css">
+    <script> </script>
+    <div class="element-background-footer benefits-container">
+        <ul class="footer-benefits-list">
+                <li class="element-text-standard footer-benefits-list-item">
+                    <span class="element-icon-haekchen" size="medium" spacing="inline-end"></span>
+                    Kostenlose Retouren
+                </li>
+                <li class="element-text-standard footer-benefits-list-item">
+                    <span class="element-icon-haekchen" size="medium" spacing="inline-end"></span>
+                    Gratis-Buchversand innerhalb Deutschlands
+                </li>
+                <li class="element-text-standard footer-benefits-list-item">
+                    <span class="element-icon-haekchen" size="medium" spacing="inline-end"></span>
+                    Click & Collect
+                </li>
+        </ul>
+    </div>
+        <div class="footer-benefits-osiander">
+            <img class="footer-benefits-osiander-logo" src="https://assets.thalia.media/red/cms/components/footer-benefits/assets/svg/brandlogo-osiander-v1.svg" alt="Osiander" width="123" height="22" loading="lazy">
+            <span class="element-text-standard">– online bei Thalia</span>
+        </div>
+        <hr class="element-background-footer footer-benefits-osiander-trennlinie" aria-hidden="true">
+</footer-benefits>
+<footer-footnote component="footer-footnote" interaction="Footer Footnote"  >
+    <link rel="stylesheet" href="https://assets.thalia.media/red/cms/components/footer-footnote/style.536376df2de1fa0b6849.thalia.css">
+    <script> </script>
+    <p class="element-text-small footer-footnote-paragraph">
+        * Gedrucktes Buch: Frühere Preisbindung aufgehoben. eBook: Befristete Preissenkung des Verlages. Gebrauchtbuch: Ggü. gebundenem Ladenpreis bzw. UVP für Neuware. Preisangaben inkl. gesetzl. MwSt. und ggf. zzgl. <a href="/hilfe/kaufprozess/versand-lieferung" target="_blank">Versandkosten</a>. <br>
+    </p>
+</footer-footnote>
+
+
+			
+        </footer>
+    </layout-zentriert-suche>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a465a8466bb43660',t:'MTc5MTMwMDEwMg=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script><script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v31edd6df95cf4e85bb4c19e7a9bdbcba1788362987495" integrity="sha512-iIg7k2xntmwu6/uSb5tpc/hySgZc4eoL31yB29W6tJFo2akwjPWcEqnCEdJvGexCL0KEQwVYv5BlowfhVz26hg==" data-cf-beacon='{"version":"2024.11.0","token":"235ccb45741c439eb3c6f7c5095d1f11","spa":2}' crossorigin="anonymous"></script>
+</body>
+
+</html>
+

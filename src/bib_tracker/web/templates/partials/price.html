@@ -1,7 +1,8 @@
 {#
   A price you type always wins over anything looked up: you can see the book,
-  and no provider outranks that. The basis is always shown, so a figure built
-  on a default is never mistaken for a real price.
+  and no provider outranks that. The label always names the source, so a
+  figure built on a default is never mistaken for a real price — and every
+  other platform's answer sits beside it, subdued, for comparison.
 #}
 <form
   id="price"
@@ -21,15 +22,14 @@
     value="{{ '%.2f'|format(media.effective_price_cents / 100) | replace('.', ',') if media.effective_price_cents is not none else '' }}"
   />
   <span class="faint">
-    {% if media.price_basis == 'manual' %}
-      von dir eingetragen
-    {% elif media.price_basis == 'provider_list_price' %}
-      Listenpreis
-    {% elif media.price_basis == 'default_by_class' %}
-      geschätzt ({{ media.media_class | media_label }}-Standardpreis)
-    {% else %}
-      unbekannt
-    {% endif %}
+    {{ media.price_basis | price_provider_label(media.price_provider) }}{% if exhausted is defined and exhausted %} · keine Quelle gefunden{% endif %}
   </span>
+  {% if price_options is defined and price_options %}
+    <span class="price-options faint">
+      {% for opt in price_options %}
+        <span class="price-options__item{% if opt.provider == media.price_provider %} price-options__item--active{% endif %}">{{ opt.provider | provider_label }} {{ opt.cents | eur }}</span>
+      {% endfor %}
+    </span>
+  {% endif %}
   <button class="btn" type="submit">Speichern</button>
 </form>

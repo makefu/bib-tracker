@@ -12,7 +12,7 @@ from bib_tracker.metadata import build_provider
 from bib_tracker.metadata.base import ProviderConfig, ProviderStatus
 from bib_tracker.metadata.dnb import parse_sru
 from bib_tracker.metadata.http import CachedClient
-from bib_tracker.metadata.pricing import PriceBasis, preferred_provider_price, resolve_price
+from bib_tracker.metadata.pricing import PriceBasis, all_found_prices, resolve_price
 from bib_tracker.metadata.vlb import extract_price
 
 PROVIDERS = Path(__file__).parent / "fixtures" / "providers"
@@ -161,13 +161,18 @@ async def test_the_configured_order_decides_which_price_wins(db, settings, media
     await _record(db, media_id, "vlb", 1899)
 
     settings.price_providers = ["vlb", "dnb", "googlebooks"]
-    assert (await preferred_provider_price(db, settings, media_id)).cents == 1899
+    assert [name for name, _ in await all_found_prices(db, settings, media_id)] == [
+        "vlb",
+        "dnb",
+        "googlebooks",
+    ]
+    assert (await resolve_price(db, settings, media_id, "book")).cents == 1899
 
     settings.price_providers = ["dnb", "googlebooks"]
-    assert (await preferred_provider_price(db, settings, media_id)).cents == 1999
+    assert (await resolve_price(db, settings, media_id, "book")).cents == 1999
 
     settings.price_providers = ["googlebooks"]
-    assert (await preferred_provider_price(db, settings, media_id)).cents == 2400
+    assert (await resolve_price(db, settings, media_id, "book")).cents == 2400
 
 
 async def test_the_ladder_falls_through_to_a_lower_preference(db, settings, media_id) -> None:

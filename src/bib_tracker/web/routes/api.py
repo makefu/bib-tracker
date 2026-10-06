@@ -14,6 +14,7 @@ from fastapi.responses import HTMLResponse, JSONResponse
 from ...db import queries
 from ...db.connection import Database
 from ...library.reconcile import apply_overrides
+from ...metadata.pricing import all_found_prices, price_search_exhausted
 from ...services import PollInProgressError, PollService, RenewalService
 from ..render import render
 
@@ -296,7 +297,7 @@ async def set_price(request: Request, media_id: int) -> HTMLResponse:
         await store_price(db, media_id, Price(cents, PriceBasis.MANUAL), source="manual", note="von Hand")
 
     updated = await db.fetch_one(
-        "SELECT id, media_class, effective_price_cents, price_basis FROM media WHERE id = ?",
+        "SELECT id, media_class, effective_price_cents, price_basis, price_provider FROM media WHERE id = ?",
         (media_id,),
     )
     if updated is None:  # pragma: no cover - the row was there a moment ago
@@ -306,7 +307,20 @@ async def set_price(request: Request, media_id: int) -> HTMLResponse:
     fragment = str(form.get("fragment") or "partials/price.html")
     if fragment not in ("partials/price.html", "partials/price_cell.html"):
         fragment = "partials/price.html"
-    return render(request, fragment, fragment, {"media": dict(updated)})
+    basis = str(updated["price_basis"])
+    context = {
+        "media": dict(updated),
+        "price_options": [
+            {"provider": name, "cents": price.cents}
+            for name, price in await all_found_prices(db, request.app.state.settings, media_id)
+        ],
+        "exhausted": (
+            await price_search_exhausted(db, request.app.state.settings, media_id)
+            if basis in ("unknown", "default_by_class")
+            else False
+        ),
+    }
+    return render(request, fragment, fragment, context)
 
 
 def _renewals(request: Request) -> RenewalService:

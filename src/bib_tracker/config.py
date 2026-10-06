@@ -233,15 +233,51 @@ class Settings(BaseSettings):
     #: refuses anonymous requests outright, so both are off unless configured.
     metadata_providers: list[str] = Field(default_factory=lambda: ["openlibrary", "dnb", "wikidata"])
     #: Which providers may supply a purchase price, in order of preference.
-    #: The VLB is the reference database for the gebundener Ladenpreis but
-    #: needs a contract; the DNB has the price as catalogued, free; Google
-    #: Books is the fallback and rarely knows German titles.
-    price_providers: list[str] = Field(default_factory=lambda: ["vlb", "dnb", "googlebooks"])
+    #: The catalogue sources first: the VLB is the reference database for the
+    #: gebundener Ladenpreis but needs a contract, the DNB has the price as
+    #: catalogued, free, and Google Books rarely knows German titles. The
+    #: shops then answer for everything they stock; they are polite by
+    #: default, riding metadata_rate_limits / default_rate_limit_per_minute.
+    price_providers: list[str] = Field(
+        default_factory=lambda: [
+            "vlb",
+            "dnb",
+            "googlebooks",
+            "buchkatalog",
+            "thalia",
+            "amazon",
+            "buch7",
+            "lehmanns",
+            "ebookde",
+        ]
+    )
+    #: Prioritised cover-image sources, walked only when the OPAC and the
+    #: enrichment merge gave none. `library` means the OPAC's own cover URLs.
+    image_providers: list[str] = Field(
+        default_factory=lambda: [
+            "library",
+            "openlibrary",
+            "thalia",
+            "googlebooks",
+            "buchkatalog",
+            "buch7",
+            "ebookde",
+            "lehmanns",
+            "amazon",
+        ]
+    )
+    #: Re-probe a provider whose last answer was 'blocked' or 'error' after
+    #: this many days; 'found' and 'not_found' are never retried on their own.
+    price_retry_days: int = 14
     metadata_base_urls: dict[str, str] = Field(default_factory=dict)
     #: Per-provider credential files, keyed by provider name.
     metadata_api_key_files: dict[str, Path] = Field(default_factory=dict)
     #: Inline tokens, for a YAML file that is itself the secrets file.
     metadata_api_keys: dict[str, str] = Field(default_factory=dict)
+    #: Per-provider `Cookie:` header values (e.g. a Thalia session that gets
+    #: past Cloudflare), inline or via files, same secrets handling as keys.
+    metadata_cookies: dict[str, str] = Field(default_factory=dict)
+    metadata_cookie_files: dict[str, Path] = Field(default_factory=dict)
     metadata_rate_limits: dict[str, int] = Field(default_factory=dict)
     user_agent_contact: str = "https://github.com/makefu/bib-tracker"
     #: Requests per minute for a provider that does not name its own limit.
@@ -271,9 +307,12 @@ class Settings(BaseSettings):
     @field_validator(
         "metadata_providers",
         "price_providers",
+        "image_providers",
         "metadata_base_urls",
         "metadata_api_key_files",
         "metadata_api_keys",
+        "metadata_cookies",
+        "metadata_cookie_files",
         "metadata_rate_limits",
         "default_prices",
         "media_class_map",
@@ -289,13 +328,13 @@ class Settings(BaseSettings):
             return [part.strip() for part in text.split(",") if part.strip()]
         return value
 
-    def provider_api_key(self, provider: str) -> str | None:
-        """Read a provider credential from wherever systemd or the user put it.
+    def _read_secret(self, name: str, files: dict[str, Path], inline: dict[str, str]) -> str | None:
+        """Read one secret from wherever systemd or the user put it.
 
         Missing is not an error: a provider that needs one reports itself as
         unavailable, which the interface can explain, rather than failing.
         """
-        path = self.metadata_api_key_files.get(provider)
+        path = files.get(name)
         if path is not None:
             candidate = Path(path)
             if not candidate.is_absolute():
@@ -303,12 +342,18 @@ class Settings(BaseSettings):
                 if base is not None:
                     candidate = base / candidate
             try:
-                key = candidate.read_text(encoding="utf-8").strip()
+                secret = candidate.read_text(encoding="utf-8").strip()
             except OSError:
-                key = ""
-            if key:
-                return key
-        return self.metadata_api_keys.get(provider) or None
+                secret = ""
+            if secret:
+                return secret
+        return inline.get(name) or None
+
+    def provider_api_key(self, provider: str) -> str | None:
+        return self._read_secret(provider, self.metadata_api_key_files, self.metadata_api_keys)
+
+    def provider_cookie(self, provider: str) -> str | None:
+        return self._read_secret(provider, self.metadata_cookie_files, self.metadata_cookies)
 
     def provider_rate_limit(self, provider: str) -> int:
         return self.metadata_rate_limits.get(provider, self.default_rate_limit_per_minute)

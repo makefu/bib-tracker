@@ -1,0 +1,24 @@
+{
+  "head" : {
+    "vars" : [ "itemLabel", "year", "publisherLabel", "image", "description" ]
+  },
+  "results" : {
+    "bindings" : [ {
+      "itemLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Kraken-Alarm"
+      },
+      "year" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#integer",
+        "type" : "literal",
+        "value" : "2010"
+      },
+      "description" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "2010 children's game"
+      }
+    } ]
+  }
+}

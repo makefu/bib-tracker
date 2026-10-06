@@ -1,0 +1,39 @@
+{
+ "provider": "buch7",
+ "recorded_at": "2026-10-06T16:45:37+00:00",
+ "corpus_entry": {
+  "class": "book",
+  "title": "So geht Technik! : Warum Toaster toasten, Flugzeuge fliegen und Wasser aus dem Hahn kommt",
+  "author": "Farndon, John",
+  "isbn": "9783836958424"
+ },
+ "captures": [
+  {
+   "file": "00-suche-9783836958424-200.html",
+   "method": "GET",
+   "url": "https://www.buch7.de/suche",
+   "params": {
+    "commit": "Suchen",
+    "search": "9783836958424"
+   },
+   "payload": null,
+   "status": 200
+  },
+  {
+   "file": "01-produkt_so_geht_technik_john_farndon_1024644799_-200.html",
+   "method": "GET",
+   "url": "https://www.buch7.de/produkt/so-geht-technik-john-farndon/1024644799?ean=9783836958424",
+   "params": null,
+   "payload": null,
+   "status": 200
+  }
+ ],
+ "expected": {
+  "external_id": "/produkt/so-geht-technik-john-farndon/1024644799?ean=9783836958424",
+  "title": "So geht Technik!",
+  "isbn13": "9783836958424",
+  "list_price_cents": 1600,
+  "list_price_currency": "EUR",
+  "cover_source_url": "https://medias.librinet.de/dl/b1ac6b9f-8306-4f04-aa5f-090f45418587/3/72677"
+ }
+}

@@ -113,6 +113,42 @@ _BASIS_LABELS: dict[str, str] = {
     "unknown": "unbekannt",
 }
 
+#: How shop and catalogue providers are named to a person, keyed by provider
+#: name. Anything unlisted shows its raw name rather than a placeholder.
+PROVIDER_LABELS: dict[str, str] = {
+    "buchkatalog": "Buchkatalog.de",
+    "thalia": "Thalia",
+    "amazon": "Amazon.de",
+    "buch7": "buch7.de",
+    "lehmanns": "Lehmanns.de",
+    "ebookde": "eBook.de",
+    "vlb": "VLB",
+    "dnb": "Deutsche Nationalbibliothek",
+    "googlebooks": "Google Books",
+    "openlibrary": "Open Library",
+    "wikidata": "Wikidata",
+    "bgg": "BoardGameGeek",
+    "library": "Bibliothek",
+    "legacy": "Eintrag aus früherer Version",
+}
+
+
+def provider_label(value: Any) -> str:
+    return PROVIDER_LABELS.get(str(value), str(value or ""))
+
+
+def price_provider_label(basis: Any, provider: Any) -> str:
+    """One label for every place a price is explained, so the cell and the
+    media page agree — and both name the source, not just the basis word."""
+    key = str(basis)
+    if key == "manual":
+        return "von dir eingetragen"
+    if key == "provider_list_price":
+        return f"Listenpreis von {PROVIDER_LABELS.get(str(provider), str(provider or 'Provider'))}"
+    if key == "default_by_class":
+        return "gesetzt (klassen-Standardpreis)"
+    return "unbekannt"
+
 
 def price_basis_label(basis: Any) -> str:
     return _BASIS_LABELS.get(str(basis), "unbekannt")
@@ -157,5 +193,7 @@ def register_filters(env: Environment) -> None:
         media_label=media_label,
         media_icon=media_icon,
         price_basis_label=price_basis_label,
+        price_provider_label=price_provider_label,
+        provider_label=provider_label,
         renew_tone=renew_tone,
     )

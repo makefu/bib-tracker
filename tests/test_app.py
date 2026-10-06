@@ -5,6 +5,7 @@ from __future__ import annotations
 import httpx
 
 from bib_tracker import __version__
+from bib_tracker.db.migrator import latest_version
 
 
 async def test_healthz_reports_the_schema_version(client: httpx.AsyncClient) -> None:
@@ -13,7 +14,7 @@ async def test_healthz_reports_the_schema_version(client: httpx.AsyncClient) -> 
     body = response.json()
     assert body["status"] == "ok"
     assert body["version"] == __version__
-    assert body["schema_version"] == 1
+    assert body["schema_version"] == latest_version()
     assert body["accounts"] == []
 
 
@@ -24,7 +25,7 @@ async def test_readyz(client: httpx.AsyncClient) -> None:
 async def test_startup_migrates_an_empty_database(client: httpx.AsyncClient, db_path) -> None:
     """The service must come up against a fresh StateDirectory."""
     assert db_path.exists()
-    assert (await client.get("/healthz")).json()["schema_version"] == 1
+    assert (await client.get("/healthz")).json()["schema_version"] == latest_version()
 
 
 async def test_static_assets_are_served(client: httpx.AsyncClient) -> None:

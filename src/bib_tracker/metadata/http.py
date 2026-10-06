@@ -117,6 +117,66 @@ class CachedClient:
             await self._write_cache(key, url, provider, response, ttl)
         return response
 
+    async def post_json(
+        self,
+        url: str,
+        *,
+        provider: str,
+        payload: dict[str, Any],
+        params: dict[str, Any] | None = None,
+        headers: dict[str, str] | None = None,
+        rate_limit_per_minute: int = 60,
+        ttl: timedelta | None = None,
+    ) -> CachedResponse:
+        """POST a JSON body through the same cache and limiter as `get`."""
+        key = _cache_key(url, {"params": params or {}, "json": payload})
+
+        cached = await self._read_cache(key)
+        if cached is not None:
+            return cached
+
+        await self.limiter(provider, rate_limit_per_minute).acquire()
+        response = await self._post_with_backoff(url, params, payload, headers, provider)
+
+        if response.ok or response.status == 404:
+            await self._write_cache(key, url, provider, response, ttl)
+        return response
+
+    async def _post_with_backoff(
+        self,
+        url: str,
+        params: dict[str, Any] | None,
+        payload: dict[str, Any],
+        headers: dict[str, str] | None,
+        provider: str,
+    ) -> CachedResponse:
+        request_headers = {"User-Agent": self.user_agent, **(headers or {})}
+        delay = 1.0
+
+        for attempt in range(1, self._max_attempts + 1):
+            try:
+                response = await self._client.post(url, params=params, json=payload, headers=request_headers)
+            except httpx.HTTPError as err:
+                if attempt == self._max_attempts:
+                    _LOGGER.warning("%s: giving up on POST %s after %d attempts: %s", provider, url, attempt, err)
+                    return CachedResponse(status=599, body=str(err).encode())
+                await asyncio.sleep(_jittered(delay))
+                delay *= 2
+                continue
+
+            if response.status_code not in RETRY_STATUSES and response.status_code != QUEUED_STATUS:
+                return CachedResponse(status=response.status_code, body=response.content)
+
+            if attempt == self._max_attempts:
+                return CachedResponse(status=response.status_code, body=response.content)
+
+            wait = _retry_after(response) or _jittered(delay)
+            _LOGGER.info("%s: POST %s %s, retrying in %.1fs", provider, response.status_code, url, wait)
+            await asyncio.sleep(wait)
+            delay *= 2
+
+        raise AssertionError("unreachable")
+
     async def _fetch_with_backoff(
         self,
         url: str,

@@ -19,6 +19,7 @@ from ...db.connection import Database
 from ...library.media_class import MediaClass
 from ...metadata.covers import VARIANTS, placeholder_svg, read_cover
 from ...metadata.lookup import lookup_isbn
+from ...metadata.pricing import all_found_prices, price_search_exhausted
 from ..filters import MEDIA_CLASS_LABELS
 from ..render import render
 
@@ -223,6 +224,27 @@ async def history(request: Request) -> HTMLResponse:
     )
 
     loan_rows = [dict(row) for row in rows]
+    # The price tooltip shows every platform's answer and the exhausted mark,
+    # neither of which is in the loan SELECT. One pair of extra queries per
+    # distinct work on the page (≤200 rows, indexed by media_id) — at SQLite
+    # speed, and it keeps the ladder's ordering logic in one function.
+    details: dict[int, tuple[Any, list[dict[str, Any]], bool]] = {}
+    for row in loan_rows:
+        media_id = int(row["media_id"])
+        if media_id not in details:
+            head = await db.fetch_one("SELECT price_provider, price_basis FROM media WHERE id = ?", (media_id,))
+            options = [
+                {"provider": name, "cents": price.cents}
+                for name, price in await all_found_prices(db, request.app.state.settings, media_id)
+            ]
+            basis = head["price_basis"] if head else "unknown"
+            exhausted = (
+                await price_search_exhausted(db, request.app.state.settings, media_id)
+                if basis in ("unknown", "default_by_class")
+                else False
+            )
+            details[media_id] = (head["price_provider"] if head else None, options, exhausted)
+        row["price_provider"], row["price_options"], row["exhausted"] = details[media_id]
     works = len({row["media_id"] for row in loan_rows})
     untracked = sum(1 for row in loan_rows if row["lend_date_source"] == "before_tracking")
 
@@ -375,9 +397,20 @@ async def media_detail(request: Request, media_id: int) -> HTMLResponse:
     )
 
     context = await _shell(request, "/history")
+    price_options = [
+        {"provider": name, "cents": price.cents}
+        for name, price in await all_found_prices(db, request.app.state.settings, media_id)
+    ]
+    basis = str(media["price_basis"])
     context |= {
         "media": dict(media),
         "loans": [dict(row) for row in rows],
+        "price_options": price_options,
+        "exhausted": (
+            await price_search_exhausted(db, request.app.state.settings, media_id)
+            if basis in ("unknown", "default_by_class")
+            else False
+        ),
         "external_ratings": [
             {
                 "provider": row["provider"],

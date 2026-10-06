@@ -22,9 +22,9 @@ def test_migrate_creates_the_schema_and_records_the_version(db_path: Path) -> No
     try:
         assert current_version(conn) == 0
         version = migrate(conn)
-        assert version == latest_version() == 1
-        assert current_version(conn) == 1
-        assert {"accounts", "poll_runs", "snapshot_items", "loans", "media"} <= _tables(conn)
+        assert version == latest_version() == 2
+        assert current_version(conn) == 2
+        assert {"accounts", "poll_runs", "snapshot_items", "loans", "media", "lookup_probes"} <= _tables(conn)
     finally:
         conn.close()
 

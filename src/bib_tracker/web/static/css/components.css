@@ -567,6 +567,28 @@
   padding: var(--sp-1) var(--sp-2);
 }
 
+/* An exhausted price search is marked, not silent: the dotted underline says
+ * "we looked, nothing answered" without stealing the row's attention. */
+.cell-price .cell-price__view.cell-price--exhausted {
+  color: var(--warn-500);
+  text-decoration: underline dotted;
+}
+
+/* The other platforms' answers beside the price: comparison, not content,
+ * so smaller and faint, never dominant. The chosen one is underlined. */
+.price-options {
+  margin-left: auto;
+  display: inline-flex;
+  gap: var(--sp-3);
+  font-size: 0.8em;
+  opacity: 0.65;
+}
+
+.price-options__item--active {
+  text-decoration: underline;
+  opacity: 1;
+}
+
 /* -- due-soon rows ---------------------------------------------------------- */
 .due-row {
   padding: var(--sp-1) var(--sp-2);

@@ -1,0 +1,40 @@
+{
+ "provider": "wikidata",
+ "recorded_at": "2026-10-06T16:56:45+00:00",
+ "corpus_entry": {
+  "class": "game",
+  "title": "Kraken-Alarm",
+  "author": "Oliver Igelhaut. Ill.: Michael Menzel",
+  "isbn": null
+ },
+ "captures": [
+  {
+   "file": "00-sparql-200.json",
+   "method": "GET",
+   "url": "https://query.wikidata.org/sparql",
+   "params": {
+    "query": "\nSELECT ?item ?itemLabel ?year ?publisherLabel ?image WHERE {\n  ?item wdt:P31/wdt:P279* wd:Q131436 .\n  ?item rdfs:label ?itemLabel .\n  FILTER(CONTAINS(LCASE(?itemLabel), LCASE(\"Kraken-Alarm\")))\n  OPTIONAL { ?item wdt:P577 ?date . BIND(YEAR(?date) AS ?year) }\n  OPTIONAL { ?item wdt:P123 ?publisher . ?publisher rdfs:label ?publisherLabel .\n             FILTER(LANG(?publisherLabel) = \"de\" || LANG(?publisherLabel) = \"en\") }\n  OPTIONAL { ?item wdt:P18 ?image }\n  FILTER(LANG(?itemLabel) = \"de\" || LANG(?itemLabel) = \"en\")\n}\nLIMIT 5\n",
+    "format": "json"
+   },
+   "payload": null,
+   "status": 200
+  },
+  {
+   "file": "01-sparql-200.json",
+   "method": "GET",
+   "url": "https://query.wikidata.org/sparql",
+   "params": {
+    "query": "\nSELECT ?itemLabel ?year ?publisherLabel ?image ?description WHERE {\n  BIND(wd:Q44660337 AS ?item)\n  OPTIONAL { ?item rdfs:label ?itemLabel . FILTER(LANG(?itemLabel) = \"de\" || LANG(?itemLabel) = \"en\") }\n  OPTIONAL { ?item wdt:P577 ?date . BIND(YEAR(?date) AS ?year) }\n  OPTIONAL { ?item wdt:P123 ?publisher . ?publisher rdfs:label ?publisherLabel .\n             FILTER(LANG(?publisherLabel) = \"de\" || LANG(?publisherLabel) = \"en\") }\n  OPTIONAL { ?item wdt:P18 ?image }\n  OPTIONAL { ?item schema:description ?description .\n             FILTER(LANG(?description) = \"de\" || LANG(?description) = \"en\") }\n}\nLIMIT 1\n",
+    "format": "json"
+   },
+   "payload": null,
+   "status": 200
+  }
+ ],
+ "expected": {
+  "external_id": "Q44660337",
+  "title": "Kraken-Alarm",
+  "published_year": 2010,
+  "description": "2010 children's game"
+ }
+}

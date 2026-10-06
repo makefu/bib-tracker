@@ -19,11 +19,11 @@ from ..library.media_class import MediaClass
 from ..library.merge_media import adopt_isbn
 from . import PROVIDER_FACTORIES, build_provider
 from .base import BaseProvider, MediaQuery, ProviderConfig, ProviderRecord, ProviderStatus
-from .covers import store_cover
+from .covers import has_cover, store_cover
 from .http import CachedClient
 from .matcher import choose
 from .merge import merge_records
-from .pricing import preferred_provider_price, store_price
+from .pricing import all_found_prices, probe_row, search_cover, search_price, store_price
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -56,6 +56,7 @@ class EnrichmentWorker:
                 name=name,
                 base_url=self._settings.metadata_base_urls.get(name),
                 api_key=self._settings.provider_api_key(name),
+                cookie=self._settings.provider_cookie(name),
                 rate_limit_per_minute=self._settings.provider_rate_limit(name),
             )
             providers[name] = build_provider(config, self._http)
@@ -83,6 +84,12 @@ class EnrichmentWorker:
             for row in rows:
                 media_class = MediaClass(row["media_class"])
                 for name, provider in self.usable_providers().items():
+                    # Shops answer price/cover for the ladders, not title or
+                    # publisher for the merge; merge_records names no shop
+                    # provider in FIELD_PRECEDENCE, so queueing one would
+                    # store a record nothing reads.
+                    if provider.shop:
+                        continue
                     if not provider.supports_class(media_class):
                         continue
                     await w.execute(
@@ -289,13 +296,68 @@ class EnrichmentWorker:
             # merge precedence: which source is authoritative for a German
             # retail price is a different question from who has the best
             # description.
-            price = await preferred_provider_price(self._db, self._settings, media_id)
-            if price is not None:
-                await store_price(self._db, media_id, price, source="provider")
+            found = await all_found_prices(self._db, self._settings, media_id)
+            if found:
+                name, price = found[0]
+                await store_price(self._db, media_id, price, source=price.provider or name, price_provider=name)
 
             cover_url = merged.get("cover_source_url")
             if cover_url:
-                await store_cover(self._db, self._http, media_id, str(cover_url))
+                await store_cover(self._db, self._http, media_id, str(cover_url), provider="merge")
+
+            # The OPAC's own cover beat every provider's scan of the same
+            # edition; snapshot_items recorded it but nothing consumed it.
+            if not await has_cover(self._db, media_id):
+                row = await self._db.fetch_one(
+                    "SELECT cover_url FROM snapshot_items WHERE cover_url IS NOT NULL"
+                    " AND copy_key IN (SELECT copy_key FROM copies WHERE media_id = ?)"
+                    " ORDER BY observed_at DESC LIMIT 1",
+                    (media_id,),
+                )
+                if row:
+                    await store_cover(self._db, self._http, media_id, str(row["cover_url"]), provider="library")
+
+            await self._run_ladders(media_id)
+
+    async def _run_ladders(self, media_id: int) -> None:
+        """Walk the price and cover ladders for one work.
+
+        Cheap to re-enter: the probe table makes a repeat call issue zero
+        requests, so the next scheduler tick reaching here costs no HTTP.
+        """
+        row = await self._db.fetch_one(
+            "SELECT title, author, media_class, isbn13, publisher, published_year FROM media WHERE id = ?",
+            (media_id,),
+        )
+        if row is None:
+            return
+        query = MediaQuery(
+            media_class=MediaClass(row["media_class"]),
+            title=row["title"],
+            author=row["author"],
+            isbn=row["isbn13"],
+            publisher=row["publisher"],
+            published_year=row["published_year"],
+        )
+
+        # The comparison list needs every platform probed, so one found
+        # price does not stop the walk: the trigger asks again while any
+        # configured provider still lacks a probe row.
+        priced = await all_found_prices(self._db, self._settings, media_id)
+        manual = await self._db.fetch_one(
+            "SELECT 1 FROM price_estimates WHERE media_id = ? AND source = 'manual'",
+            (media_id,),
+        )
+        missing = [
+            name
+            for name in self._settings.price_providers
+            if await probe_row(self._db, media_id, name, "price") is None
+        ]
+        if (not priced and manual is None) or missing:
+            await search_price(self._db, self._settings, self._http, media_id, query)
+
+        if not await has_cover(self._db, media_id):
+            await search_cover(self._db, self._settings, self._http, media_id, query)
 
     async def _write_media(self, media_id: int, merged: dict[str, Any], state: str) -> None:
         columns = {

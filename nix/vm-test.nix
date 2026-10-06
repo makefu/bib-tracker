@@ -64,7 +64,8 @@ pkgs.testers.nixosTest {
 
     with subtest("the service is healthy and the schema was migrated"):
         machine.succeed("curl -fsS localhost:8099/healthz | grep -q '\"status\":\"ok\"'")
-        machine.succeed("curl -fsS localhost:8099/healthz | grep -q '\"schema_version\":1'")
+        # 2: price provenance (media.price_provider, lookup_probes) landed in 0002.
+        machine.succeed("curl -fsS localhost:8099/healthz | grep -q '\"schema_version\":2'")
         machine.succeed("curl -fsS localhost:8099/readyz")
 
     with subtest("vendored assets ship in the closure, so no CDN is needed"):

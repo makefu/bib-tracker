@@ -9,7 +9,11 @@ log_level: info
 
 poll_interval_minutes: 360
 metadata_providers: [openlibrary, dnb, wikidata]
-price_providers: [vlb, dnb, googlebooks]
+# Shops answer for everything they stock; a Thalia session cookie lives in
+# .secrets.yml (metadata_cookies: {thalia: "..."}), without it the probe is
+# marked blocked in the UI.
+price_providers: [vlb, dnb, googlebooks, buchkatalog, thalia, amazon, buch7, lehmanns, ebookde]
+image_providers: [library, openlibrary, thalia, googlebooks, buchkatalog, buch7, ebookde, lehmanns, amazon]
 
 accounts:
   stuttgart:

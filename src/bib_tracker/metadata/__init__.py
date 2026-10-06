@@ -23,6 +23,14 @@ from .bgg import BoardGameGeekProvider
 from .dnb import DnbProvider
 from .googlebooks import GoogleBooksProvider
 from .openlibrary import OpenLibraryProvider
+from .shops import (
+    AmazonProvider,
+    Buch7Provider,
+    BuchkatalogProvider,
+    EbookDeProvider,
+    LehmannsProvider,
+    ThaliaProvider,
+)
 from .vlb import VlbProvider
 from .wikidata import WikidataProvider
 
@@ -33,6 +41,12 @@ PROVIDER_FACTORIES: dict[str, Callable[[ProviderConfig, Any], BaseProvider]] = {
     BoardGameGeekProvider.name: BoardGameGeekProvider,
     WikidataProvider.name: WikidataProvider,
     VlbProvider.name: VlbProvider,
+    ThaliaProvider.name: ThaliaProvider,
+    BuchkatalogProvider.name: BuchkatalogProvider,
+    AmazonProvider.name: AmazonProvider,
+    Buch7Provider.name: Buch7Provider,
+    LehmannsProvider.name: LehmannsProvider,
+    EbookDeProvider.name: EbookDeProvider,
 }
 
 
@@ -50,10 +64,15 @@ def build_provider(config: ProviderConfig, client: Any) -> BaseProvider:
 
 __all__ = [
     "PROVIDER_FACTORIES",
+    "AmazonProvider",
     "BaseProvider",
     "BoardGameGeekProvider",
+    "Buch7Provider",
+    "BuchkatalogProvider",
     "DnbProvider",
+    "EbookDeProvider",
     "GoogleBooksProvider",
+    "LehmannsProvider",
     "MatchMethod",
     "MediaQuery",
     "MetadataProvider",
@@ -62,6 +81,7 @@ __all__ = [
     "ProviderConfig",
     "ProviderRecord",
     "ProviderStatus",
+    "ThaliaProvider",
     "VlbProvider",
     "WikidataProvider",
     "available_providers",

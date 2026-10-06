@@ -52,6 +52,12 @@ class ProviderCandidate:
     isbn13: str | None = None
     #: Filled in by the matcher, never by the provider itself.
     score: float = 0.0
+    #: A shop whose search answer already carries the full record (price,
+    #: cover) fills this so the ladder needs no second request; catalogue
+    #: providers leave it None and pay the fetch.
+    record: ProviderRecord | None = None
+    #: Loose per-tile extras a shop parsed but has no field for (price text).
+    payload: dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass
@@ -90,6 +96,9 @@ class ProviderConfig:
     name: str
     base_url: str | None = None
     api_key: str | None = None
+    #: Whole `Cookie:` header value, for shop front-ends behind a login or a
+    #: bot wall that a browser session cookie unlocks.
+    cookie: str | None = None
     enabled: bool = True
     rate_limit_per_minute: int = 60
 
@@ -104,6 +113,8 @@ class MetadataProvider(Protocol):
     provides_rating: ClassVar[bool]
     #: True when the service refuses anonymous access.
     requires_credentials: ClassVar[bool]
+    #: Shop front-ends serve price/cover, never bibliographic merge fields.
+    shop: ClassVar[bool]
 
     def available(self) -> bool:
         """False when configured but missing a credential it cannot work without."""
@@ -122,6 +133,8 @@ class BaseProvider:
     provides_price: ClassVar[bool] = False
     provides_rating: ClassVar[bool] = False
     requires_credentials: ClassVar[bool] = False
+    #: Shop front-ends serve price/cover, never bibliographic merge fields.
+    shop: ClassVar[bool] = False
     DEFAULT_BASE_URL: ClassVar[str] = ""
 
     def __init__(self, config: ProviderConfig, client: Any) -> None:

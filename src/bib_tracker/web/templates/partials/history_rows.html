@@ -68,8 +68,8 @@
     </td>
     {# Same partial the price endpoint re-renders, so the HTMX swap back is
        self-consistent; effective_price_cents matches the DB-row dict the
-       endpoint hands its render call. #}
-    {% with media={'id': loan.media_id, 'title': loan.title, 'effective_price_cents': loan.price_cents, 'price_basis': loan.price_basis} %}
+       endpoint hands its render call. The comparison list is per row. #}
+    {% with media={'id': loan.media_id, 'title': loan.title, 'effective_price_cents': loan.price_cents, 'price_basis': loan.price_basis, 'price_provider': loan.price_provider}, price_options=loan.price_options, exhausted=loan.exhausted %}
       {% include "partials/price_cell.html" %}
     {% endwith %}
     <td>

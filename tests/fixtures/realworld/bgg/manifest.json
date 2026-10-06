@@ -1,0 +1,44 @@
+{
+ "provider": "bgg",
+ "recorded_at": "2026-10-06T16:45:51+00:00",
+ "corpus_entry": {
+  "class": "game",
+  "title": "Billy Biber",
+  "author": "Haferkamp, Kai",
+  "isbn": null
+ },
+ "captures": [
+  {
+   "file": "00-xmlapi2_search-200.xml",
+   "method": "GET",
+   "url": "https://boardgamegeek.com/xmlapi2/search",
+   "params": {
+    "query": "Billy Biber",
+    "type": "boardgame"
+   },
+   "payload": null,
+   "status": 200
+  },
+  {
+   "file": "01-xmlapi2_thing-200.xml",
+   "method": "GET",
+   "url": "https://boardgamegeek.com/xmlapi2/thing",
+   "params": {
+    "id": "50458",
+    "stats": 1
+   },
+   "payload": null,
+   "status": 200
+  }
+ ],
+ "expected": {
+  "external_id": "50458",
+  "title": "Billy Biber",
+  "publisher": "Ravensburger AG",
+  "published_year": 2009,
+  "description": "A dexterity game in which cylindrical logs are stacked between the banks of a river with Billy Beaver sitting on top. Players try to remove logs from the pile (with the help of a stick) without causing the pile to collapse.",
+  "rating_value": 5.22987,
+  "rating_scale": 10.0,
+  "cover_source_url": "https://cf.geekdo-images.com/EH1Yg5VZP3x1MELysRE6Kg__original/img/ewKhayZkYme5vIPvGa4QY5BwxEs=/0x0/filters:format(jpeg)/pic698212.jpg"
+ }
+}

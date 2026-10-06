@@ -51,7 +51,7 @@ async def test_the_dnb_really_has_a_price_for_these_books(http, isbn, expected_c
 
 async def test_the_dnb_price_survives_the_whole_ladder(db, http) -> None:
     """End to end: look the price up, store it, and let the ladder choose it."""
-    from bib_tracker.metadata.pricing import PriceBasis, preferred_provider_price, store_price
+    from bib_tracker.metadata.pricing import PriceBasis, all_found_prices, store_price
 
     isbn, expected = KNOWN_PRICES[0]
     settings = Settings(db_path=db.path, price_providers=["vlb", "dnb", "googlebooks"])
@@ -80,8 +80,10 @@ async def test_the_dnb_price_survives_the_whole_ladder(db, http) -> None:
             (media_id, record.list_price_cents),
         )
 
-    price = await preferred_provider_price(db, settings, media_id)
-    assert price is not None
+    found = await all_found_prices(db, settings, media_id)
+    assert found
+    name, price = found[0]
+    assert name == "dnb"
     assert price.cents == expected
     assert price.basis is PriceBasis.PROVIDER
     assert price.is_estimate is False

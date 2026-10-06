@@ -88,7 +88,8 @@ log_level: info
 
 poll_interval_minutes: 360
 metadata_providers: [openlibrary, dnb, wikidata]
-price_providers: [vlb, dnb, googlebooks]
+price_providers: [vlb, dnb, googlebooks, buchkatalog, thalia, amazon, buch7, lehmanns, ebookde]
+image_providers: [library, openlibrary, thalia, googlebooks, buchkatalog, buch7, ebookde, lehmanns, amazon]
 default_prices:
   book: 15.0
   game: 35.0
@@ -112,6 +113,12 @@ accounts:
 
 metadata_api_keys:
   bgg: "…"
+
+# A Thalia session that gets past its Cloudflare check; without it the
+# thalia probe is marked blocked in the UI. Files work too
+# (metadata_cookie_files), same precedence as the keys above.
+metadata_cookies:
+  thalia: "session-xy=…"
 ```
 
 Accounts merge *per account*: the second file completes the account the
@@ -211,6 +218,7 @@ services.bib-tracker.defaultPrices = {
 | `bib-tracker-migrate` | apply migrations and exit (runs as `ExecStartPre`) |
 | `bib-tracker-poll` | poll every account once, non-zero exit on failure |
 | `bib-tracker-rebuild` | recompute the history from the stored observations |
+| `bib-tracker-lookup ISBN` | ask every price/image source for one work and print the answers side by side (`--json`, `--provider`, `--fresh`) |
 
 ## Development
 

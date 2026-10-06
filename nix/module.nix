@@ -37,10 +37,14 @@ let
       metadata_enabled = cfg.metadata.enable;
       metadata_providers = cfg.metadata.providers;
       price_providers = cfg.metadata.priceProviders;
+      image_providers = cfg.metadata.imageProviders;
+      price_retry_days = cfg.metadata.priceRetryDays;
       metadata_base_urls = cfg.metadata.baseUrls;
       metadata_rate_limits = cfg.metadata.rateLimits;
       # Credential names, resolved against $CREDENTIALS_DIRECTORY at runtime.
       metadata_api_key_files = lib.mapAttrs' (name: _: lib.nameValuePair name "provider-${name}-key") cfg.metadata.apiKeyFiles;
+      metadata_cookie_files = lib.mapAttrs' (name: _: lib.nameValuePair name "provider-${name}-cookie") cfg.metadata.cookieFiles;
+      metadata_cookies = cfg.metadata.cookies;
       user_agent_contact = cfg.metadata.userAgentContact;
       default_prices = cfg.defaultPrices;
     }
@@ -283,12 +287,24 @@ in
             "dnb"
             "googlebooks"
             "openlibrary"
+            "buchkatalog"
+            "thalia"
+            "amazon"
+            "buch7"
+            "lehmanns"
+            "ebookde"
           ]
         );
         default = [
           "vlb"
           "dnb"
           "googlebooks"
+          "buchkatalog"
+          "thalia"
+          "amazon"
+          "buch7"
+          "lehmanns"
+          "ebookde"
         ];
         description = ''
           Which providers may supply a purchase price, most trusted first.
@@ -303,10 +319,72 @@ in
           binding are not reflected there, which is fine for "what would this
           have cost" and not a claim about today's price.
 
-          Google Books is the fallback and rarely knows German titles at all.
+          Google Books is the last catalogue source and rarely knows German
+          titles at all. After it come the shop front-ends (Buchkatalog.de,
+          Thalia, Amazon.de, buch7.de, Lehmanns.de, eBook.de), which answer
+          for everything they stock. Every provider that answered is shown
+          beside the chosen price, so the order decides the headline figure,
+          not what is recorded.
+
+          Shops get asked once per work; a shop that blocked the question is
+          asked again after {option}`services.bib-tracker.metadata.priceRetryDays`.
 
           A price entered by hand always beats every entry in this list.
         '';
+      };
+
+      imageProviders = lib.mkOption {
+        type = lib.types.listOf lib.types.str;
+        default = [
+          "library"
+          "openlibrary"
+          "thalia"
+          "googlebooks"
+          "buchkatalog"
+          "buch7"
+          "ebookde"
+          "lehmanns"
+          "amazon"
+        ];
+        description = ''
+          Where to look for a cover image when the library did not give one,
+          most preferred first. The special name `library` means the OPAC's own
+          cover URL, which is the right picture for the edition actually
+          borrowed and so comes first.
+        '';
+      };
+
+      priceRetryDays = lib.mkOption {
+        type = lib.types.ints.positive;
+        default = 14;
+        description = ''
+          Re-ask a shop that blocked or failed at a price lookup after this
+          many days. A shop that answered "not stocked" is not asked again on
+          its own; that is an answer, not a failure.
+        '';
+      };
+
+      cookies = lib.mkOption {
+        type = lib.types.attrsOf lib.types.str;
+        default = { };
+        example = {
+          thalia = "session=...";
+        };
+        description = ''
+          Per-provider `Cookie:` header value, for the shops that only serve
+          their catalogue to a browser that has passed a bot check. Prefer
+          {option}`services.bib-tracker.metadata.cookieFiles` for anything that
+          is a secret: an inline value ends up in the Nix store, world-readable.
+        '';
+      };
+
+      cookieFiles = lib.mkOption {
+        type = lib.types.attrsOf lib.types.path;
+        default = { };
+        example = {
+          thalia = "/run/secrets/thalia-cookie";
+        };
+        description = "Per-provider cookie file, read through systemd's credential store so it never enters the Nix store.";
       };
 
       apiKeyFiles = lib.mkOption {
@@ -408,7 +486,10 @@ in
           lib.mapAttrsToList (name: a: "${credentialName name}:${toString a.passwordFile}") enabledAccounts
           ++ lib.mapAttrsToList (
             name: file: "provider-${name}-key:${toString file}"
-          ) cfg.metadata.apiKeyFiles;
+          ) cfg.metadata.apiKeyFiles
+          ++ lib.mapAttrsToList (
+            name: file: "provider-${name}-cookie:${toString file}"
+          ) cfg.metadata.cookieFiles;
       }
       // (
         if cfg.user == null then
