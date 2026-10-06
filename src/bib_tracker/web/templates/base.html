@@ -133,6 +133,42 @@
           },
         };
       }
+
+      /* A failed HTMX request used to vanish: pressing Ausführen while a
+       * task runs gave a 409 that swapped nothing, so the page just sat
+       * there. Every non-2xx answer now says what happened. */
+      function toast(message, tone) {
+        var host = document.getElementById("toasts");
+        if (!host) return;
+        var el = document.createElement("div");
+        el.className = "toast";
+        if (tone) el.dataset.tone = tone;
+        el.setAttribute("role", "status");
+        el.textContent = message;
+        host.appendChild(el);
+        setTimeout(function () {
+          el.remove();
+        }, 6000);
+      }
+      document.body.addEventListener("htmx:responseError", function (event) {
+        var detail = "";
+        try {
+          detail = JSON.parse(event.detail.xhr.response).detail || "";
+        } catch (e) {
+          /* an HTML error body has no detail field; the status is enough */
+        }
+        var status = event.detail.xhr.status;
+        var message =
+          status === 409
+            ? "Es läuft bereits eine Wartungsaufgabe."
+            : status === 404
+              ? "Das Werk existiert nicht (mehr)."
+              : detail || ("Anfrage fehlgeschlagen (" + status + ")");
+        toast(message, "bad");
+      });
+      document.body.addEventListener("htmx:sendError", function () {
+        toast("Keine Verbindung zum Server.", "bad");
+      });
     </script>
   </body>
 </html>

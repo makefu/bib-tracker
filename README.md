@@ -7,6 +7,8 @@ Stuttgart (aDIS/BMS) and Remseck (Koha/LMSCloud) are supported today; the
 scraping comes from [ha_stadtbibliothek](https://github.com/makefu/ha_stadtbibliothek),
 whose backends work without Home Assistant.
 
+Release notes live in [CHANGELOG.md](CHANGELOG.md).
+
 ## Why
 
 The library OPACs only show what is on loan *right now*. There is no history,
