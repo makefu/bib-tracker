@@ -10,7 +10,7 @@ from bib_tracker.library.media_class import MediaClass
 from bib_tracker.metadata.base import MediaQuery, ProviderCandidate, ProviderRecord, ProviderStatus
 from bib_tracker.metadata.matcher import AUTO_ACCEPT, NEEDS_CONFIRMATION, choose, score
 from bib_tracker.metadata.merge import consensus_rating, merge_records, ratings
-from bib_tracker.metadata.pricing import Price, PriceBasis, resolve_price, store_price
+from bib_tracker.metadata.pricing import Price, PriceBasis, clear_price, parse_price_cents, resolve_price, store_price
 from tests.conftest import library_fixture
 
 OPAC = "http://opac.test"
@@ -276,3 +276,92 @@ async def test_an_unknown_price_fragment_falls_back_to_the_form(api) -> None:
         data={"price": "12,34", "fragment": "pages/base.html"},
     )
     assert 'id="price"' in response.text
+
+
+# -- clearing a price, and German-style input --------------------------------
+
+
+def test_both_separators_are_german_prices() -> None:
+    """People type what they see on the price tag; the comma wins where both
+    appear, and a lone dot is a thousands separator, not a decimal point."""
+    assert parse_price_cents("12,34") == 1234
+    assert parse_price_cents("12.34") == 1234
+    assert parse_price_cents("1.234,56") == 123456
+    assert parse_price_cents("1.234") == 123400
+    assert parse_price_cents("12.345,678") == 1234568
+    assert parse_price_cents("8 €") == 800
+
+
+async def _provider_record(db, media_id: int, cents: int) -> None:
+    async with db.write() as w:
+        await w.execute(
+            """
+            INSERT INTO metadata_records (media_id, provider, status, list_price_cents,
+                                          list_price_currency, fetched_at)
+            VALUES (?, 'vlb', 'ok', ?, 'EUR', datetime('now'))
+            """,
+            (media_id, cents),
+        )
+
+
+async def test_clearing_the_price_falls_back_to_the_provider_price(db, settings, priced_media) -> None:
+    """Clearing your entry is not the same as never having had one: what the
+    providers know becomes visible again instead of the class default."""
+    await _provider_record(db, priced_media, 2400)
+    await store_price(db, priced_media, Price(1899, PriceBasis.MANUAL), source="manual")
+
+    await clear_price(db, settings, priced_media)
+
+    row = await db.fetch_one("SELECT effective_price_cents, price_basis FROM media WHERE id = ?", (priced_media,))
+    assert row["effective_price_cents"] == 2400
+    assert row["price_basis"] == "provider_list_price"
+    price = await resolve_price(db, settings, priced_media, "book")
+    assert price.basis is PriceBasis.PROVIDER
+
+
+async def test_clearing_the_price_without_any_other_source_leaves_it_unknown(db, settings, priced_media) -> None:
+    """No class-default guess on a deliberate clear: you said it is not
+    worth anything you can name."""
+    await store_price(db, priced_media, Price(1899, PriceBasis.MANUAL), source="manual")
+
+    await clear_price(db, settings, priced_media)
+
+    row = await db.fetch_one("SELECT effective_price_cents, price_basis FROM media WHERE id = ?", (priced_media,))
+    assert row["effective_price_cents"] is None
+    assert row["price_basis"] == "unknown"
+
+
+@respx.mock
+async def test_the_interface_clears_a_price_entered_as_zero_or_nothing(api, db) -> None:
+    """Emptying the field or leaving 0,00 in it undoes the manual entry; the
+    row shows the price the providers know again, and after that nothing."""
+    _mock_opac()
+    await api.post("/api/accounts/remseck/poll")
+    media_id = (await api.get("/api/history")).json()["loans"][0]["media_id"]
+    await _provider_record(db, media_id, 2400)
+
+    typed = await api.post(f"/api/media/{media_id}/price", data={"price": "18.99"})
+    assert "18,99" in typed.text
+
+    zero = await api.post(
+        f"/api/media/{media_id}/price",
+        data={"price": "0,00", "fragment": "partials/price_cell.html"},
+    )
+    assert "24,00" in zero.text
+
+    # With the provider's figure gone there is nothing left to fall back to,
+    # and clearing again must not re-inherit the class default.
+    async with db.write() as w:
+        await w.execute("DELETE FROM metadata_records WHERE media_id = ?", (media_id,))
+    emptied = await api.post(
+        f"/api/media/{media_id}/price",
+        data={"price": "", "fragment": "partials/price_cell.html"},
+    )
+    assert "\u2013" in emptied.text
+    # An unset price prefills an empty box, not 0,00: the field shows the
+    # absence rather than a price of zero.
+    assert 'value=""' in emptied.text
+
+    row = await db.fetch_one("SELECT effective_price_cents, price_basis FROM media WHERE id = ?", (media_id,))
+    assert row["effective_price_cents"] is None
+    assert row["price_basis"] == "unknown"

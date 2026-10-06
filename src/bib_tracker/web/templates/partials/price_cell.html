@@ -30,7 +30,7 @@
       size="7"
       autocomplete="off"
       x-ref="input"
-      value="{{ '%.2f'|format((media.effective_price_cents or 0) / 100) | replace('.', ',') }}"
+      value="{{ '%.2f'|format(media.effective_price_cents / 100) | replace('.', ',') if media.effective_price_cents is not none else '' }}"
       @blur="if (!edit || cancel) { cancel = false; return } $el.form.requestSubmit()"
       @keydown.escape.prevent="cancel = true; edit = false; $el.form.reset()"
     />

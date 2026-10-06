@@ -270,24 +270,30 @@ async def dismiss_media(request: Request, media_id: int) -> HTMLResponse:
 
 @router.post("/media/{media_id}/price", response_class=HTMLResponse)
 async def set_price(request: Request, media_id: int) -> HTMLResponse:
-    """Enter a price by hand. Always beats anything a provider reported."""
-    from ...metadata.pricing import Price, PriceBasis, store_price
+    """Enter a price by hand. Always beats anything a provider reported.
+
+    An empty field or a zero is not a price of zero: it unsets the manual
+    entry, so the next-best figure a provider reported shows again.
+    """
+    from ...metadata.pricing import Price, PriceBasis, clear_price, parse_price_cents, store_price
 
     db = _db(request)
     form = await request.form()
-    raw = str(form.get("price") or "").strip().replace("\u20ac", "").replace(".", "").replace(",", ".")
     try:
-        cents = round(float(raw) * 100)
+        cents = parse_price_cents(str(form.get("price") or ""))
     except ValueError:
         raise HTTPException(status_code=400, detail="price must be a number") from None
-    if cents < 0:
+    if cents is not None and cents < 0:
         raise HTTPException(status_code=400, detail="price must not be negative")
 
     media = await db.fetch_one("SELECT id, media_class FROM media WHERE id = ?", (media_id,))
     if media is None:
         raise HTTPException(status_code=404, detail=f"No media {media_id}")
 
-    await store_price(db, media_id, Price(cents, PriceBasis.MANUAL), source="manual", note="von Hand")
+    if cents is None:
+        await clear_price(db, request.app.state.settings, media_id)
+    else:
+        await store_price(db, media_id, Price(cents, PriceBasis.MANUAL), source="manual", note="von Hand")
 
     updated = await db.fetch_one(
         "SELECT id, media_class, effective_price_cents, price_basis FROM media WHERE id = ?",

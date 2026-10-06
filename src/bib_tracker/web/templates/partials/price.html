@@ -18,7 +18,7 @@
     type="text"
     inputmode="decimal"
     size="8"
-    value="{{ '%.2f'|format((media.effective_price_cents or 0) / 100) | replace('.', ',') }}"
+    value="{{ '%.2f'|format(media.effective_price_cents / 100) | replace('.', ',') if media.effective_price_cents is not none else '' }}"
   />
   <span class="faint">
     {% if media.price_basis == 'manual' %}
