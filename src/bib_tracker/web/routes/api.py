@@ -221,7 +221,10 @@ async def rate_media(request: Request, media_id: int) -> HTMLResponse:
                 (media_id, value),
             )
 
-    context = {"media": {"id": media_id, "title": media["title"], "rating": value or None}}
+    # A history row can show the same work twice; the uid round-trips through
+    # the form so the swapped-back radios keep row-unique ids.
+    uid = str((await request.form()).get("uid", "") or "")
+    context = {"media": {"id": media_id, "title": media["title"], "rating": value or None}, "uid": uid}
     return render(request, "partials/rating.html", "partials/rating.html", context)
 
 
@@ -292,7 +295,12 @@ async def set_price(request: Request, media_id: int) -> HTMLResponse:
     )
     if updated is None:  # pragma: no cover - the row was there a moment ago
         raise HTTPException(status_code=404, detail=f"No media {media_id}")
-    return render(request, "partials/price.html", "partials/price.html", {"media": dict(updated)})
+    # The caller says which fragment it wants swapped back; form input must
+    # never pick the template, so the choice is clamped to these two.
+    fragment = str(form.get("fragment") or "partials/price.html")
+    if fragment not in ("partials/price.html", "partials/price_cell.html"):
+        fragment = "partials/price.html"
+    return render(request, fragment, fragment, {"media": dict(updated)})
 
 
 def _renewals(request: Request) -> RenewalService:
@@ -308,7 +316,7 @@ async def renew_loan(request: Request, loan_key: str) -> HTMLResponse:
     except KeyError as err:
         raise HTTPException(status_code=404, detail=str(err)) from err
 
-    return await _loans_fragment(request, [outcome])
+    return await _renew_fragment(request, [outcome])
 
 
 @router.post("/accounts/{name}/renew-due", response_class=HTMLResponse)
@@ -323,15 +331,11 @@ async def renew_due(request: Request, name: str, days: int | None = None) -> HTM
     except KeyError as err:
         raise HTTPException(status_code=404, detail=str(err)) from err
 
-    return await _loans_fragment(request, outcomes)
+    return await _renew_fragment(request, outcomes)
 
 
-async def _loans_fragment(request: Request, outcomes: list[Any]) -> HTMLResponse:
-    from .pages import loans_context
-
-    context = await loans_context(request)
-    context["renewals"] = outcomes
-    return render(request, "partials/loans_table.html", "partials/loans_table.html", context)
+async def _renew_fragment(request: Request, outcomes: list[Any]) -> HTMLResponse:
+    return render(request, "partials/renew_outcome.html", "partials/renew_outcome.html", {"renewals": outcomes})
 
 
 @router.get("/stats")

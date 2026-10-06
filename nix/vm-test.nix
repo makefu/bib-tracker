@@ -113,12 +113,16 @@ pkgs.testers.nixosTest {
     with subtest("the pages render with the scraped data"):
         # Fetched to a file rather than piped: grep -q exits on the first
         # match and curl then dies of EPIPE on anything larger than a buffer.
-        for path in ["/", "/loans", "/history", "/history/add", "/rate", "/stats", "/runs"]:
-            machine.succeed(f"curl -fsS -o /tmp/page localhost:8099{path}")
+        for path in ["/", "/history?state=open", "/history", "/history/add", "/rate", "/stats", "/runs"]:
+            machine.succeed(f"curl -fsS -o /tmp/page 'localhost:8099{path}'")
             machine.succeed("grep -q '<!DOCTYPE html>' /tmp/page")
         machine.succeed("curl -fsS -o /tmp/page localhost:8099/history")
         machine.succeed("grep -q 'Die unendliche Geschichte' /tmp/page")
-        machine.succeed("curl -fsS -o /tmp/page localhost:8099/loans")
+        # The history table carries the star widget and the price column over
+        # real recorded data.
+        machine.succeed("grep -q 'name=\"rating\"' /tmp/page")
+        machine.succeed("grep -q 'cell-price' /tmp/page")
+        machine.succeed("curl -fsS -o /tmp/page 'localhost:8099/history?state=open'")
         machine.succeed("grep -q 'Ende, Michael' /tmp/page")
         # An HTMX request must get the fragment, not the whole page again.
         machine.succeed("curl -fsS -H 'HX-Request: true' -o /tmp/frag localhost:8099/history")

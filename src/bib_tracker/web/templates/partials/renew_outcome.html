@@ -1,0 +1,24 @@
+{#
+  The renewal answer, swapped into #renew-outcome by the renew endpoints.
+  Its own file because every HTMX target must be a standalone partial.
+#}
+<div id="renew-outcome">
+  {% if renewals %}
+    {# Per item, never a bare "done": a library can refuse one and not another. #}
+    <div class="notice" data-tone="{{ 'warn' if renewals | rejectattr('success') | list else 'info' }}"
+         style="margin-bottom: var(--sp-4)" role="status">
+      <div class="stack" style="gap: var(--sp-1)">
+        {% for outcome in renewals %}
+          <div class="row">
+            <span class="status" data-state="{{ 'open' if outcome.success else 'overdue' }}">
+              {{ outcome.title }}
+            </span>
+            <span class="{{ 'muted' if outcome.success else '' }}">
+              {{ 'verlängert' if outcome.success else outcome.error }}
+            </span>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+</div>

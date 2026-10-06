@@ -62,6 +62,9 @@
       <h2 class="card__title">Ausgeliehen</h2>
       <span class="card__note">{{ loans | length }}×</span>
     </div>
+    {# Renewal lives here, not in the history table: this is the view where
+       you look one work up before deciding. #}
+    <div id="renew-outcome"></div>
     <div class="table-wrap">
       <table class="table">
         <caption class="sr-only">Alle Ausleihen dieses Werks</caption>
@@ -72,6 +75,7 @@
             <th scope="col">Zurück</th>
             <th scope="col">Dauer</th>
             <th scope="col">Verl.</th>
+            <th scope="col"><span class="sr-only">Aktionen</span></th>
           </tr>
         </thead>
         <tbody>
@@ -95,6 +99,22 @@
                 {%- endif %}
               </td>
               <td class="nums">{{ loan.times_renewed }}</td>
+              <td>
+                {% if loan.state == 'open' %}
+                  <button
+                    class="btn btn--ghost"
+                    hx-post="/api/loans/{{ loan.loan_key }}/renew"
+                    hx-indicator="closest tr"
+                    hx-target="#renew-outcome"
+                    hx-swap="outerHTML"
+                    {% if not loan.can_be_renewed %}disabled aria-disabled="true"{% endif %}
+                  >
+                    Verlängern
+                  </button>
+                {% else %}
+                  <span class="faint">–</span>
+                {% endif %}
+              </td>
             </tr>
           {% endfor %}
         </tbody>

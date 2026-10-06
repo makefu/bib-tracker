@@ -13,7 +13,7 @@ from typing import Any
 from urllib.parse import urlencode
 
 from fastapi import APIRouter, HTTPException, Request
-from fastapi.responses import HTMLResponse, JSONResponse, Response
+from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse, Response
 
 from ...db.connection import Database
 from ...library.media_class import MediaClass
@@ -142,33 +142,11 @@ async def _recent_returns(db: Database) -> list[dict[str, Any]]:
     return [dict(row) for row in rows]
 
 
-async def loans_context(request: Request) -> dict[str, Any]:
-    """Shared by the page and by the fragment a renewal swaps back in."""
-    db = _db(request)
-    rows = await db.fetch_all(
-        """
-        SELECT l.loan_key, m.id AS media_id, m.title, m.author, m.media_class,
-               a.name AS account, a.colour AS account_colour,
-               l.last_due_date AS due_date, l.lend_date, l.lend_date_source,
-               l.lend_date_earliest, l.lend_date_latest,
-               l.times_renewed, l.max_renewals, l.can_be_renewed,
-               CAST(julianday(l.last_due_date) - julianday(date('now')) AS INTEGER) AS days_remaining
-        FROM loans l
-        JOIN media m ON m.id = l.media_id
-        JOIN accounts a ON a.id = l.account_id
-        WHERE l.state = 'open'
-        ORDER BY l.last_due_date, m.title
-        """
-    )
-    context = await _shell(request, "/loans")
-    context["loans"] = [dict(row) for row in rows]
-    context.setdefault("renewals", [])
-    return context
-
-
-@router.get("/loans", response_class=HTMLResponse)
-async def loans(request: Request) -> HTMLResponse:
-    return render(request, "pages/loans.html", "partials/loans_table.html", await loans_context(request))
+@router.get("/loans", include_in_schema=False)
+async def loans_redirect(request: Request) -> RedirectResponse:
+    """The loans table merged into the history table; bookmarks and dashboard
+    links keep working by landing on the same filter the old page showed."""
+    return RedirectResponse(url="/history?state=open", status_code=302)
 
 
 @router.get("/history", response_class=HTMLResponse)
@@ -224,6 +202,8 @@ async def history(request: Request) -> HTMLResponse:
             m.cover_sha256,
             l.last_due_date, l.times_renewed, l.max_renewals, l.duration_days,
             l.duration_uncertainty_days,
+            m.effective_price_cents AS price_cents, m.price_basis,
+            r.rating,
             CAST(julianday(l.last_due_date) - julianday(date('now')) AS INTEGER) AS days_remaining,
             (SELECT COUNT(*) FROM loans x WHERE x.media_id = l.media_id) AS borrow_count
         FROM loans l
@@ -231,6 +211,7 @@ async def history(request: Request) -> HTMLResponse:
         JOIN copies c ON c.id = l.copy_id
         JOIN accounts a ON a.id = l.account_id
         LEFT JOIN loan_overrides o ON o.loan_key = l.loan_key
+        LEFT JOIN ratings r ON r.media_id = m.id
         {clause}
         ORDER BY lend_date DESC, l.id DESC
         LIMIT 200
@@ -250,6 +231,9 @@ async def history(request: Request) -> HTMLResponse:
         "untracked": untracked,
         "filters": {"q": search, "state": state, "media_class": media_classes, "account": accounts},
         "query_string": urlencode([(key, value) for key, value in params.multi_items() if key != "page"]),
+        # The renew banner renders only when a fragment carries outcomes;
+        # an empty list keeps the full page quiet.
+        "renewals": [],
     }
     return render(request, "pages/history.html", "partials/history_results.html", context)
 

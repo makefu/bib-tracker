@@ -5,6 +5,27 @@
   <div class="page-head">
     <h1>Verlauf</h1>
     <div class="page-head__actions">
+      {% for account in accounts %}
+        <button
+          class="btn btn--ghost"
+          hx-post="/api/accounts/{{ account.name }}/poll"
+          hx-swap="none"
+          hx-indicator="this"
+        >
+          {{ account.display_name or account.name }} aktualisieren
+        </button>
+        <button
+          class="btn"
+          hx-post="/api/accounts/{{ account.name }}/renew-due"
+          hx-target="#renew-outcome"
+          hx-swap="outerHTML"
+          hx-indicator="this"
+          hx-confirm="Alle bald fälligen Medien von {{ account.display_name or account.name }} verlängern?"
+          hx-on::after-request="if (event.detail.successful && window.htmx && document.getElementById('results')) htmx.ajax('GET', location.pathname + location.search, '#results')"
+        >
+          Fällige verlängern
+        </button>
+      {% endfor %}
       <a class="btn" href="/history/add">Eintragen</a>
       <a class="btn" href="/export/history.csv?{{ query_string }}">CSV</a>
     </div>
@@ -81,5 +102,8 @@
     </div>
   </form>
 
+  {# Outside #results so the chained table refresh after a renewal cannot
+     wipe the outcome the button just reported. #}
+  <div id="renew-outcome"></div>
   {% include "partials/history_results.html" %}
 {% endblock %}

@@ -536,3 +536,6 @@
     width: 140px;
   }
 }
+
+.cell-price .cell-price__view { background: none; border: 0; padding: 0; font: inherit; color: inherit; cursor: text; }
+.cell-price input.field { width: 8ch; text-align: right; padding: var(--sp-1) var(--sp-2); }

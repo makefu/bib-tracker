@@ -1,0 +1,38 @@
+{#
+  The editable price cell of the history table. One partial for both sides of
+  the swap: the row include renders it, and the price endpoint re-renders this
+  same file, so a swap back is self-consistent. Click the value, type, leave
+  the field to save; Escape discards.
+#}
+<td class="nums cell-price" x-data="{ edit: false, cancel: false }">
+  <button
+    type="button"
+    class="cell-price__view"
+    x-show="!edit"
+    @click="edit = true; $nextTick(() => $refs.input.focus())"
+    title="{{ media.price_basis | price_basis_label }} — zum Bearbeiten klicken"
+  >
+    {{ media.effective_price_cents | eur }}{% if media.price_basis and media.price_basis != 'manual' %}*{% endif %}
+  </button>
+  <form
+    x-show="edit"
+    hx-post="/api/media/{{ media.id }}/price"
+    hx-target="closest .cell-price"
+    hx-swap="outerHTML"
+    @htmx:after-request="edit = false"
+  >
+    <input type="hidden" name="fragment" value="partials/price_cell.html" />
+    <input
+      class="field nums"
+      name="price"
+      type="text"
+      inputmode="decimal"
+      size="7"
+      autocomplete="off"
+      x-ref="input"
+      value="{{ '%.2f'|format((media.effective_price_cents or 0) / 100) | replace('.', ',') }}"
+      @blur="if (!edit || cancel) { cancel = false; return } $el.form.requestSubmit()"
+      @keydown.escape.prevent="cancel = true; edit = false; $el.form.reset()"
+    />
+  </form>
+</td>

@@ -41,8 +41,7 @@
 
         {% set nav = [
           ('/', 'Übersicht', none),
-          ('/loans', 'Ausleihen', counts.open_loans),
-          ('/history', 'Verlauf', none),
+          ('/history', 'Verlauf', counts.open_loans),
           ('/rate', 'Bewerten', counts.unrated),
           ('/stats', 'Statistik', none),
           ('/runs', 'Abfragen', counts.failed_runs),
@@ -87,7 +86,6 @@
     <nav class="tabbar" aria-label="Hauptnavigation">
       {% for href, label, icon in [
         ('/', 'Übersicht', '🏠'),
-        ('/loans', 'Ausleihen', '📚'),
         ('/history', 'Verlauf', '🕘'),
         ('/rate', 'Bewerten', '★'),
       ] %}

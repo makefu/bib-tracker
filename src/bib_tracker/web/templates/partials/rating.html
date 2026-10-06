@@ -3,6 +3,9 @@
   labelling all come free, which a div-based star widget has to reimplement
   badly. Alpine only fills the stars optimistically; the server's answer wins.
 #}
+{# A work can appear on two history rows at once; the uid keeps the radio
+  ids of the two copies distinct. Empty uid => the media-page ids unchanged. #}
+{% set uid = uid | default('', true) %}
 <form
   class="rating"
   hx-post="/api/media/{{ media.id }}/rating"
@@ -14,6 +17,7 @@
   x-on:htmx:after-request="saved = true; setTimeout(() => saved = false, 1600)"
   x-on:htmx:response-error="value = {{ media.rating or 0 }}"
 >
+  <input type="hidden" name="uid" value="{{ uid }}" />
   <fieldset class="rating__stars">
     <legend class="sr-only">Deine Bewertung für {{ media.title }}</legend>
     {% for n in range(1, 6) %}
@@ -21,14 +25,14 @@
         class="sr-only"
         type="radio"
         name="rating"
-        id="r{{ media.id }}-{{ n }}"
+        id="r{{ media.id }}{{ uid }}-{{ n }}"
         value="{{ n }}"
         {% if media.rating == n %}checked{% endif %}
         x-on:click="value = {{ n }}"
       />
       <label
         class="star"
-        for="r{{ media.id }}-{{ n }}"
+        for="r{{ media.id }}{{ uid }}-{{ n }}"
         x-on:mouseenter="hover = {{ n }}"
         x-on:mouseleave="hover = 0"
         :class="{ 'is-on': (hover || value) >= {{ n }} }"

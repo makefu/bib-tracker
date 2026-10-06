@@ -48,6 +48,14 @@
       {% endif %}
     </td>
     <td>
+      {% if loan.state == 'open' %}
+        <time class="date" datetime="{{ loan.last_due_date }}">{{ loan.last_due_date | de_date_short }}</time>
+        <div class="cell-title__meta">{{ loan.last_due_date | rel_days }}</div>
+      {% else %}
+        <span class="faint">–</span>
+      {% endif %}
+    </td>
+    <td>
       {{ dates.show(loan.lend_date, loan.lend_date_source, loan.lend_date_earliest,
                     loan.lend_date_latest, loan.uncertainty_note) }}
     </td>
@@ -57,6 +65,17 @@
     </td>
     <td class="nums">
       {{ loan.times_renewed }}{% if loan.max_renewals %}/{{ loan.max_renewals }}{% endif %}
+    </td>
+    {# Same partial the price endpoint re-renders, so the HTMX swap back is
+       self-consistent; effective_price_cents matches the DB-row dict the
+       endpoint hands its render call. #}
+    {% with media={'id': loan.media_id, 'title': loan.title, 'effective_price_cents': loan.price_cents, 'price_basis': loan.price_basis} %}
+      {% include "partials/price_cell.html" %}
+    {% endwith %}
+    <td>
+      {% with media={'id': loan.media_id, 'title': loan.title, 'rating': loan.rating}, uid='-%d' % loop.index %}
+        {% include "partials/rating.html" %}
+      {% endwith %}
     </td>
   </tr>
 {% endfor %}

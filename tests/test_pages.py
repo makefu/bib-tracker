@@ -19,7 +19,7 @@ def _mock(checkouts: str) -> None:
     )
 
 
-@pytest.mark.parametrize("path", ["/", "/loans", "/history", "/runs"])
+@pytest.mark.parametrize("path", ["/", "/history?state=open", "/history", "/runs"])
 async def test_pages_render_without_any_data(client: httpx.AsyncClient, path: str) -> None:
     """A fresh install must not 500 on an empty database."""
     response = await client.get(path)
@@ -96,16 +96,42 @@ async def test_a_history_restore_gets_the_whole_page_back(api: httpx.AsyncClient
 
 
 @respx.mock
-async def test_the_loans_page_hides_renewal_behind_a_menu(api: httpx.AsyncClient) -> None:
+async def test_the_media_detail_offers_renewal_for_open_loans(api: httpx.AsyncClient) -> None:
     """Renewals belong to Home Assistant; here they must not be a stray click
-    away from a row someone meant to open."""
+    away from a row someone meant to open. The media detail is the one place
+    they live, on the open loan's row."""
     _mock(library_fixture("remseck_checkouts.html"))
     await api.post("/api/accounts/remseck/poll")
 
-    body = (await api.get("/loans")).text
-    assert 'aria-haspopup="menu"' in body
+    loans = (await api.get("/api/history")).json()["loans"]
+    media_id = loans[0]["media_id"]
+
+    body = (await api.get(f"/media/{media_id}")).text
     assert "Verlängern" in body
-    assert body.index('aria-haspopup="menu"') < body.index("Verlängern")
+    assert 'hx-post="/api/loans/' in body
+
+
+async def test_the_loans_page_redirects_to_history(client: httpx.AsyncClient) -> None:
+    """Bookmarks and dashboard links keep working after the merge."""
+    response = await client.get("/loans", follow_redirects=False)
+    assert response.status_code == 302
+    assert response.headers["location"].startswith("/history?state=open")
+
+
+@respx.mock
+async def test_the_history_table_shows_price_and_stars(api: httpx.AsyncClient) -> None:
+    _mock(library_fixture("remseck_checkouts.html"))
+    await api.post("/api/accounts/remseck/poll")
+    media_id = (await api.get("/api/history")).json()["loans"][0]["media_id"]
+    await api.post(f"/api/media/{media_id}/price", data={"price": "12,34"})
+    await api.post(f"/api/media/{media_id}/rating", data={"rating": "3"})
+
+    body = (await api.get("/history")).text
+    assert "12,34\u00a0\u20ac" in body
+    assert "cell-price" in body
+    assert 'name="price"' in body
+    assert 'name="rating"' in body
+    assert "\u2605" in body
 
 
 @respx.mock

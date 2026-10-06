@@ -241,3 +241,38 @@ async def test_a_nonsense_price_is_refused(api) -> None:
 
     assert (await api.post(f"/api/media/{media_id}/price", data={"price": "gratis"})).status_code == 400
     assert (await api.post(f"/api/media/{media_id}/price", data={"price": "-5"})).status_code == 400
+
+
+@respx.mock
+async def test_the_price_endpoint_serves_whichever_fragment_asked_for(api) -> None:
+    """The history table re-renders its editable cell; the media page keeps
+    its form. One endpoint, and the caller says which one it wants."""
+    _mock_opac()
+    await api.post("/api/accounts/remseck/poll")
+    media_id = (await api.get("/api/history")).json()["loans"][0]["media_id"]
+
+    cell = await api.post(
+        f"/api/media/{media_id}/price",
+        data={"price": "12,34", "fragment": "partials/price_cell.html"},
+    )
+    assert cell.status_code == 200
+    assert "cell-price" in cell.text
+    assert "12,34" in cell.text
+    assert 'id="price"' not in cell.text
+
+    form = await api.post(f"/api/media/{media_id}/price", data={"price": "12,34"})
+    assert 'id="price"' in form.text
+
+
+@respx.mock
+async def test_an_unknown_price_fragment_falls_back_to_the_form(api) -> None:
+    """Form input never picks the template that renders it."""
+    _mock_opac()
+    await api.post("/api/accounts/remseck/poll")
+    media_id = (await api.get("/api/history")).json()["loans"][0]["media_id"]
+
+    response = await api.post(
+        f"/api/media/{media_id}/price",
+        data={"price": "12,34", "fragment": "pages/base.html"},
+    )
+    assert 'id="price"' in response.text

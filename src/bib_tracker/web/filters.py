@@ -104,6 +104,20 @@ def duration_de(days: Any) -> str:
     return f"{days} Tage"
 
 
+#: How each price basis is explained to a person, wording identical to the
+#: media page's inline chain so both say the same thing.
+_BASIS_LABELS: dict[str, str] = {
+    "manual": "von dir eingetragen",
+    "provider_list_price": "Listenpreis",
+    "default_by_class": "gesetzt (klassen-Standardpreis)",
+    "unknown": "unbekannt",
+}
+
+
+def price_basis_label(basis: Any) -> str:
+    return _BASIS_LABELS.get(str(basis), "unbekannt")
+
+
 def media_label(media_class: Any) -> str:
     return MEDIA_CLASS_LABELS.get(str(media_class), "Sonstiges")
 
@@ -122,4 +136,5 @@ def register_filters(env: Environment) -> None:
         duration_de=duration_de,
         media_label=media_label,
         media_icon=media_icon,
+        price_basis_label=price_basis_label,
     )
