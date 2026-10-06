@@ -547,12 +547,18 @@
 
 .cell-price .cell-price__view {
   background: none;
-  border: 0;
-  padding: 0;
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--r-sm);
+  padding: var(--sp-1) var(--sp-2);
   font: inherit;
   color: inherit;
-  cursor: text;
+  cursor: pointer;
   white-space: nowrap;
+}
+
+.cell-price .cell-price__view:hover {
+  background: var(--surface-2);
+  border-color: var(--border-strong);
 }
 
 .cell-price input.field {
