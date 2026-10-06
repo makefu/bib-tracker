@@ -1,0 +1,43 @@
+{#
+  The due-soon list, its own partial so a row's renew button can re-pull just
+  the list after the library answered; the full page includes it.
+#}
+{% if due_soon %}
+  <div class="card" style="margin-bottom: var(--sp-6)" id="due-soon">
+    <div class="card__head">
+      <h2 class="card__title">Bald fällig</h2>
+      <span class="card__note">nächste 7 Tage</span>
+    </div>
+    <div class="stack">
+      {% for loan in due_soon %}
+        {% set overdue = loan.days_remaining < 0 %}
+        <div
+          class="row due-row"
+          data-renew-tone="{{ loan | renew_tone }}"
+          aria-label="{{ loan.title }}, Konto {{ loan.account }}"
+        >
+          <span class="status" data-state="{{ 'overdue' if overdue else 'duesoon' }}">
+            {{ loan.title }}
+          </span>
+          <span class="muted">{{ loan.account }}</span>
+          <span class="nums faint"
+            >{{ loan.times_renewed }}{% if loan.max_renewals is not none %}/{{ loan.max_renewals }}{% endif %} Verl.</span
+          >
+          <span style="margin-left: auto" class="{{ 'muted' if not overdue }}">
+            {{ loan.due_date | rel_days }}
+          </span>
+          <button
+            class="btn btn--ghost due-row__renew"
+            hx-post="/api/loans/{{ loan.loan_key }}/renew"
+            hx-target="#renew-outcome"
+            hx-on::after-request="if (event.detail.successful && window.htmx) htmx.ajax('GET', location.pathname, {target: '#due-soon', swap: 'outerHTML'})"
+            hx-indicator="closest .due-row"
+            {% if loan.can_be_renewed != 1 %}disabled aria-disabled="true"{% endif %}
+          >
+            Verlängern
+          </button>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+{% endif %}

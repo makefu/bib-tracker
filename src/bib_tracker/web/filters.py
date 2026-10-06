@@ -118,6 +118,26 @@ def price_basis_label(basis: Any) -> str:
     return _BASIS_LABELS.get(str(basis), "unbekannt")
 
 
+def renew_tone(loan: dict[str, Any]) -> str:
+    """The row colour for the due-soon list: red when the library will refuse,
+    orange for the last renewal, yellow for the next-to-last. Colour never
+    carries the meaning alone -- the count and the disabled button say it too.
+    """
+    if not loan["can_be_renewed"]:
+        return "none"
+    maximum = loan["max_renewals"]
+    if maximum is None:
+        return ""
+    left = maximum - (loan["times_renewed"] or 0)
+    if left <= 0:
+        return "none"
+    if left == 1:
+        return "last"
+    if left == 2:
+        return "two"
+    return ""
+
+
 def media_label(media_class: Any) -> str:
     return MEDIA_CLASS_LABELS.get(str(media_class), "Sonstiges")
 
@@ -137,4 +157,5 @@ def register_filters(env: Environment) -> None:
         media_label=media_label,
         media_icon=media_icon,
         price_basis_label=price_basis_label,
+        renew_tone=renew_tone,
     )

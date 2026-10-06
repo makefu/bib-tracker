@@ -119,6 +119,40 @@ async def test_the_loans_page_redirects_to_history(client: httpx.AsyncClient) ->
 
 
 @respx.mock
+async def test_the_dashboard_offers_to_renew_each_due_loan(api: httpx.AsyncClient) -> None:
+    """The due-soon list is where a renewal gets clicked, so every row carries
+    its renewal count, its colour, and the button."""
+    _mock(library_fixture("remseck_checkouts.html"))
+    await api.post("/api/accounts/remseck/poll")
+
+    body = (await api.get("/")).text
+
+    assert body.count('hx-post="/api/loans/') == 4
+    # Remseck fixture, times_renewed/max_renewals: Momo 3/3 (refused),
+    # die Geschichte 2/3, Tschick 0/2, Krabat 0/3.
+    assert 'data-renew-tone="none"' in body
+    assert 'data-renew-tone="last"' in body
+    assert 'data-renew-tone="two"' in body
+    assert "3/3 Verl." in body
+    assert "2/3 Verl." in body
+    assert "0/2 Verl." in body
+    assert "0/3 Verl." in body
+    assert 'disabled aria-disabled="true"' in body
+
+
+@respx.mock
+async def test_the_due_soon_list_refreshes_as_a_fragment(api: httpx.AsyncClient) -> None:
+    """The row button re-pulls the list after renewing; an HTMX GET must get
+    the partial back, not the whole shell."""
+    _mock(library_fixture("remseck_checkouts.html"))
+    await api.post("/api/accounts/remseck/poll")
+
+    response = await api.get("/", headers={"HX-Request": "true"})
+    assert response.text.lstrip().startswith('<div class="card"')
+    assert "<!DOCTYPE" not in response.text
+
+
+@respx.mock
 async def test_the_history_table_shows_price_and_stars(api: httpx.AsyncClient) -> None:
     _mock(library_fixture("remseck_checkouts.html"))
     await api.post("/api/accounts/remseck/poll")

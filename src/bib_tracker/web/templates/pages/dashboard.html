@@ -29,28 +29,10 @@
       {% endfor %}
     </div>
 
-    {% if due_soon %}
-      <div class="card" style="margin-bottom: var(--sp-6)">
-        <div class="card__head">
-          <h2 class="card__title">Bald fällig</h2>
-          <span class="card__note">nächste 7 Tage</span>
-        </div>
-        <div class="stack">
-          {% for loan in due_soon %}
-            <div class="row">
-              {% set overdue = loan.days_remaining < 0 %}
-              <span class="status" data-state="{{ 'overdue' if overdue else 'duesoon' }}">
-                {{ loan.title }}
-              </span>
-              <span class="muted">{{ loan.account }}</span>
-              <span style="margin-left: auto" class="{{ 'muted' if not overdue }}">
-                {{ loan.due_date | rel_days }}
-              </span>
-            </div>
-          {% endfor %}
-        </div>
-      </div>
-    {% endif %}
+  {# Outside the fragment: the chained refresh after a renewal re-pulls
+     #due-soon and must not wipe the outcome the button just reported. #}
+  <div id="renew-outcome"></div>
+  {% include "partials/due_soon.html" %}
 
     <div class="card">
       <div class="card__head">

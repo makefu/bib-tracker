@@ -110,14 +110,17 @@ async def dashboard(request: Request) -> HTMLResponse:
         "due_soon": await _due_soon(db),
         "recent": await _recent_returns(db),
     }
-    return render(request, "pages/dashboard.html", None, context)
+    # The due-soon list is its own fragment so a row's renew button can
+    # re-pull just that list after the library has answered.
+    return render(request, "pages/dashboard.html", "partials/due_soon.html", context)
 
 
 async def _due_soon(db: Database) -> list[dict[str, Any]]:
     rows = await db.fetch_all(
         """
-        SELECT m.title, a.name AS account, l.last_due_date AS due_date,
-               CAST(julianday(l.last_due_date) - julianday(date('now')) AS INTEGER) AS days_remaining
+        SELECT l.loan_key, m.title, a.name AS account, l.last_due_date AS due_date,
+               CAST(julianday(l.last_due_date) - julianday(date('now')) AS INTEGER) AS days_remaining,
+               l.can_be_renewed, l.times_renewed, l.max_renewals
         FROM loans l
         JOIN media m ON m.id = l.media_id
         JOIN accounts a ON a.id = l.account_id

@@ -537,5 +537,55 @@
   }
 }
 
-.cell-price .cell-price__view { background: none; border: 0; padding: 0; font: inherit; color: inherit; cursor: text; }
-.cell-price input.field { width: 8ch; text-align: right; padding: var(--sp-1) var(--sp-2); }
+/* The edit field would otherwise widen the column on click and shift every
+ * other column sideways; the cell reserves the wider of the two states: the
+ * 8ch input plus its padding and border. */
+.cell-price {
+  width: 9rem;
+  min-width: 9rem;
+}
+
+.cell-price .cell-price__view {
+  background: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  cursor: text;
+  white-space: nowrap;
+}
+
+.cell-price input.field {
+  width: 8ch;
+  text-align: right;
+  padding: var(--sp-1) var(--sp-2);
+}
+
+/* -- due-soon rows ---------------------------------------------------------- */
+.due-row {
+  padding: var(--sp-1) var(--sp-2);
+  border-radius: var(--r-sm);
+}
+
+/* Tone repeats the status colour rule; the count text and the disabled button
+ * carry the same meaning without colour. */
+.due-row[data-renew-tone="none"] {
+  background: var(--bad-bg);
+  box-shadow: inset 3px 0 0 var(--bad-500);
+}
+
+.due-row[data-renew-tone="last"] {
+  background: var(--warn-bg);
+  box-shadow: inset 3px 0 0 var(--warn-500);
+}
+
+.due-row[data-renew-tone="two"] {
+  background: color-mix(in oklab, var(--a-300) 22%, var(--surface-1));
+  box-shadow: inset 3px 0 0 var(--a-300);
+}
+
+[data-theme="dark"] .due-row[data-renew-tone="two"] {
+  background: color-mix(in oklab, var(--a-300) 14%, var(--surface-1));
+}
+
+
