@@ -662,3 +662,65 @@
 }
 
 
+/* -- settings page -------------------------------------------------------- */
+/* Version footer: reference information, so it stays at the bottom of the
+ * scroll and out of the page head's way. */
+.app-footer {
+  display: flex;
+  justify-content: center;
+  gap: var(--sp-2);
+  margin-top: var(--sp-6);
+  font-size: var(--fs-xs);
+  color: var(--text-faint);
+}
+
+.app-footer a {
+  color: inherit;
+}
+
+.maint-action {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-3) 0;
+  border-top: 1px solid var(--border);
+}
+
+.maint-action__label {
+  font-weight: 600;
+  font-size: var(--fs-sm);
+}
+
+.maint-action .btn {
+  margin-left: auto;
+}
+
+.provider-list__item[data-tone="ok"] {
+  color: var(--text-muted);
+}
+
+.provider-list__item[data-tone="warn"] {
+  color: var(--warn-500);
+}
+
+/* Probe outcomes repeat the status rule: the word is there, the colour is
+ * an addition, never the message. */
+.table td[data-tone="ok"] {
+  color: var(--ok-500);
+}
+
+.table td[data-tone="warn"] {
+  color: var(--warn-500);
+}
+
+.table td[data-tone="bad"] {
+  color: var(--bad-500);
+}
+
+.btn--sm {
+  min-height: 1.9rem;
+  padding: 0 var(--sp-3);
+  font-size: var(--fs-xs);
+}
+

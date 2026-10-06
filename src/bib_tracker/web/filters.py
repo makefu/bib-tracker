@@ -104,6 +104,20 @@ def duration_de(days: Any) -> str:
     return f"{days} Tage"
 
 
+def filesizeformat_de(value: Any) -> str:
+    """Bytes as a German would write them: 1,4 MB with a comma."""
+    if value is None:
+        return EN_DASH
+    n = float(value)
+    for unit in ("B", "kB", "MB", "GB", "TB"):
+        if abs(n) < 1000 or unit == "TB":
+            formatted = f"{n:.1f}".rstrip("0").rstrip(".") if unit != "B" else str(int(n))
+            formatted = formatted.replace(".", ",")
+            return f"{formatted}{NBSP}{unit}"
+        n /= 1000.0
+    return EN_DASH  # pragma: no cover - the loop always returns
+
+
 #: How each price basis is explained to a person, wording identical to the
 #: media page's inline chain so both say the same thing.
 _BASIS_LABELS: dict[str, str] = {
@@ -196,4 +210,5 @@ def register_filters(env: Environment) -> None:
         price_provider_label=price_provider_label,
         provider_label=provider_label,
         renew_tone=renew_tone,
+        filesizeformat_de=filesizeformat_de,
     )

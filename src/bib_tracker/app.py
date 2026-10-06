@@ -17,6 +17,7 @@ from .config import Settings, load_settings
 from .db import queries
 from .db.connection import Database, connect
 from .db.migrator import current_version, migrate
+from .maintenance import MaintenanceRunner
 from .metadata.worker import EnrichmentWorker
 from .scheduler import PollScheduler
 from .services import PollService
@@ -37,12 +38,14 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         conn = connect(settings.db_path)
         try:
             migrate(conn)
+            schema_version = current_version(conn)
         finally:
             conn.close()
 
         db = Database(settings.db_path)
         app.state.db = db
         app.state.settings = settings
+        app.state.schema_version = schema_version
 
         accounts = settings.accounts
         await queries.sync_accounts(db, accounts)
@@ -55,6 +58,12 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             enrichment_client = httpx.AsyncClient(follow_redirects=True, timeout=30.0)
             enrichment = EnrichmentWorker(db, settings, enrichment_client)
             app.state.enrichment = enrichment
+
+        # Always present: the settings page shows the maintenance card even
+        # when enrichment is off, and the tasks that need no provider
+        # (rebuild, vacuum) still work.
+        runner = MaintenanceRunner(db, settings, enrichment)
+        app.state.maintenance = runner
 
         scheduler = PollScheduler(service, settings, enrichment)
         app.state.scheduler = scheduler
@@ -73,6 +82,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         finally:
             if startup_poll is not None and not startup_poll.done():
                 startup_poll.cancel()
+            runner.cancel()
             scheduler.shutdown()
             await service.aclose()
             if enrichment is not None:

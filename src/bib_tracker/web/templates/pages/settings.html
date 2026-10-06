@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Einstellungen · bib-tracker{% endblock %}
+
+{% block content %}
+  <div class="page-head">
+    <h1>Einstellungen</h1>
+    <span class="muted">Version {{ version }}{% if schema_version %} · Schema {{ schema_version }}{% endif %}</span>
+  </div>
+
+  <div class="card" style="margin-bottom: var(--sp-4)">
+    <div class="card__head">
+      <h2 class="card__title">Datenbank</h2>
+      <span class="card__note">{{ db_bytes | filesizeformat_de }}</span>
+    </div>
+    <div class="grid grid--kpi">
+      <div class="stat">
+        <span class="stat__value nums">{{ completeness.total }}</span>
+        <span class="stat__label">Werke</span>
+      </div>
+      <div class="stat">
+        <span class="stat__value nums">
+          {{ completeness.priced }}{% if completeness.total %} <span class="faint">/ {{ completeness.total }}</span>{% endif %}
+        </span>
+        <span class="stat__label">mit Preis</span>
+      </div>
+      <div class="stat">
+        <span class="stat__value nums">
+          {{ completeness.isbn }}{% if completeness.total %} <span class="faint">/ {{ completeness.total }}</span>{% endif %}
+        </span>
+        <span class="stat__label">mit ISBN</span>
+      </div>
+      <div class="stat">
+        <span class="stat__value nums">
+          {{ completeness.description }}{% if completeness.total %} <span class="faint">/ {{ completeness.total }}</span>{% endif %}
+        </span>
+        <span class="stat__label">mit Beschreibung</span>
+      </div>
+      <div class="stat">
+        <span class="stat__value nums">
+          {{ completeness.covers }}{% if completeness.total %} <span class="faint">/ {{ completeness.total }}</span>{% endif %}
+        </span>
+        <span class="stat__label">mit Cover</span>
+      </div>
+      <div class="stat">
+        <span class="stat__value nums">{{ cache.count }}</span>
+        <span class="stat__label">HTTP-Cache-Einträge ({{ cache.bytes | filesizeformat_de }})</span>
+      </div>
+    </div>
+    {% if money %}
+      <p class="faint">
+        Erspart: {{ money.exact_cents | eur }} nach gelisteten Preisen
+        ({{ money.basis.exact }} Werke),
+        {{ money.estimated_cents | eur }} nach Klassen-Annahmen
+        ({{ money.basis.estimated }} Werke).
+      </p>
+    {% endif %}
+  </div>
+
+  {% include "partials/maintenance_card.html" %}
+{% endblock %}

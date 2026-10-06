@@ -317,13 +317,14 @@ class EnrichmentWorker:
                 if row:
                     await store_cover(self._db, self._http, media_id, str(row["cover_url"]), provider="library")
 
-            await self._run_ladders(media_id)
+            await self.run_ladders(media_id)
 
-    async def _run_ladders(self, media_id: int) -> None:
+    async def run_ladders(self, media_id: int) -> None:
         """Walk the price and cover ladders for one work.
 
         Cheap to re-enter: the probe table makes a repeat call issue zero
-        requests, so the next scheduler tick reaching here costs no HTTP.
+        requests, so the next scheduler tick — or a maintenance sweep —
+        reaching here costs no HTTP.
         """
         row = await self._db.fetch_one(
             "SELECT title, author, media_class, isbn13, publisher, published_year FROM media WHERE id = ?",

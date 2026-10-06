@@ -11,9 +11,13 @@ from typing import Any
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import HTMLResponse, JSONResponse
 
+from ...config import Settings
 from ...db import queries
 from ...db.connection import Database
 from ...library.reconcile import apply_overrides
+from ...maintenance import KIND_LABELS, MaintenanceBusy, MaintenanceRunner
+from ...metadata import PROVIDER_FACTORIES
+from ...metadata.base import ProviderConfig
 from ...metadata.pricing import all_found_prices, price_search_exhausted
 from ...services import PollInProgressError, PollService, RenewalService
 from ..render import render
@@ -392,3 +396,140 @@ async def list_accounts(request: Request) -> JSONResponse:
         "SELECT name, library_type, username, enabled, last_success_at, removed_at FROM accounts ORDER BY name"
     )
     return JSONResponse({"accounts": [dict(row) for row in rows]})
+
+
+def _maintenance(request: Request) -> MaintenanceRunner:
+    runner: MaintenanceRunner | None = getattr(request.app.state, "maintenance", None)
+    if runner is None:
+        raise HTTPException(status_code=503, detail="Maintenance is not available")
+    return runner
+
+
+def _status_dict(app: Any) -> dict[str, Any]:
+    runner = getattr(app.state, "maintenance", None)
+    if runner is None:
+        return {"running": False, "kind": "", "label": "", "total": 0, "done": 0, "error": None, "detail": {}}
+    status = runner.status()
+    return {
+        "running": status.running,
+        "kind": status.kind,
+        "label": status.label,
+        "total": status.total,
+        "done": status.done,
+        "started_at": status.started_at,
+        "finished_at": status.finished_at,
+        "error": status.error,
+        "detail": status.detail,
+    }
+
+
+@router.get("/maintenance/status")
+async def maintenance_status(request: Request) -> JSONResponse:
+    return JSONResponse(_status_dict(request.app))
+
+
+@router.post("/maintenance/{kind}", response_class=HTMLResponse)
+async def maintenance_start(request: Request, kind: str) -> HTMLResponse:
+    """Start a maintenance task; the response is the card, which polls itself."""
+    runner = _maintenance(request)
+    if kind not in KIND_LABELS:
+        raise HTTPException(status_code=404, detail=f"Unknown maintenance task {kind!r}")
+    form = await request.form()
+    fresh = str(form.get("fresh") or "") in ("1", "on", "true")
+    clear_cache = str(form.get("clear_cache") or "") in ("1", "on", "true")
+    scope = str(form.get("scope") or ("missing" if fresh else "all"))
+    if scope not in ("all", "missing"):
+        scope = "all"
+    try:
+        runner.start(kind, fresh=fresh, scope=scope, clear_cache=clear_cache)
+    except MaintenanceBusy:
+        raise HTTPException(status_code=409, detail="Already running") from None
+    except RuntimeError as err:
+        raise HTTPException(status_code=503, detail=str(err)) from None
+    return _maintenance_card(request)
+
+
+def _maintenance_card(request: Request) -> HTMLResponse:
+    settings: Settings = request.app.state.settings
+    context = {
+        "maintenance": _status_dict(request.app),
+        "price_providers": _providers_state(settings, settings.price_providers),
+        "cover_providers": _providers_state(settings, settings.image_providers),
+        "metadata_enabled": settings.metadata_enabled,
+    }
+    return render(request, "partials/maintenance_card.html", "partials/maintenance_card.html", context)
+
+
+def _providers_state(settings: Settings, names: list[str]) -> list[dict[str, Any]]:
+    """Every configured provider with why it can or cannot answer.
+
+    Built from the config directly rather than the worker's instances, so the
+    settings page renders identically with enrichment disabled; `available()`
+    only reads the config anyway.
+    """
+    out: list[dict[str, Any]] = []
+    for name in names:
+        if name == "library":
+            out.append({"name": name, "available": True, "reason": None})
+            continue
+        factory = PROVIDER_FACTORIES.get(name)
+        if factory is None:
+            out.append({"name": name, "available": False, "reason": "unbekannter Anbieter"})
+            continue
+        provider = factory(
+            ProviderConfig(
+                name=name,
+                base_url=settings.metadata_base_urls.get(name),
+                api_key=settings.provider_api_key(name),
+                cookie=settings.provider_cookie(name),
+                rate_limit_per_minute=settings.provider_rate_limit(name),
+            ),
+            None,
+        )
+        usable = provider.available()
+        reason = None if usable else ("braucht Zugangsdaten" if provider.requires_credentials else "deaktiviert")
+        out.append({"name": name, "available": usable, "reason": reason})
+    return out
+
+
+@router.get("/maintenance/card")
+async def maintenance_card(request: Request) -> HTMLResponse:
+    return _maintenance_card(request)
+
+
+@router.post("/media/{media_id}/crawl", response_class=HTMLResponse)
+async def media_crawl(request: Request, media_id: int) -> HTMLResponse:
+    """Re-run the price or cover ladder for one work, forgetting the probes.
+
+    Goes through the same runner as the global sweeps: a button press while a
+    sweep is running is a 409, not a second request to the same shop.
+    """
+    runner = _maintenance(request)
+    db = _db(request)
+    form = await request.form()
+    what = str(form.get("what") or "price")
+    if what not in ("price", "cover"):
+        raise HTTPException(status_code=400, detail="what must be price or cover")
+    if await db.fetch_one("SELECT id FROM media WHERE id = ?", (media_id,)) is None:
+        raise HTTPException(status_code=404, detail=f"No media {media_id}")
+    try:
+        runner.start(what, fresh=True, media_ids=[media_id])
+    except MaintenanceBusy:
+        raise HTTPException(status_code=409, detail="Already running") from None
+    except RuntimeError as err:
+        raise HTTPException(status_code=503, detail=str(err)) from None
+    return _crawl_status_fragment(request, media_id, what)
+
+
+def _crawl_status_fragment(request: Request, media_id: int, what: str) -> HTMLResponse:
+    return render(
+        request,
+        "partials/media_crawl.html",
+        "partials/media_crawl.html",
+        {"crawl": _status_dict(request.app), "media_id": media_id, "what": what},
+    )
+
+
+@router.get("/media/{media_id}/crawl/status", response_class=HTMLResponse)
+async def media_crawl_status(request: Request, media_id: int) -> HTMLResponse:
+    return _crawl_status_fragment(request, media_id, str(request.query_params.get("what") or "price"))

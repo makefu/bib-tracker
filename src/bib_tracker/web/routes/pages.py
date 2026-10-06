@@ -15,6 +15,7 @@ from urllib.parse import urlencode
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse, Response
 
+from ... import __version__
 from ...db.connection import Database
 from ...library.media_class import MediaClass
 from ...metadata.covers import VARIANTS, placeholder_svg, read_cover
@@ -100,6 +101,8 @@ async def _shell(request: Request, active: str) -> dict[str, Any]:
         "active": active,
         "accounts": await _accounts(db),
         "counts": await _counts(db),
+        "version": __version__,
+        "schema_version": getattr(request.app.state, "schema_version", None),
     }
 
 
@@ -438,6 +441,59 @@ async def runs(request: Request) -> HTMLResponse:
     return render(request, "pages/runs.html", None, context)
 
 
+@router.get("/settings", response_class=HTMLResponse)
+async def settings_page(request: Request) -> HTMLResponse:
+    """Diagnostics and operator controls, all read from the databases.
+
+    Deliberately stateless beyond the tables: completeness is counted live so
+    a work added after the last maintenance run is reflected at once.
+    """
+    from ... import stats as stats_module
+    from .api import _providers_state, _status_dict
+
+    db = _db(request)
+    settings = request.app.state.settings
+    money = await stats_module.money_saved(db, settings)
+    quality = await stats_module.data_quality(db)
+    priced = await db.fetch_one("SELECT COUNT(*) AS n FROM media")
+    total = priced["n"] if priced else 0
+
+    async def _count(where: str) -> int:
+        row = await db.fetch_one(f"SELECT COUNT(*) AS n FROM media WHERE {where}")
+        return int(row["n"]) if row else 0
+
+    completeness = {
+        "total": total,
+        "priced": await _count("effective_price_cents IS NOT NULL"),
+        "isbn": await _count("isbn13 IS NOT NULL"),
+        "description": await _count("description IS NOT NULL"),
+        "author": await _count("author IS NOT NULL"),
+        "covers": await _count("cover_sha256 IS NOT NULL"),
+    }
+    cache = await db.fetch_one("SELECT COUNT(*) AS n, COALESCE(SUM(LENGTH(body)), 0) AS bytes FROM http_cache")
+    db_size = await db.fetch_one("SELECT page_count * 4096 AS bytes FROM pragma_page_count()")
+    probe_rows = await db.fetch_all(
+        "SELECT provider, attempted_for, outcome, COUNT(*) AS n FROM lookup_probes"
+        " GROUP BY provider, attempted_for, outcome"
+    )
+
+    context = await _shell(request, "/settings")
+    context |= {
+        "money": money.as_dict(),
+        "quality": quality,
+        "completeness": completeness,
+        "price_providers": _providers_state(settings, settings.price_providers),
+        "cover_providers": _providers_state(settings, settings.image_providers),
+        "cache": {"count": cache["n"] if cache else 0, "bytes": cache["bytes"] if cache else 0},
+        "db_bytes": db_size["bytes"] if db_size else 0,
+        "probe_summary": [dict(row) for row in probe_rows],
+        "maintenance": _status_dict(request.app),
+        "metadata_enabled": settings.metadata_enabled,
+        "config_files": [str(p) for p in settings.config_files],
+    }
+    return render(request, "pages/settings.html", None, context)
+
+
 @router.get("/media/{media_id}", response_class=HTMLResponse)
 async def media_detail(request: Request, media_id: int) -> HTMLResponse:
     db = _db(request)
@@ -467,6 +523,11 @@ async def media_detail(request: Request, media_id: int) -> HTMLResponse:
         (media_id,),
     )
 
+    probe_rows = await db.fetch_all(
+        "SELECT provider, attempted_for, outcome, checked_at, detail FROM lookup_probes"
+        " WHERE media_id = ? ORDER BY attempted_for, provider",
+        (media_id,),
+    )
     context = await _shell(request, "/history")
     price_options = [
         {"provider": name, "cents": price.cents}
@@ -491,6 +552,8 @@ async def media_detail(request: Request, media_id: int) -> HTMLResponse:
             }
             for row in provider_rows
         ],
+        "probes": [dict(row) for row in probe_rows],
+        "crawl_enabled": bool(request.app.state.settings.metadata_enabled),
     }
     return render(request, "pages/media.html", None, context)
 

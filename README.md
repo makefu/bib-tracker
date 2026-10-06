@@ -210,6 +210,19 @@ services.bib-tracker.defaultPrices = {
 };
 ```
 
+### The settings page
+
+`/settings` is the operator's surface: database size and completeness, the
+HTTP cache, every configured provider marked by whether it can actually
+answer (a missing key or cookie is shown, not silently skipped), and the
+probe ledger summarised by outcome. Its Wartung card runs the backfills one
+task at a time — re-search prices or covers (with the choice to forget the
+probe table first), re-enrich works from scratch, reload every cover after a
+parser fix, rebuild the history, or VACUUM. A task in flight is visible in
+the card, and a second press is refused rather than doubling the requests.
+Each work's page carries the same idea at one-work scope: *Preis neu suchen*
+/ *Cover neu laden* beside the price field.
+
 ## Commands
 
 | Command | What it does |

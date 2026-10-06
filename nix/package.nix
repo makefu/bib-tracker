@@ -7,7 +7,18 @@
 
 python313Packages.buildPythonApplication {
   pname = "bib-tracker";
-  version = "0.1.0";
+  # Single source: the version lives in bib_tracker.__version__ and pyproject
+  # reads it dynamically; the derivation reads the same line so the two cannot
+  # drift apart at release time. builtins.match has no (?s), so find the line
+  # first and capture within it.
+  version = let
+    line = builtins.head (
+      builtins.filter (l: builtins.match ''__version__ = "([^"]+)".*'' l != null) (
+        lib.splitString "\n" (builtins.readFile ../src/bib_tracker/__init__.py)
+      )
+    );
+  in
+    builtins.elemAt (builtins.match ''__version__ = "([^"]+)".*'' line) 0;
 
   src = lib.cleanSource ../.;
   pyproject = true;

@@ -54,6 +54,29 @@
 
     {% include "partials/price.html" %}
     {% include "partials/notes.html" %}
+    <div class="row" style="gap: var(--sp-3)">
+      <button
+        class="btn btn--ghost btn--sm"
+        hx-post="/api/media/{{ media.id }}/crawl"
+        hx-vals='{"what": "price", "fresh": "1"}'
+        hx-target="#crawl-status"
+        hx-swap="outerHTML"
+        {% if not crawl_enabled %}disabled{% endif %}
+      >
+        Preis neu suchen
+      </button>
+      <button
+        class="btn btn--ghost btn--sm"
+        hx-post="/api/media/{{ media.id }}/crawl"
+        hx-vals='{"what": "cover", "fresh": "1"}'
+        hx-target="#crawl-status"
+        hx-swap="outerHTML"
+        {% if not crawl_enabled %}disabled{% endif %}
+      >
+        Cover neu laden
+      </button>
+      <span id="crawl-status"></span>
+    </div>
     </div>
   </div>
 
@@ -121,4 +144,42 @@
       </table>
     </div>
   </div>
+
+  {% if probes %}
+    {% set OUTCOMES = {
+      'found': ('gefunden', 'ok'),
+      'not_found': ('nicht gefunden', 'muted'),
+      'blocked': ('zugehalten', 'warn'),
+      'error': ('Fehler', 'bad'),
+    } %}
+    <div class="card" style="margin-top: var(--sp-4)">
+      <div class="card__head">
+        <h2 class="card__title">Recherche</h2>
+      </div>
+      <div class="table-wrap">
+        <table class="table">
+          <caption class="sr-only">Provider-Sonden für dieses Werk</caption>
+          <thead>
+            <tr>
+              <th scope="col">Provider</th>
+              <th scope="col">Zweck</th>
+              <th scope="col">Ausgang</th>
+              <th scope="col">Geprüft</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for probe in probes %}
+              {% set outcome = OUTCOMES.get(probe.outcome, (probe.outcome, 'muted')) %}
+              <tr>
+                <td>{{ probe.provider | provider_label }}</td>
+                <td class="muted">{{ 'Preis' if probe.attempted_for == 'price' else 'Cover' }}</td>
+                <td data-tone="{{ outcome[1] }}">{{ outcome[0] }}</td>
+                <td class="nums faint">{{ probe.checked_at | de_date }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  {% endif %}
 {% endblock %}

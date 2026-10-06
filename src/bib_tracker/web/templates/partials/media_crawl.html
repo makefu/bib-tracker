@@ -1,0 +1,19 @@
+{#
+  One work's re-crawl status. The button's response is this fragment, and
+  while the runner works it polls itself until the task is finished.
+#}
+<span
+  id="crawl-status"
+  {% if crawl.running and crawl.kind == what and crawl.total == 1 %}hx-get="/api/media/{{ media_id }}/crawl/status?what={{ what }}" hx-trigger="every 3s" hx-swap="outerHTML"{% endif %}
+>
+  {% if crawl.running and crawl.kind == what %}
+    <span class="faint" role="status">
+      {{ 'Preis-Suche' if what == 'price' else 'Cover-Suche' }} läuft …
+    </span>
+  {% elif crawl.kind == what and crawl.finished_at %}
+    <span class="faint">
+      {{ 'fertig' if not crawl.error else 'fehlgeschlagen: ' + crawl.error }} ·
+      {{ 'Preis' if what == 'price' else 'Cover' }}-Suche
+    </span>
+  {% endif %}
+</span>

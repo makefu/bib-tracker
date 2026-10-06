@@ -1,0 +1,125 @@
+{#
+  Operator-triggered maintenance. The card is the same fragment the POST
+  endpoints return, and while a task runs it polls itself: progress lives in
+  the runner, not in the browser.
+#}
+{% set OUTCOMES = {
+  'found': ('gefunden', 'ok'),
+  'not_found': ('nicht gefunden', 'muted'),
+  'blocked': ('zugehalten', 'warn'),
+  'error': ('Fehler', 'bad'),
+} %}
+<div class="card" id="maintenance-card" {% if maintenance.running %}hx-get="/api/maintenance/card" hx-trigger="every 3s" hx-swap="outerHTML"{% endif %}>
+  <div class="card__head">
+    <h2 class="card__title">Wartung</h2>
+    {% if maintenance.running %}
+      <span class="status" data-state="open">{{ maintenance.label }} läuft · {{ maintenance.done }}/{{ maintenance.total }}</span>
+    {% elif maintenance.finished_at %}
+      <span class="faint">
+        zuletzt: {{ maintenance.label }}
+        {{ maintenance.finished_at | de_date_short }}
+        {%- if maintenance.error %} · abgebrochen: {{ maintenance.error }}{% endif %}
+        {%- for key, value in maintenance.detail.items() %} · {{ key }} {{ value }}{% endfor %}
+      </span>
+    {% endif %}
+  </div>
+
+  {% if not metadata_enabled %}
+    <div class="notice" data-tone="warn">
+      <span>Metadaten-Anreicherung ist deaktiviert; Preise, Cover und Werkinformationen können nicht neu geholt werden.</span>
+    </div>
+  {% endif %}
+
+  <form class="maint-action" hx-post="/api/maintenance/price" hx-target="#maintenance-card" hx-swap="outerHTML">
+    <span class="maint-action__label">Preise neu suchen</span>
+    <label class="faint"><input type="checkbox" name="fresh" value="1" checked /> alte Sonden vergessen</label>
+    <select class="field" name="scope" aria-label="Umfang">
+      <option value="missing">nur Werke ohne Preis</option>
+      <option value="all">alle Werke</option>
+    </select>
+    <button class="btn btn--ghost btn--sm" type="submit" {% if not metadata_enabled %}disabled{% endif %}>Ausführen</button>
+  </form>
+
+  <form class="maint-action" hx-post="/api/maintenance/cover" hx-target="#maintenance-card" hx-swap="outerHTML">
+    <span class="maint-action__label">Cover neu suchen</span>
+    <label class="faint"><input type="checkbox" name="fresh" value="1" checked /> alte Sonden vergessen</label>
+    <select class="field" name="scope" aria-label="Umfang">
+      <option value="missing">nur Werke ohne Cover</option>
+      <option value="all">alle Werke</option>
+    </select>
+    <button class="btn btn--ghost btn--sm" type="submit" {% if not metadata_enabled %}disabled{% endif %}>Ausführen</button>
+  </form>
+
+  <form class="maint-action" hx-post="/api/maintenance/reenrich" hx-target="#maintenance-card" hx-swap="outerHTML">
+    <span class="maint-action__label">Werkinformationen neu verschlagworten</span>
+    <span class="faint">Provider-Datensätze und Sonden werden verworfen; manuelle Preise und Bewertungen bleiben.</span>
+    <button class="btn btn--ghost btn--sm" type="submit" {% if not metadata_enabled %}disabled{% endif %}>Ausführen</button>
+  </form>
+
+  <form class="maint-action" hx-post="/api/maintenance/covers-reload" hx-target="#maintenance-card" hx-swap="outerHTML">
+    <span class="maint-action__label">Cover alle neu laden</span>
+    <span class="faint">Ein Update der Provider-Parser soll hier greifen, nicht erst bei neuen Werken.</span>
+    <button class="btn btn--ghost btn--sm" type="submit" {% if not metadata_enabled %}disabled{% endif %}>Ausführen</button>
+  </form>
+
+  <form class="maint-action" hx-post="/api/maintenance/rebuild-history" hx-target="#maintenance-card" hx-swap="outerHTML">
+    <span class="maint-action__label">Verlauf neu aufbauen</span>
+    <span class="faint">Leihungen und Exemplare aus den gespeicherten Abfragen berechnen.</span>
+    <button class="btn btn--ghost btn--sm" type="submit">Ausführen</button>
+  </form>
+
+  <form class="maint-action" hx-post="/api/maintenance/vacuum" hx-target="#maintenance-card" hx-swap="outerHTML">
+    <span class="maint-action__label">Datenbank komprimieren</span>
+    <span class="faint">VACUUM; VACUUM allein gibt belegte Seiten nicht an das System zurück.</span>
+    <label class="faint"><input type="checkbox" name="clear_cache" value="1" /> HTTP-Cache leeren</label>
+    <button class="btn btn--ghost btn--sm" type="submit">Ausführen</button>
+  </form>
+
+  {% if probe_summary %}
+    <div class="card__head"><h3 class="card__title">Sonden</h3></div>
+    <div class="table-wrap">
+      <table class="table">
+        <caption class="sr-only">Provider-Sonden nach Ausgang</caption>
+        <thead>
+          <tr>
+            <th scope="col">Provider</th>
+            <th scope="col">Zweck</th>
+            <th scope="col">Ausgang</th>
+            <th scope="col">Anzahl</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in probe_summary %}
+            {% set outcome = OUTCOMES.get(row.outcome, (row.outcome, 'muted')) %}
+            <tr>
+              <td>{{ row.provider | provider_label }}</td>
+              <td class="muted">{{ 'Preis' if row.attempted_for == 'price' else 'Cover' }}</td>
+              <td data-tone="{{ outcome[1] }}">{{ outcome[0] }}</td>
+              <td class="nums">{{ row.n }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% endif %}
+
+  <div class="card__head"><h3 class="card__title">Provider</h3></div>
+  <div class="row provider-list">
+    <div class="stack provider-list__col">
+      <span class="muted">Preise</span>
+      {% for p in price_providers %}
+        <span class="faint provider-list__item" data-tone="{{ 'ok' if p.available else 'warn' }}">
+          {{ p.name | provider_label }}{% if p.reason %} · {{ p.reason }}{% endif %}
+        </span>
+      {% endfor %}
+    </div>
+    <div class="stack provider-list__col">
+      <span class="muted">Cover</span>
+      {% for p in cover_providers %}
+        <span class="faint provider-list__item" data-tone="{{ 'ok' if p.available else 'warn' }}">
+          {{ p.name | provider_label }}{% if p.reason %} · {{ p.reason }}{% endif %}
+        </span>
+      {% endfor %}
+    </div>
+  </div>
+</div>
