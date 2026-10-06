@@ -33,7 +33,10 @@
     in
     {
       overlays.default = final: _prev: {
-        bib-tracker = final.callPackage ./nix/package.nix { };
+        bib-tracker = final.callPackage ./nix/package.nix {
+          # The browser tests need the driver only where nixpkgs ships one.
+          playwrightDriver = final.playwright-driver or null;
+        };
       };
 
       packages = forAllSystems (pkgs: {
@@ -100,13 +103,17 @@
               ps.freezegun
               ps.asgi-lifespan
               ps.mypy
+              ps.playwright
+              ps.pytest-playwright
             ]))
             pkgs.ruff
             pkgs.uv
             pkgs.sqlite
+            pkgs.playwright-driver
           ];
           shellHook = ''
             export PYTHONPATH=$PWD/src''${PYTHONPATH:+:$PYTHONPATH}
+            export PLAYWRIGHT_BROWSERS_PATH=${pkgs.playwright-driver.browsers}
           '';
         };
       });
@@ -159,6 +166,14 @@
                 mypy
                 touch $out
               '';
+        }
+        // nixpkgs.lib.optionalAttrs (pkgs ? playwright-driver) {
+          # The browser tests run as a check of their own: the same package
+          # rebuilt with the mark selection flipped, so the unit suite stays
+          # the cheap gate and a Playwright failure names itself.
+          e2e = pkgs.bib-tracker.overrideAttrs (_final: _prev: {
+            PYTEST_ADDOPTS = "-m e2e";
+          });
         }
         // nixpkgs.lib.optionalAttrs (pkgs.stdenv.hostPlatform.system == "x86_64-linux") {
           vm-test = import ./nix/vm-test.nix { inherit pkgs self; };

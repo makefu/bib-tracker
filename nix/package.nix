@@ -1,6 +1,8 @@
 {
   lib,
+  pkgs,
   python313Packages,
+  playwrightDriver ? null,
 }:
 
 python313Packages.buildPythonApplication {
@@ -33,10 +35,36 @@ python313Packages.buildPythonApplication {
     respx
     freezegun
     asgi-lifespan
-  ];
+  ] ++ lib.optionals (playwrightDriver != null) [ python313Packages.playwright python313Packages.pytest-playwright ];
 
-  # Live tests hit the real OPACs and metadata APIs; the build has no network.
-  disabledTestMarks = [ "live" ];
+  # Playwright's browsers come from the store rather than a network install,
+  # so the e2e tests find them through PLAYWRIGHT_BROWSERS_PATH (an env
+  # attribute: it is exported during build and check). Each browser component
+  # is a derivation whose RUNPATH already names the libraries Chromium needs
+  # (libglvnd, vulkan, alsa, ...), so putting the components in buildInputs is
+  # what makes the binary launchable inside the build sandbox.
+  buildInputs = lib.optionals (playwrightDriver != null) [
+    playwrightDriver.components.chromium
+    playwrightDriver.components.chromium-headless-shell
+  ];
+  PLAYWRIGHT_BROWSERS_PATH = lib.optionalString (playwrightDriver != null) "${playwrightDriver.browsers}";
+
+  # The playwright browser components ship a wrapped `chrome` that sets
+  # FONTCONFIG_FILE, but headless-shell is unwrapped and the build sandbox has
+  # no system font config: Chromium dies on the first page render ("Cannot
+  # load default config file", then a Skia font-manager FATAL). Give the
+  # browser tests a real fonts.conf and a writable HOME for chrome's profile
+  # (the sandbox HOME is not one). DejaVu matches what the widget tests'
+  # geometry expectations were written against.
+  FONTCONFIG_FILE = lib.optionalString (playwrightDriver != null) (
+    "${pkgs.makeFontsConf { fontDirectories = [ pkgs.dejavu_fonts ]; }}"
+  );
+  HOME = lib.optionalString (playwrightDriver != null) "/tmp";
+
+  # Mark selection is pyproject's addopts (`-m 'not live and not e2e'`): the
+  # plain package build is the unit suite only. The flake's `e2e` check
+  # rebuilds this derivation with PYTEST_ADDOPTS="-m e2e", which pytest ranks
+  # above the ini addopts, so the browser tests get run by a gate of their own.
 
   pythonImportsCheck = [
     "bib_tracker"

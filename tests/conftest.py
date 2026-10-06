@@ -13,6 +13,14 @@ from bib_tracker.db.migrator import migrate
 
 FIXTURES = Path(__file__).parent / "fixtures"
 
+# The browser tests import playwright at module level. Where the e2e
+# dependencies were not added to the environment, the whole directory is
+# ignored at collection rather than failing the run at import.
+try:
+    import pytest_playwright  # noqa: F401
+except ImportError:  # pragma: no cover
+    collect_ignore_glob = ["e2e/*"]
+
 
 @pytest.fixture
 def db_path(tmp_path: Path) -> Path:
