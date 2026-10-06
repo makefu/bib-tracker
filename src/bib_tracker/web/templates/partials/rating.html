@@ -42,18 +42,5 @@
       </label>
     {% endfor %}
   </fieldset>
-
-  <button
-    class="btn btn--ghost rating__clear"
-    type="submit"
-    name="rating"
-    value="0"
-    x-show="value > 0"
-    x-cloak
-    title="Bewertung entfernen"
-  >
-    ✕<span class="sr-only">Bewertung entfernen</span>
-  </button>
-
   <span class="rating__saved faint" x-show="saved" x-cloak role="status">gespeichert</span>
 </form>
