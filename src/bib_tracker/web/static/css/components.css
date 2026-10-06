@@ -250,6 +250,51 @@
   background: var(--surface-2);
 }
 
+/* Sortable history headers. The arrow is the affordance: faint when the
+   column is idle, solid when it is the active sort, flipped by aria-sort so
+   the direction reads without colour alone. */
+.table th.th-sortable {
+  padding: 0;
+}
+
+.table th.th-sortable .th-sortable__link {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-1);
+  padding: var(--sp-3);
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.table th.th-sortable .th-sortable__link::after {
+  content: "";
+  width: 0;
+  height: 0;
+  margin-left: auto;
+  border: 3px solid transparent;
+  border-top: 4px solid var(--text-muted);
+  opacity: 0.25;
+}
+
+.table th.th-sortable:hover .th-sortable__link::after {
+  opacity: 0.6;
+}
+
+.table th[aria-sort="ascending"] .th-sortable__link,
+.table th[aria-sort="descending"] .th-sortable__link {
+  color: var(--text);
+}
+
+.table th[aria-sort="ascending"] .th-sortable__link::after {
+  transform: rotate(180deg);
+  opacity: 1;
+}
+
+.table th[aria-sort="descending"] .th-sortable__link::after {
+  opacity: 1;
+}
+
 .cell-title {
   display: grid;
   gap: 2px;

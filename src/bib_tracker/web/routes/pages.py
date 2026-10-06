@@ -27,6 +27,39 @@ router = APIRouter()
 
 MEDIA_CLASSES = ("book", "audiobook", "music", "movie", "game", "magazine", "other")
 
+# History table columns, in the order the rows render them (the cover cell
+# is not sortable). Each header links to the same URL with sort/dir set, so
+# sorting needs no JS and the page, the HTMX fragment and a bookmarked URL
+# always show the same order.
+HISTORY_SORTS: dict[str, str] = {
+    # `{dir}` is substituted with ASC/DESC. NULLs sort last whichever way the
+    # column reads, so a work with no price or rating does not jump to the
+    # top just because the table is descending. The trailing id tiebreak
+    # makes every order total, which is what lets the tests assert exact rows.
+    "title": "m.title COLLATE NOCASE {dir}, l.id ASC",
+    "status": "l.state {dir}, l.last_due_date ASC, l.id ASC",
+    "due": "l.last_due_date {dir} NULLS LAST, l.id ASC",
+    "lend": "lend_date {dir} NULLS LAST, l.id ASC",
+    "return": "return_date {dir} NULLS LAST, l.id ASC",
+    "renewals": "l.times_renewed {dir}, l.id ASC",
+    "price": "m.effective_price_cents {dir} NULLS LAST, m.title COLLATE NOCASE ASC, l.id ASC",
+    "rating": "r.rating {dir} NULLS LAST, m.title COLLATE NOCASE ASC, l.id ASC",
+}
+
+HISTORY_SORT_LABELS: dict[str, str] = {
+    "title": "Titel",
+    "author": "Autor",
+    "status": "Status",
+    "due": "Fällig",
+    "lend": "Ausgeliehen",
+    "return": "Zurück",
+    "renewals": "Verl.",
+    "price": "Preis",
+    "rating": "Bewertung",
+}
+
+HISTORY_SORT_COLUMNS: list[tuple[str, str]] = [(key, HISTORY_SORT_LABELS[key]) for key in HISTORY_SORTS]
+
 
 def _db(request: Request) -> Database:
     db: Database = request.app.state.db
@@ -163,6 +196,42 @@ async def history(request: Request) -> HTMLResponse:
     media_classes = [value for value in params.getlist("media_class") if value in MEDIA_CLASSES]
     accounts = params.getlist("account")
 
+    requested = params.get("sort")
+    # A sort the server recognises is the only thing that marks a header: a
+    # missing or nonsense value is the unsorted view — newest loan first,
+    # nothing active — so `?sort=;drop` cannot claim the lend column or pick
+    # a direction the user never asked for.
+    explicit = requested in HISTORY_SORTS
+    sort = (requested or "lend") if explicit else "lend"
+    dir_param = params.get("dir")
+    if not explicit:
+        direction = "desc"
+    elif dir_param in ("asc", "desc"):
+        direction = dir_param
+    else:
+        direction = "asc"
+    order_by = HISTORY_SORTS[sort].format(dir=direction.upper())
+    # The header links and the CSV export keep every filter; only sort/dir
+    # change. The export ignores sort/dir on purpose: a CSV has no visible
+    # row order the user clicked for.
+    base_params = [(key, value) for key, value in params.multi_items() if key not in ("sort", "dir", "page")]
+
+    def _other_dir(key: str) -> str:
+        """The direction the header link sends: clicking the active column
+        flips it, any other column starts ascending."""
+        return "desc" if key == sort and direction == "asc" else "asc"
+
+    columns = [
+        {
+            "key": key,
+            "label": label,
+            "aria": ("ascending" if direction == "asc" else "descending") if explicit and key == sort else "none",
+            "active": explicit and key == sort,
+            "url": "/history?" + urlencode([*base_params, ("sort", key), ("dir", _other_dir(key))]),
+        }
+        for key, label in HISTORY_SORT_COLUMNS
+    ]
+
     where: list[str] = []
     args: list[Any] = []
 
@@ -217,7 +286,7 @@ async def history(request: Request) -> HTMLResponse:
         LEFT JOIN loan_overrides o ON o.loan_key = l.loan_key
         LEFT JOIN ratings r ON r.media_id = m.id
         {clause}
-        ORDER BY lend_date DESC, l.id DESC
+        ORDER BY {order_by}
         LIMIT 200
         """,
         args,
@@ -255,6 +324,8 @@ async def history(request: Request) -> HTMLResponse:
         "works": works,
         "untracked": untracked,
         "filters": {"q": search, "state": state, "media_class": media_classes, "account": accounts},
+        "columns": columns,
+        "sort": sort,
         "query_string": urlencode([(key, value) for key, value in params.multi_items() if key != "page"]),
         # The renew banner renders only when a fragment carries outcomes;
         # an empty list keeps the full page quiet.

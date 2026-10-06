@@ -19,18 +19,36 @@
   {% if loans %}
     <div class="table-wrap">
       <table class="table">
-        <caption class="sr-only">Alle Ausleihen, neueste zuerst</caption>
+        <caption class="sr-only">
+          Alle Ausleihen
+          {%- for column in columns %}
+            {%- if column.active %}, sortiert nach {{ column.label }}
+              {{- 'absteigend' if column.aria == 'descending' else 'aufsteigend' }}
+            {%- endif %}
+          {%- endfor -%}
+        </caption>
         <thead>
           <tr>
             <th scope="col"><span class="sr-only">Cover</span></th>
-            <th scope="col">Titel</th>
-            <th scope="col">Status</th>
-            <th scope="col">Fällig</th>
-            <th scope="col">Ausgeliehen</th>
-            <th scope="col">Zurück</th>
-            <th scope="col">Verl.</th>
-            <th scope="col">Preis</th>
-            <th scope="col">Bewertung</th>
+            {# One loop, one class: the sortable headers differ only in the
+               aria-sort state, which the CSS arrow keys off. The plain href
+               is the no-JS path; the hx-* attributes are the HTMX path. #}
+            {% for column in columns %}
+              <th scope="col" data-sort="{{ column.key }}" aria-sort="{{ column.aria }}" class="th-sortable">
+                {# hx-history="false": a pushed sort entry must be refetched on
+                   back, not restored from htmx's cache — the cached HTML
+                   would replay the row order of the moment it was pushed,
+                   not the data as it is now. #}
+                <a class="th-sortable__link"
+                   href="{{ column.url }}"
+                   hx-get="{{ column.url }}"
+                   hx-target="#results"
+                   hx-swap="outerHTML"
+                   hx-push-url="true"
+                   hx-history="false"
+                   title="Nach {{ column.label }} sortieren">{{ column.label }}</a>
+              </th>
+            {% endfor %}
           </tr>
         </thead>
         <tbody id="rows">
