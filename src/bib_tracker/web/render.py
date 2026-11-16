@@ -30,3 +30,12 @@ def is_fragment(request: Request) -> bool:
 def render(request: Request, page: str, partial: str | None, context: dict[str, Any]) -> HTMLResponse:
     template = partial if (partial and is_fragment(request)) else page
     return templates.TemplateResponse(request, template, context)
+
+
+def render_fragment(request: Request, name: str, context: dict[str, Any]) -> str:
+    """A fragment as a string, for a response that is not itself HTML.
+
+    The identify stream sends card markup inside a server-sent event, so the
+    card still comes from the one template rather than from string-built DOM.
+    """
+    return bytes(templates.TemplateResponse(request, name, context).body).decode()

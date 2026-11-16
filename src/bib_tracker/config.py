@@ -217,6 +217,14 @@ class Settings(BaseSettings):
     poll_jitter_seconds: int = 300
     poll_max_concurrent: int = 2
     poll_on_startup: bool = True
+    #: After the site answers 403/429, stop polling that account:
+    #: base * 2^(failures-1) minutes, capped. The aDIS firewall blocks for
+    #: hours; retrying on the normal schedule is what extends the block.
+    poll_backoff_base_minutes: int = 360
+    poll_backoff_max_hours: int = 24
+    #: Re-ask the OPAC's detail page for one copy after this many days.
+    #: Covers and ISBNs do not change; this is the request budget for them.
+    details_retry_days: int = 30
     #: How many consecutive empty results are needed before believing that an
     #: account really was emptied, rather than that the parser broke.
     zero_result_confirmations: int = 2

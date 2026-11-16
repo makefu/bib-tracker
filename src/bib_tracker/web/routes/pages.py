@@ -18,10 +18,11 @@ from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse, Resp
 from ... import __version__
 from ...db.connection import Database
 from ...library.media_class import MediaClass
+from ...metadata import identify
 from ...metadata.covers import VARIANTS, placeholder_svg, read_cover
 from ...metadata.lookup import lookup_isbn
 from ...metadata.pricing import all_found_prices, price_search_exhausted
-from ..filters import MEDIA_CLASS_LABELS
+from ..filters import MEDIA_CLASS_LABELS, provider_label
 from ..render import render
 
 router = APIRouter()
@@ -554,6 +555,10 @@ async def media_detail(request: Request, media_id: int) -> HTMLResponse:
         ],
         "probes": [dict(row) for row in probe_rows],
         "crawl_enabled": bool(request.app.state.settings.metadata_enabled),
+        "identify_providers": [
+            {"name": name, "label": provider_label(name)}
+            for name in identify.usable_names(request.app.state.settings, str(media["media_class"]))
+        ],
     }
     return render(request, "pages/media.html", None, context)
 

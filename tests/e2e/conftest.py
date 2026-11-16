@@ -11,14 +11,18 @@ file; the app's lifespan migrates it, which is a no-op on a migrated copy.
 
 from __future__ import annotations
 
+import json
 import os
 import socket
 import sqlite3
 import subprocess
 import sys
+import threading
 import time
+import urllib.parse
 import urllib.request
 from collections.abc import Iterator
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -26,6 +30,48 @@ import pytest
 
 if TYPE_CHECKING:
     from playwright.sync_api import Page
+
+
+#: The recorded Buchkatalog answers are served by a local shop below, which
+#: keeps the identify-dialog round trip real (HTTP, JSON, HTML) and offline.
+_FIXTURES = Path(__file__).resolve().parents[1] / "fixtures" / "providers"
+_PRODUCT_HTML = "buchkatalog_product_4099276460851090106.html"
+
+
+class _ShopHandler(BaseHTTPRequestHandler):
+    """A fake Buchkatalog: the JSON search endpoint and the product page,
+    served from the captured fixtures."""
+
+    def do_GET(self) -> None:
+        parsed = urllib.parse.urlparse(self.path)
+        if parsed.path == "/api/search/search":
+            term = urllib.parse.parse_qs(parsed.query).get("search", [""])[0]
+            name = "buchkatalog_search_isbn.json" if "9783832163594" in term else "buchkatalog_search.json"
+            self._send((_FIXTURES / name).read_bytes(), "application/json")
+        elif parsed.path.startswith("/product/"):
+            self._send((_FIXTURES / _PRODUCT_HTML).read_bytes(), "text/html; charset=utf-8")
+        elif parsed.path.startswith("/media-cover/"):
+            # The product fixture's cover URLs point here so the apply path's
+            # store_cover fetches a real image instead of a 404.
+            self._send((_FIXTURES / "cover_sample.png").read_bytes(), "image/png")
+        else:
+            self.send_error(404)
+
+    def _send(self, body: bytes, ctype: str) -> None:
+        self.send_response(200)
+        self.send_header("Content-Type", ctype)
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
+
+    def log_message(self, *args: object) -> None:
+        pass
+
+
+def _start_shop() -> ThreadingHTTPServer:
+    server = ThreadingHTTPServer(("127.0.0.1", 0), _ShopHandler)
+    threading.Thread(target=server.serve_forever, daemon=True).start()
+    return server
 
 
 def _seed(path: Path) -> None:
@@ -52,15 +98,19 @@ def _seed(path: Path) -> None:
 
         -- title / price / rating / renewals / due / lend / return / status
         -- vary across four works; nothing is alphabetically equal to another.
-        INSERT INTO media (id, media_key, media_class, title, author, effective_price_cents,
-                           price_basis, first_seen_at, last_seen_at) VALUES
-            (1, 'm1', 'book',  'Alpha', 'Ziegler', 100,  'provider_list_price',
+        INSERT INTO media (id, media_key, media_class, title, author, isbn13,
+                           effective_price_cents, price_basis, first_seen_at, last_seen_at) VALUES
+            (1, 'm1', 'book',  'Alpha', 'Ziegler', NULL, 100,  'provider_list_price',
              '2026-01-01', '2026-01-01'),
-            (2, 'm2', 'book',  'Bravo', 'Yaklich', 500,  'provider_list_price',
+            (2, 'm2', 'book',  'Bravo', 'Yaklich', NULL, 500,  'provider_list_price',
              '2026-01-01', '2026-01-01'),
-            (3, 'm3', 'book',  'Charlie', 'Xanth', 300,  'provider_list_price',
+            (3, 'm3', 'book',  'Charlie', 'Xanth', NULL, 300,  'provider_list_price',
              '2026-01-01', '2026-01-01'),
-            (4, 'm4', 'game',  'Delta', 'Weiss', NULL, 'unknown',
+            (4, 'm4', 'game',  'Delta', 'Weiss', NULL, NULL, 'unknown',
+             '2026-01-01', '2026-01-01'),
+            -- The picker's work: a known ISBN, no loan, so the sort tests'
+            -- history list (loans only) never sees it.
+            (5, 'm5', 'book',  'Epsilon', 'Ortolani', '9783832163594', NULL, 'unknown',
              '2026-01-01', '2026-01-01');
 
         INSERT INTO copies (id, account_id, copy_key, media_id, library_type,
@@ -98,13 +148,21 @@ def _seed(path: Path) -> None:
 
 @pytest.fixture(scope="module")
 def app_server(tmp_path_factory: pytest.TempPathFactory) -> Iterator[str]:
-    """A real uvicorn process on a free port, serving the seeded database."""
+    """A real uvicorn process on a free port, serving the seeded database.
+
+    Each module gets its own process and its own local fake shop: the
+    maintenance test's rebuild wipes the derived rows, so sharing one
+    database across modules would leak that destruction sideways.
+    """
     db_file = tmp_path_factory.mktemp("e2e") / "bib-tracker.db"
     _seed(db_file)
 
     with socket.socket() as probe:
         probe.bind(("127.0.0.1", 0))
         port = probe.getsockname()[1]
+
+    shop = _start_shop()
+    shop_url = f"http://127.0.0.1:{shop.server_address[1]}"
 
     # The env is what the app itself reads (pydantic-settings, BIB_TRACKER_*);
     # empty config files stop a developer's ~/.config/bib-tracker from leaking
@@ -116,6 +174,14 @@ def app_server(tmp_path_factory: pytest.TempPathFactory) -> Iterator[str]:
         "BIB_TRACKER_CONFIG_FILES": "",
         "BIB_TRACKER_METADATA_ENABLED": "false",
         "BIB_TRACKER_POLL_ON_STARTUP": "false",
+        # Enrichment is off (the scheduler must not pollute the seeded db),
+        # but the identify endpoints work off these lists regardless. One
+        # source only, aimed at the local fake shop: the suite never reaches
+        # for the internet.
+        "BIB_TRACKER_METADATA_PROVIDERS": "[]",
+        "BIB_TRACKER_PRICE_PROVIDERS": "buchkatalog",
+        "BIB_TRACKER_IMAGE_PROVIDERS": "[]",
+        "BIB_TRACKER_METADATA_BASE_URLS": json.dumps({"buchkatalog": shop_url}),
     }
     log_path = db_file.with_suffix(".log")
     log = log_path.open("wb")
@@ -161,6 +227,8 @@ def app_server(tmp_path_factory: pytest.TempPathFactory) -> Iterator[str]:
             proc.kill()
             proc.wait(timeout=5)
         log.close()
+        shop.shutdown()
+        shop.server_close()
 
 
 @pytest.fixture(scope="session")

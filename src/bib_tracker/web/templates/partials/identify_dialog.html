@@ -1,0 +1,139 @@
+{#
+  The picker: a search box, one status row per source that was asked, and the
+  cards as they arrive. Vanilla JS rather than Alpine or HTMX — the stream is
+  an EventSource, the cards arrive as server-rendered markup, and the dialog
+  itself is a native <dialog>, so nothing else has to be wired up here.
+#}
+<dialog id="identify-dialog" class="identify" aria-labelledby="identify-title">
+  <div class="identify__head">
+    <h2 class="card__title" id="identify-title">Werksuche</h2>
+    <button class="identify__close" type="button" aria-label="Schließen">✕</button>
+  </div>
+  <form class="identify__search" id="identify-form">
+    <input
+      class="field"
+      id="identify-q"
+      type="search"
+      value="{{ media.title }}"
+      placeholder="Titel oder ISBN"
+      aria-label="Suchbegriff"
+    />
+    <button class="btn btn--sm" type="submit">Suchen</button>
+  </form>
+  <p class="notice" id="identify-note" hidden></p>
+  <ul class="identify__providers" id="identify-providers"></ul>
+  <div class="identify__grid" id="identify-results"></div>
+</dialog>
+
+<script>
+  (function () {
+    var dialog = document.getElementById("identify-dialog");
+    if (!dialog) return;
+    var mediaId = {{ media.id }};
+    var form = document.getElementById("identify-form");
+    var input = document.getElementById("identify-q");
+    var note = document.getElementById("identify-note");
+    var list = document.getElementById("identify-providers");
+    var results = document.getElementById("identify-results");
+    var stream = null;
+
+    document.getElementById("identify-open").addEventListener("click", function () {
+      dialog.showModal();
+      input.focus();
+      input.select();
+      if (!results.childElementCount && !list.childElementCount) run();
+    });
+    dialog.querySelector(".identify__close").addEventListener("click", function () {
+      dialog.close();
+    });
+    form.addEventListener("submit", function (event) {
+      event.preventDefault();
+      run();
+    });
+
+    function row(name, label) {
+      var li = document.createElement("li");
+      li.className = "identify__provider";
+      li.dataset.provider = name;
+      var chip = document.createElement("span");
+      chip.className = "identify__chip";
+      chip.dataset.status = "searching";
+      chip.textContent = label;
+      var out = document.createElement("span");
+      out.className = "identify__status faint";
+      li.appendChild(chip);
+      li.appendChild(out);
+      list.appendChild(li);
+      return out;
+    }
+
+    function run() {
+      if (stream) stream.close();
+      list.textContent = "";
+      results.textContent = "";
+      note.hidden = true;
+      var q = encodeURIComponent(input.value.trim());
+      stream = new EventSource("/api/media/" + mediaId + "/identify/search?q=" + q);
+      stream.onmessage = function (event) {
+        var msg = JSON.parse(event.data);
+        if (msg.event === "begin") {
+          msg.providers.forEach(function (p) {
+            row(p.name, p.label);
+          });
+          if (msg.skipped.length) say("ohne Zugangsdaten ausgelassen: " + msg.skipped.join(", "));
+        } else if (msg.event === "card") {
+          results.insertAdjacentHTML("beforeend", msg.html);
+        } else if (msg.event === "status") {
+          var li = list.querySelector('[data-provider="' + msg.provider + '"]');
+          if (!li) return;
+          li.querySelector(".identify__chip").dataset.status = msg.status;
+          li.querySelector(".identify__status").textContent = msg.note;
+        } else if (msg.event === "done") {
+          stream.close();
+          stream = null;
+          if (!results.childElementCount) say("kein Anbieter hat etwas gefunden");
+        }
+      };
+      stream.onerror = function () {
+        stream.close();
+        stream = null;
+        say("Verbindung getrennt.");
+      };
+    }
+
+    function say(text) {
+      note.textContent = text;
+      note.hidden = false;
+    }
+
+    /* Plain fetch rather than an htmx attribute: the cards are inserted by
+     * this script, and a plain request keeps the apply path free of anything
+     * that has to be re-processed after insertion. */
+    results.addEventListener("click", function (event) {
+      var button = event.target.closest(".identify-card__apply");
+      if (!button) return;
+      var card = button.closest(".identify-card");
+      button.disabled = true;
+      var body = new URLSearchParams({
+        provider: card.dataset.provider,
+        external_id: card.dataset.externalId,
+      });
+      fetch("/api/media/" + mediaId + "/identify/apply", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: body.toString(),
+      })
+        .then(function (response) {
+          if (!response.ok) return response.json().then(function (d) { throw new Error(d.detail); });
+          return response.json();
+        })
+        .then(function (data) {
+          window.location = "/media/" + data.media_id;
+        })
+        .catch(function (err) {
+          button.disabled = false;
+          say(String(err.message || err));
+        });
+    });
+  })();
+</script>

@@ -47,6 +47,24 @@ class Database:
         self._connections: list[sqlite3.Connection] = []
         self._connections_lock = threading.Lock()
         self._write_lock = asyncio.Lock()
+        # Statements execute on asyncio worker threads; a cancelled task
+        # abandons its statement mid-run rather than joining the thread, and
+        # sqlite segfaults if a connection is closed underneath a running
+        # statement. Count them so close() can wait.
+        self._statements = 0
+        self._idle = threading.Condition()
+
+    @contextmanager
+    def _statement(self) -> Iterator[None]:
+        with self._idle:
+            self._statements += 1
+        try:
+            yield
+        finally:
+            with self._idle:
+                self._statements -= 1
+                if self._statements == 0:
+                    self._idle.notify_all()
 
     @property
     def connection(self) -> sqlite3.Connection:
@@ -72,10 +90,12 @@ class Database:
         conn.execute("COMMIT")
 
     def fetch_all_sync(self, sql: str, params: Params = ()) -> list[sqlite3.Row]:
-        return list(self.connection.execute(sql, params))
+        with self._statement():
+            return list(self.connection.execute(sql, params))
 
     def fetch_one_sync(self, sql: str, params: Params = ()) -> sqlite3.Row | None:
-        row: sqlite3.Row | None = self.connection.execute(sql, params).fetchone()
+        with self._statement():
+            row: sqlite3.Row | None = self.connection.execute(sql, params).fetchone()
         return row
 
     # -- async API ---------------------------------------------------------
@@ -100,10 +120,14 @@ class Database:
             await asyncio.to_thread(writer._commit)
 
     def close(self) -> None:
-        with self._connections_lock:
-            for conn in self._connections:
-                conn.close()
-            self._connections.clear()
+        # Runs on the event loop at shutdown; the wait is one statement long.
+        with self._idle:
+            while self._statements:
+                self._idle.wait()
+            with self._connections_lock:
+                for conn in self._connections:
+                    conn.close()
+                self._connections.clear()
         self._local = threading.local()
 
 
@@ -114,29 +138,46 @@ class Writer:
         self._db = db
 
     def _begin(self) -> None:
-        self._conn = self._db.connection
-        self._conn.execute("BEGIN IMMEDIATE")
+        with self._db._statement():
+            self._conn = self._db.connection
+            self._conn.execute("BEGIN IMMEDIATE")
 
     def _commit(self) -> None:
-        self._conn.execute("COMMIT")
+        with self._db._statement():
+            self._conn.execute("COMMIT")
 
     def _rollback(self) -> None:
-        self._conn.execute("ROLLBACK")
+        with self._db._statement():
+            self._conn.execute("ROLLBACK")
 
     async def execute(self, sql: str, params: Params = ()) -> int:
         """Run a statement; returns lastrowid."""
 
         def run() -> int:
-            cur = self._conn.execute(sql, params)
+            with self._db._statement():
+                cur = self._conn.execute(sql, params)
             return int(cur.lastrowid or 0)
 
         return await asyncio.to_thread(run)
 
     async def execute_many(self, sql: str, rows: Sequence[Params]) -> None:
-        await asyncio.to_thread(lambda: self._conn.executemany(sql, rows))
+        def run() -> None:
+            with self._db._statement():
+                self._conn.executemany(sql, rows)
+
+        await asyncio.to_thread(run)
 
     async def fetch_one(self, sql: str, params: Params = ()) -> sqlite3.Row | None:
-        return await asyncio.to_thread(lambda: self._conn.execute(sql, params).fetchone())
+        def run() -> sqlite3.Row | None:
+            with self._db._statement():
+                row: sqlite3.Row | None = self._conn.execute(sql, params).fetchone()
+            return row
+
+        return await asyncio.to_thread(run)
 
     async def fetch_all(self, sql: str, params: Params = ()) -> list[sqlite3.Row]:
-        return await asyncio.to_thread(lambda: list(self._conn.execute(sql, params)))
+        def run() -> list[sqlite3.Row]:
+            with self._db._statement():
+                return list(self._conn.execute(sql, params))
+
+        return await asyncio.to_thread(run)

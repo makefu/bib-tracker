@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import UTC, datetime, timedelta
 from typing import Any
 
 from .connection import Database, Writer
@@ -22,6 +22,111 @@ class AccountRow:
     username: str
     base_url: str | None
     enabled: bool
+
+
+#: How the account's site last treated us. Drives the poll back-off.
+@dataclass(frozen=True)
+class BackoffState:
+    until: datetime | None
+    failures: int
+
+
+def _aware(value: str) -> datetime:
+    """Parse a stored timestamp; SQL's datetime() writes naive UTC strings."""
+    parsed = datetime.fromisoformat(value)
+    return parsed if parsed.tzinfo else parsed.replace(tzinfo=UTC)
+
+
+async def get_backoff(db: Database, account_id: int) -> BackoffState:
+    row = await db.fetch_one(
+        "SELECT backoff_until, backoff_failures FROM accounts WHERE id = ?",
+        (account_id,),
+    )
+    until = row["backoff_until"] if row else None
+    return BackoffState(
+        until=_aware(until) if until else None,
+        failures=int(row["backoff_failures"]) if row else 0,
+    )
+
+
+async def bump_backoff(
+    db: Database,
+    account_id: int,
+    *,
+    base_minutes: int,
+    max_hours: int,
+    retry_after: float | None = None,
+    now: datetime | None = None,
+) -> datetime:
+    """Record another failure and return the time the account may be tried again.
+
+    Exponential on the consecutive-failure count, capped, and never shorter
+    than a ``Retry-After`` the server itself asked for.
+    """
+    start = now or datetime.now(UTC)
+    row = await db.fetch_one("SELECT backoff_failures FROM accounts WHERE id = ?", (account_id,))
+    failures = int(row["backoff_failures"]) + 1 if row else 1
+    delay_minutes = min(base_minutes * 2 ** (failures - 1), max_hours * 60)
+    if retry_after is not None:
+        delay_minutes = max(delay_minutes, retry_after / 60)
+    until = start + timedelta(minutes=delay_minutes)
+    async with db.write() as w:
+        await w.execute(
+            "UPDATE accounts SET backoff_failures = ?, backoff_until = ? WHERE id = ?",
+            (failures, until.isoformat(), account_id),
+        )
+    return until
+
+
+async def clear_backoff(db: Database, account_id: int) -> None:
+    async with db.write() as w:
+        await w.execute(
+            "UPDATE accounts SET backoff_failures = 0, backoff_until = NULL WHERE id = ?",
+            (account_id,),
+        )
+
+
+async def get_detail_lookups(db: Database, account_id: int, *, max_age_days: int) -> dict[str, dict[str, Any]]:
+    """copy_key -> what the detail page said, for gating per-loan fetches.
+
+    Rows older than ``max_age`` are omitted so a copy is re-fetched after it.
+    """
+    rows = await db.fetch_all(
+        "SELECT copy_key, cover_url, isbn FROM detail_lookups"
+        " WHERE account_id = ? AND fetched_at >= datetime('now', ?)",
+        (account_id, f"-{max_age_days} days"),
+    )
+    return {row["copy_key"]: dict(row) for row in rows}
+
+
+async def store_detail_lookup(
+    db: Database,
+    account_id: int,
+    copy_key: str,
+    *,
+    cover_url: str | None,
+    isbn: str | None,
+) -> None:
+    """Record what the detail page said — including "nothing", which is what
+    stops a title the catalogue has no jacket for from costing a request on
+    every poll."""
+    async with db.write() as w:
+        await w.execute(
+            """
+            INSERT INTO detail_lookups (account_id, copy_key, cover_url, isbn, fetched_at)
+            VALUES (?, ?, ?, ?, datetime('now'))
+            ON CONFLICT (account_id, copy_key) DO UPDATE SET
+                cover_url  = excluded.cover_url,
+                isbn       = excluded.isbn,
+                fetched_at = excluded.fetched_at
+            """,
+            (account_id, copy_key, cover_url, isbn),
+        )
+
+
+async def account_id_by_name(db: Database, name: str) -> int | None:
+    row = await db.fetch_one("SELECT id FROM accounts WHERE name = ?", (name,))
+    return None if row is None else int(row["id"])
 
 
 async def sync_accounts(db: Database, accounts: list[Any]) -> None:

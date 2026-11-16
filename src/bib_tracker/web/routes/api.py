@@ -6,21 +6,32 @@ JSON only, which is what the VM test asserts against.
 
 from __future__ import annotations
 
+import asyncio
+import json
+import logging
+from collections.abc import AsyncIterator
 from typing import Any
 
+import httpx
 from fastapi import APIRouter, HTTPException, Request
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse, StreamingResponse
 
 from ...config import Settings
 from ...db import queries
 from ...db.connection import Database
+from ...library.media_class import MediaClass
 from ...library.reconcile import apply_overrides
 from ...maintenance import KIND_LABELS, MaintenanceBusy, MaintenanceRunner
-from ...metadata import PROVIDER_FACTORIES
+from ...metadata import PROVIDER_FACTORIES, identify
 from ...metadata.base import ProviderConfig
+from ...metadata.http import CachedClient
 from ...metadata.pricing import all_found_prices, price_search_exhausted
+from ...metadata.shops import ShopBlocked
 from ...services import PollInProgressError, PollService, RenewalService
-from ..render import render
+from ..filters import provider_label
+from ..render import render, render_fragment
+
+_LOGGER = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api")
 
@@ -533,3 +544,111 @@ def _crawl_status_fragment(request: Request, media_id: int, what: str) -> HTMLRe
 @router.get("/media/{media_id}/crawl/status", response_class=HTMLResponse)
 async def media_crawl_status(request: Request, media_id: int) -> HTMLResponse:
     return _crawl_status_fragment(request, media_id, str(request.query_params.get("what") or "price"))
+
+
+#: -- identify ---------------------------------------------------------------
+
+
+def _sse(payload: dict[str, Any]) -> str:
+    """One server-sent event. JSON escapes the newlines in a card's markup,
+    so a message stays a single `data:` line."""
+    return f"data: {json.dumps(payload, ensure_ascii=False)}\n\n"
+
+
+@router.get("/media/{media_id}/identify/search")
+async def identify_search(request: Request, media_id: int, q: str = "") -> StreamingResponse:
+    """Ask every source at once and stream the answers as they arrive.
+
+    The slowest shop sets the pace of a plain request; a picker where the
+    fast sources fill in while the slow one spins is usable at library
+    network speeds. The client cancels by closing the stream.
+    """
+    db = _db(request)
+    settings: Settings = request.app.state.settings
+    row = await db.fetch_one("SELECT media_class, isbn13 FROM media WHERE id = ?", (media_id,))
+    if row is None:
+        raise HTTPException(status_code=404, detail=f"No media {media_id}")
+    query = identify.parse_query(row["media_class"], q, row["isbn13"])
+    names = identify.provider_names(settings)
+
+    async def stream() -> AsyncIterator[str]:
+        async with httpx.AsyncClient(follow_redirects=True, timeout=httpx.Timeout(30.0)) as raw:
+            http = CachedClient(db, raw, contact=settings.user_agent_contact)
+            providers = identify.build_for(settings, http, names, MediaClass(row["media_class"]))
+            yield _sse(
+                {
+                    "event": "begin",
+                    "providers": [{"name": n, "label": provider_label(n)} for n in providers],
+                    "skipped": [n for n in names if n not in providers],
+                }
+            )
+            tasks = {asyncio.create_task(identify.search_cards(p, query)): n for n, p in providers.items()}
+            try:
+                while tasks:
+                    done, _ = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
+                    for task in done:
+                        name = tasks.pop(task)
+                        try:
+                            cards = task.result()
+                        except ShopBlocked:
+                            yield _sse(_provider_status(name, "blocked", "haltet uns hinaus"))
+                            continue
+                        except Exception as err:  # one dead source must not end the stream
+                            _LOGGER.warning("identify %s failed: %s", name, err)
+                            yield _sse(_provider_status(name, "error", "Fehler"))
+                            continue
+                        for card in cards:
+                            yield _sse(
+                                {
+                                    "event": "card",
+                                    "provider": name,
+                                    "html": render_fragment(request, "partials/identify_card.html", {"card": card}),
+                                }
+                            )
+                        yield _sse(
+                            _provider_status(
+                                name,
+                                "found" if cards else "none",
+                                f"{len(cards)} Treffer" if cards else "nichts gefunden",
+                            )
+                        )
+            finally:
+                for task in tasks:
+                    task.cancel()
+            yield _sse({"event": "done"})
+
+    return StreamingResponse(
+        stream(),
+        media_type="text/event-stream",
+        headers={"Cache-Control": "no-store", "X-Accel-Buffering": "no"},
+    )
+
+
+def _provider_status(name: str, status: str, note: str) -> dict[str, Any]:
+    return {"event": "status", "provider": name, "status": status, "note": note}
+
+
+@router.post("/media/{media_id}/identify/apply")
+async def identify_apply(request: Request, media_id: int) -> JSONResponse:
+    """Adopt the picked record. The dialog hands over provider and external
+    id; everything else is re-fetched, so a stale tile cannot be applied."""
+    db = _db(request)
+    settings: Settings = request.app.state.settings
+    if await db.fetch_one("SELECT id FROM media WHERE id = ?", (media_id,)) is None:
+        raise HTTPException(status_code=404, detail=f"No media {media_id}")
+    form = await request.form()
+    provider = str(form.get("provider") or "")
+    external_id = str(form.get("external_id") or "")
+    if not provider or not external_id:
+        raise HTTPException(status_code=400, detail="provider and external_id are required")
+    async with httpx.AsyncClient(follow_redirects=True, timeout=httpx.Timeout(30.0)) as raw:
+        http = CachedClient(db, raw, contact=settings.user_agent_contact)
+        try:
+            final = await identify.apply_choice(db, settings, http, media_id, provider, external_id)
+        except LookupError:
+            raise HTTPException(status_code=422, detail="Ergebnis nicht verfügbar") from None
+        except RuntimeError as err:
+            raise HTTPException(status_code=503, detail=str(err)) from None
+    # The id can move: adopting an ISBN merges the row into the work that
+    # already carries it.
+    return JSONResponse({"media_id": final}, headers={"HX-Redirect": f"/media/{final}"})

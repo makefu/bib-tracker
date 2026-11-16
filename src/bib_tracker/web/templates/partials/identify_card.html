@@ -1,0 +1,47 @@
+{#
+  One provider's answer, as something you can compare. Rendered server-side
+  and sent inside a server-sent event, so the card in the stream and the card
+  the dialog inserts are the same markup, and the apply button below is the
+  only thing the client has to know how to build.
+#}
+<article
+  class="identify-card"
+  data-provider="{{ card.provider }}"
+  data-external-id="{{ card.external_id }}"
+  data-title="{{ card.title }}"
+  data-authors="{{ card.authors }}"
+  data-isbn13="{{ card.isbn13 or '' }}"
+  data-price-cents="{{ card.price_cents if card.price_cents is not none else '' }}"
+  data-cover-url="{{ card.cover_url or '' }}"
+>
+  <div class="identify-card__top">
+    {% if card.cover_url %}
+      <img src="{{ card.cover_url }}" alt="" loading="lazy" referrerpolicy="no-referrer" />
+    {% else %}
+      <span class="identify-card__nocover" aria-hidden="true">?</span>
+    {% endif %}
+    <div class="identify-card__meta">
+      <h3 class="identify-card__title">{{ card.title }}</h3>
+      {% if card.authors %}<p class="muted">{{ card.authors }}</p>{% endif %}
+      <p class="faint nums">
+        {% if card.publisher %}{{ card.publisher }}{% endif %}
+        {%- if card.year %} · {{ card.year }}{% endif %}
+      </p>
+      {% if card.isbn13 %}<p class="faint nums">ISBN {{ card.isbn13 }}</p>{% endif %}
+      <p class="identify-card__price">
+        {% if card.price_cents is not none %}
+          <span class="nums">{{ card.price_cents | eur }}</span>
+        {% else %}
+          <span class="faint">kein Preis</span>
+        {% endif %}
+      </p>
+    </div>
+  </div>
+  <div class="identify-card__actions">
+    <span class="chip chip--sm" data-status="found">{{ card.provider | provider_label }}</span>
+    {% if card.external_url %}
+      <a class="faint" href="{{ card.external_url }}" target="_blank" rel="noopener">Quelle</a>
+    {% endif %}
+    <button class="btn btn--sm identify-card__apply" type="button">Übernehmen</button>
+  </div>
+</article>

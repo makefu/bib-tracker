@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+from contextlib import suppress
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from typing import TYPE_CHECKING
@@ -92,9 +93,17 @@ class MaintenanceRunner:
         )
         return self._status
 
-    def cancel(self) -> None:
-        if self._task is not None and not self._task.done():
+    async def aclose(self) -> None:
+        """Cancel the in-flight task and await it.
+
+        A cancelled task's `asyncio.to_thread` statement keeps running on its
+        worker thread after cancel() returns; closing the sqlite connection
+        under it segfaults. Only awaiting the task proves the statement done.
+        """
+        if self._task is not None:
             self._task.cancel()
+            with suppress(asyncio.CancelledError):
+                await self._task
 
     async def _guard(self, coro: object) -> None:
         """Never let a maintenance failure surface as an unhandled task error."""

@@ -32,7 +32,10 @@ let
       poll_jitter_seconds = cfg.poll.jitterSeconds;
       poll_max_concurrent = cfg.poll.maxConcurrent;
       poll_on_startup = cfg.poll.onStartup;
+      poll_backoff_base_minutes = cfg.poll.backoffBaseMinutes;
+      poll_backoff_max_hours = cfg.poll.backoffMaxHours;
       zero_result_confirmations = cfg.poll.zeroResultConfirmations;
+      details_retry_days = cfg.metadata.detailsRetryDays;
       renew_threshold_days = cfg.renewThresholdDays;
       metadata_enabled = cfg.metadata.enable;
       metadata_providers = cfg.metadata.providers;
@@ -163,6 +166,18 @@ in
         type = lib.types.ints.positive;
         default = 2;
         description = "How many consecutive empty results are required before believing an account really was emptied. Guards the history against a silent scraper breakage, at the cost of one poll interval of latency when everything genuinely was returned.";
+      };
+
+      backoffBaseMinutes = lib.mkOption {
+        type = lib.types.ints.positive;
+        default = 360;
+        description = "After the site answers 403/429, the account is not polled again for base * 2^(consecutive failures - 1) minutes. Retrying a firewall on the normal schedule is what extends the block.";
+      };
+
+      backoffMaxHours = lib.mkOption {
+        type = lib.types.ints.positive;
+        default = 24;
+        description = "Cap of the exponential poll back-off.";
       };
     };
 
@@ -361,6 +376,17 @@ in
           Re-ask a shop that blocked or failed at a price lookup after this
           many days. A shop that answered "not stocked" is not asked again on
           its own; that is an answer, not a failure.
+        '';
+      };
+
+      detailsRetryDays = lib.mkOption {
+        type = lib.types.ints.positive;
+        default = 30;
+        description = ''
+          Re-fetch the OPAC detail page of one borrowed copy after this many
+          days. Covers and ISBNs do not change; without a budget the poll
+          issues one request per loan every time, which is the traffic
+          pattern the Stuttgart firewall punishes with a 403.
         '';
       };
 

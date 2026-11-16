@@ -75,6 +75,12 @@
       >
         Cover neu laden
       </button>
+      {# Catalogue matching is a threshold; this is the escape hatch for a
+         real work the threshold rejected — every source asked at once, the
+         pick made by the person looking at the cover. #}
+      {% if identify_providers %}
+        <button class="btn btn--ghost btn--sm" type="button" id="identify-open">Werke identifizieren</button>
+      {% endif %}
       <span id="crawl-status"></span>
     </div>
     </div>
@@ -144,6 +150,10 @@
       </table>
     </div>
   </div>
+
+  {% if identify_providers %}
+    {% include "partials/identify_dialog.html" %}
+  {% endif %}
 
   {% if probes %}
     {% set OUTCOMES = {

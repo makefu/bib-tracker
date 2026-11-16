@@ -12,7 +12,20 @@ from typing import Any
 
 from .base import ProviderRecord, ProviderStatus
 
-#: First provider in the tuple that has a value for the field, wins.
+#: Shop front-ends, appended to every field's tuple rather than listed in it:
+#: the worker never queues a shop for the merge, so a shop record only exists
+#: once a person confirmed it in the identify dialog. It may fill a gap no
+#: catalogue stated, but it must never outrank one that did.
+SHOPS: tuple[str, ...] = ("buchkatalog", "thalia", "amazon", "buch7", "lehmanns", "ebookde")
+
+#: Fields that identify the work itself, taken from a shop only as a last
+#: resort and never over a catalogue: a shop's title or publisher is
+#: marketing text for its own edition. The ISBN is exempt — it is a factual
+#: identifier, and a pick is often the only way a work gets one at all.
+BIBLIOGRAPHIC: frozenset[str] = frozenset(("title", "publisher", "language", "published_year", "page_count"))
+
+#: First provider in the tuple that has a value for the field wins; the shop
+#: tail only ever fills a gap.
 FIELD_PRECEDENCE: dict[str, tuple[str, ...]] = {
     # The national library is authoritative on German bibliographic data.
     "isbn13": ("dnb", "googlebooks", "openlibrary"),
@@ -33,6 +46,9 @@ FIELD_PRECEDENCE: dict[str, tuple[str, ...]] = {
     "list_price_cents": ("vlb", "dnb", "googlebooks"),
     "list_price_currency": ("vlb", "dnb", "googlebooks"),
 }
+for _field, _providers in FIELD_PRECEDENCE.items():
+    FIELD_PRECEDENCE[_field] = _providers + SHOPS
+
 
 MERGED_FIELDS = tuple(FIELD_PRECEDENCE)
 
@@ -46,6 +62,11 @@ def merge_records(records: list[ProviderRecord]) -> dict[str, Any]:
         for provider in providers:
             record = usable.get(provider)
             if record is None:
+                continue
+            # The shop tail exists for cover and price only: a confirmed shop
+            # record answers gaps, and its title, author or publisher must
+            # never become the authority over a catalogue that stated one.
+            if provider in SHOPS and field in BIBLIOGRAPHIC:
                 continue
             value = getattr(record, field, None)
             if value not in (None, "", []):

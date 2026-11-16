@@ -56,7 +56,10 @@ async def test_open_library_is_reachable_without_a_key(http) -> None:
 
     assert record is not None
     assert record.status is ProviderStatus.OK
-    assert record.title == "Nineteen Eighty-Four"
+    # The record's title is OpenLibrary's to rename (it currently reads
+    # "1984"); what the test guards is that the keyless fetch resolves the
+    # ISBN to a real book, so pin the stable author, not the mutable title.
+    assert "orwell" in " ".join(record.authors).lower()
 
 
 async def test_wikidata_covers_a_game_without_a_key(http) -> None:

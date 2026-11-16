@@ -22,9 +22,32 @@ def test_migrate_creates_the_schema_and_records_the_version(db_path: Path) -> No
     try:
         assert current_version(conn) == 0
         version = migrate(conn)
-        assert version == latest_version() == 2
-        assert current_version(conn) == 2
-        assert {"accounts", "poll_runs", "snapshot_items", "loans", "media", "lookup_probes"} <= _tables(conn)
+        assert version == latest_version() == 4
+        assert current_version(conn) == 4
+        assert {
+            "accounts",
+            "poll_runs",
+            "snapshot_items",
+            "loans",
+            "media",
+            "lookup_probes",
+            "detail_lookups",
+        } <= _tables(conn)
+        # 0004: the rebuilt poll_runs accepts the rate-limit status and still
+        # rejects a bogus one
+        conn.execute("INSERT INTO accounts (name, library_type, username) VALUES ('a', 'remseck', 'u')")
+        conn.execute(
+            "INSERT INTO poll_runs (account_id, trigger, status, started_at)"
+            " VALUES (1, 'manual', 'rate_limited', '2026-01-01T00:00:00+00:00')"
+        )
+        try:
+            conn.execute(
+                "INSERT INTO poll_runs (account_id, trigger, status, started_at)"
+                " VALUES (1, 'manual', 'bogus', '2026-01-01T00:00:00+00:00')"
+            )
+            raise AssertionError("CHECK constraint did not reject a bogus status")
+        except sqlite3.IntegrityError:
+            pass
     finally:
         conn.close()
 

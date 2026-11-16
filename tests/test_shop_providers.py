@@ -18,7 +18,7 @@ import respx
 
 from bib_tracker.library.media_class import MediaClass
 from bib_tracker.metadata import build_provider
-from bib_tracker.metadata.base import MediaQuery, ProviderConfig
+from bib_tracker.metadata.base import MediaQuery, ProviderConfig, ProviderStatus
 from bib_tracker.metadata.http import CachedClient
 from bib_tracker.metadata.matcher import choose
 from bib_tracker.metadata.pricing import (
@@ -118,9 +118,15 @@ def _mount_all(m: respx.MockRouter) -> None:
         return httpx.Response(200, text=json.dumps(BLANK))
 
     m.get("https://www.buchkatalog.de/api/search/search").mock(side_effect=buchkatalog)
+    m.get("https://www.buchkatalog.de/product/4099276460851090106").mock(
+        return_value=httpx.Response(200, text=payload("buchkatalog_product_4099276460851090106.html"))
+    )
     m.get("https://www.amazon.de/s").mock(return_value=httpx.Response(200, text=payload("amazon_search_isbn.html")))
     m.get("https://www.amazon.de/dp/B01N5HZ0H6").mock(
         return_value=httpx.Response(404, text=payload("amazon_dp_B01N5HZ0H6.html"))
+    )
+    m.get("https://www.amazon.de/dp/383216359X").mock(
+        return_value=httpx.Response(200, text=payload("amazon_dp_383216359X.html"))
     )
     m.get("https://www.buch7.de/suche").mock(
         side_effect=lambda req: httpx.Response(
@@ -232,14 +238,34 @@ async def test_buchkatalog_answers_with_the_price_inline(http) -> None:
 
 
 @respx.mock
-async def test_buchkatalog_id_lookup_is_honest_about_being_empty(http) -> None:
-    """Recorded reality: an id query answers 0 products; the ladder keeps the
-    record the search attached instead of chasing a fetch."""
+async def test_buchkatalog_id_fetch_falls_back_to_the_product_page(http) -> None:
+    """The API cannot look a product up by its own id (verified live: an id
+    query answers 0 hits), so fetch() must resolve the card through the
+    product page — otherwise the identify dialog 422s on every pick."""
     m = respx.mock(assert_all_called=False)
     _mount_all(m)
     with m:
         provider = _shop("buchkatalog", http)
-        assert await provider.fetch("4099276460851090106") is None
+        record = await provider.fetch("4099276460851090106")
+
+    assert record is not None
+    assert record.status is ProviderStatus.OK
+    assert record.title == "Unterwerfung"
+    assert record.isbn13 == "9783832163594"
+    assert record.list_price_cents == 1500
+    assert record.cover_source_url == "https://www.buchkatalog.de/media-cover/cover/55/39/53/5539536700001Z.jpg"
+    assert record.external_url == "https://www.buchkatalog.de/unterwerfung-9783832163594"
+
+
+@respx.mock
+async def test_buchkatalog_id_fetch_is_honest_about_an_unknown_id(http) -> None:
+    """Neither the API nor the product page answers for a made-up id."""
+    m = respx.mock(assert_all_called=False)
+    _mount_all(m)
+    with m:
+        provider = _shop("buchkatalog", http)
+        m.get("https://www.buchkatalog.de/product/999").mock(return_value=httpx.Response(404, text=""))
+        assert await provider.fetch("999") is None
 
 
 # -- Amazon.de ----------------------------------------------------------------
@@ -275,6 +301,26 @@ async def test_amazon_detail_page_that_says_nothing_gives_no_record(http) -> Non
     with m:
         provider = _shop("amazon", http)
         assert await provider.fetch("B01N5HZ0H6") is None
+
+
+@respx.mock
+async def test_amazon_detail_page_without_json_ld_still_answers(http) -> None:
+    """Live /dp pages carry no JSON-LD at all: the price is the apex label,
+    the title the productTitle node, the cover the image block's hiRes, and
+    the ISBN the detail table. The apply step re-fetches by ASIN, so all of
+    that has to parse or the pick dies with 'Ergebnis nicht verfügbar'."""
+    m = respx.mock(assert_all_called=False)
+    _mount_all(m)
+    with m:
+        provider = _shop("amazon", http)
+        record = await provider.fetch("383216359X")
+
+    assert record is not None
+    assert record.status is ProviderStatus.OK
+    assert record.title == "Unterwerfung: Roman (Taschenbücher)"
+    assert record.isbn13 == "9783832163594"
+    assert record.list_price_cents == 1500
+    assert record.cover_source_url == "https://m.media-amazon.com/images/I/615ohqK9IYL._SL1280_.jpg"
 
 
 # -- buch7.de ------------------------------------------------------------------
@@ -387,8 +433,9 @@ async def test_ebookde_detail_page_states_price_cover_and_publisher(http) -> Non
 
 
 def test_a_shop_never_fills_a_bibliographic_field() -> None:
-    """The merge table names no shop: a shop's description or cover must not
-    overwrite the catalogue's, no matter how fresh its probe is."""
+    """A confirmed shop record fills a gap no catalogue stated (here the
+    cover) but never overwrites a catalogue's own answer, no matter how
+    fresh its probe is."""
     from bib_tracker.metadata.base import ProviderRecord, ProviderStatus
     from bib_tracker.metadata.merge import merge_records
 
@@ -396,6 +443,7 @@ def test_a_shop_never_fills_a_bibliographic_field() -> None:
         provider="thalia",
         external_id="A1",
         status=ProviderStatus.OK,
+        title="Unterwerfung - Taschenbuch",
         description="Werbung",
         publisher="Thalia",
         cover_source_url="https://images.thalia.media/x.jpg",
@@ -405,15 +453,22 @@ def test_a_shop_never_fills_a_bibliographic_field() -> None:
         provider="googlebooks",
         external_id="G1",
         status=ProviderStatus.OK,
+        title="Unterwerfung",
         description="Klappentext",
         publisher="Kiepenheuer & Witsch",
+        cover_source_url="https://books.google.com/n.jpg",
     )
 
     merged = merge_records([shop, catalogue])
 
+    assert merged["title"] == "Unterwerfung"
     assert merged["description"] == "Klappentext"
     assert merged["publisher"] == "Kiepenheuer & Witsch"
-    assert "cover_source_url" not in merged or merged["cover_source_url"] is None
+    assert merged["cover_source_url"] == "https://books.google.com/n.jpg"
+
+    # The gap case: no catalogue cover, so the shop's scan is what we have.
+    del catalogue.cover_source_url
+    assert merge_records([shop, catalogue])["cover_source_url"] == "https://images.thalia.media/x.jpg"
 
 
 # -- the ladder -----------------------------------------------------------------

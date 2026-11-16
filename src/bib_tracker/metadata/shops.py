@@ -361,10 +361,42 @@ class BuchkatalogProvider(ShopProvider):
         return candidate
 
     async def fetch(self, external_id: str) -> ProviderRecord | None:
-        for product in await self._search(external_id):
-            if str(product.get("id") or product.get("artNr")) == external_id:
-                return self._candidate(product).record
-        return None
+        # The JSON API cannot look a product up by its own id (an id query
+        # answers 0 hits, verified live), so the card is resolved through the
+        # product page, which carries the same Product node as the other shops.
+        response = await self._get(f"{self.base_url}/product/{external_id}")
+        self._blocked_check(response)
+        if response.status != 200:
+            return None
+        node = _product_node(response.text)
+        if node is None:
+            return None
+
+        cents = _cents(_offer_field(node, "price"))
+        cover = _image_field(node)
+        if cents is None and cover is None:
+            return None
+        cover = (
+            str(cover) if cover and str(cover).startswith("http") else (f"{self.base_url}{cover}" if cover else None)
+        )
+
+        isbn = node.get("gtin13") or node.get("isbn") or None
+        if isbn:
+            digits = re.sub(r"\D", "", str(isbn))
+            isbn = digits if len(digits) in (10, 13) else None
+        description = node.get("description")
+
+        return ProviderRecord(
+            provider=self.name,
+            external_id=external_id,
+            external_url=str(node.get("url") or f"{self.base_url}/product/{external_id}"),
+            title=_text(str(node.get("name") or "")) or None,
+            isbn13=isbn,
+            description=html_module.unescape(str(description)) if description else None,
+            list_price_cents=cents,
+            list_price_currency=str(_offer_field(node, "priceCurrency") or "EUR"),
+            cover_source_url=cover,
+        )
 
 
 class AmazonProvider(ShopProvider):
@@ -444,16 +476,34 @@ class AmazonProvider(ShopProvider):
         node = _product_node(page)
         cents = _cents(_offer_field(node, "price")) if node else None
         cents = cents if cents is not None else self._dp_price(page)
-        cover = (_image_field(node) if node else None) or _first(r'property="og:image" content="([^"]+)"', page)
+        cover = (
+            (_image_field(node) if node else None)
+            or _first(r'property="og:image" content="([^"]+)"', page)
+            or _first(r'"hiRes":"(https:[^"]+)"', page)
+        )
         if cents is None and cover is None:
             return None
+
+        # Live /dp pages carry no JSON-LD at all: the title is the productTitle
+        # node and the ISBN sits in the detail table, so the JSON-LD answer is
+        # only the first choice, never the only one.
+        title = _text(str(node.get("name") or "")) if node else None
+        title = title or _first(r'id="productTitle"[^>]*>([^<]+)<', page) or None
+        isbn = (
+            _first(r'itemprop="isbn"[^>]*content="([^"]+)"', page)
+            or _first(r"ISBN-13[^0-9X]*([0-9][0-9 \-]{8,16}[0-9Xx])", page)
+            or _isbn_from_path(external_id)
+        )
+        if isbn:
+            digits = re.sub(r"\D", "", str(isbn))
+            isbn = digits if len(digits) in (10, 13) else None
 
         return ProviderRecord(
             provider=self.name,
             external_id=external_id,
             external_url=f"{self.base_url}/dp/{external_id}",
-            title=_text(str(node.get("name") or "")) if node else None,
-            isbn13=_first(r'itemprop="isbn"[^>]*content="([^"]+)"', page) or _isbn_from_path(external_id),
+            title=title,
+            isbn13=isbn,
             list_price_cents=cents,
             list_price_currency=str(_offer_field(node, "priceCurrency") or "EUR") if node else "EUR",
             cover_source_url=cover,
@@ -463,6 +513,17 @@ class AmazonProvider(ShopProvider):
         meta = _first(r'property="og:price:amount" content="([^"]+)"', page)
         if meta is not None:
             return _cents(meta)
+        # The accessibility label of the price block states the figure the
+        # page renders, independent of how the price markup is wrapped.
+        apex = _first(r'id="apex-pricetopay-accessibility-label"[^>]*>\s*([^<]+?)\s*<', page)
+        if apex is not None:
+            try:
+                return parse_price_cents(apex)
+            except ValueError:
+                pass
+        cents = self._card_price(page)
+        if cents is not None:
+            return cents
         match = re.search(r'<span class="a-price[^"]*">\s*<span class="a-offscreen">([^<]+)</span>', page)
         return parse_price_cents(match.group(1)) if match else None
 

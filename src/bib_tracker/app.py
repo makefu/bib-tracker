@@ -5,7 +5,7 @@ from __future__ import annotations
 import asyncio
 import logging
 from collections.abc import AsyncIterator
-from contextlib import asynccontextmanager
+from contextlib import asynccontextmanager, suppress
 
 import httpx
 from fastapi import FastAPI
@@ -80,9 +80,14 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         try:
             yield
         finally:
-            if startup_poll is not None and not startup_poll.done():
+            # Every thread that could still hold a statement must be joined
+            # before db.close(): closing the sqlite connection under an
+            # in-flight asyncio.to_thread statement segfaults the process.
+            if startup_poll is not None:
                 startup_poll.cancel()
-            runner.cancel()
+                with suppress(asyncio.CancelledError):
+                    await startup_poll
+            await runner.aclose()
             scheduler.shutdown()
             await service.aclose()
             if enrichment is not None:
