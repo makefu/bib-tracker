@@ -89,6 +89,67 @@ def test_a_failing_migration_leaves_nothing_behind(db_path: Path, monkeypatch: p
         conn.close()
 
 
+def test_rebuilding_a_parent_table_keeps_its_children(db_path: Path) -> None:
+    """0004 drops and recreates poll_runs while `fees` still REFERENCES it.
+
+    With foreign-key enforcement on — which is how the service opens its
+    connection — SQLite refuses to drop a parent that has referencing rows.
+    This is the live failure the migration first hit on omo: the unit test
+    above passed only because its tables were empty. Reproduce it with a
+    version-3 database that holds real observations.
+    """
+    conn = connect(db_path)
+    try:
+        for target, _name, sql in migrator.discover():
+            if target > 3:
+                continue
+            conn.executescript(f"BEGIN;\n{sql}\nPRAGMA user_version = {target};\nCOMMIT;")
+        conn.execute("INSERT INTO accounts (name, library_type, username) VALUES ('a', 'remseck', 'u')")
+        conn.execute(
+            "INSERT INTO poll_runs (id, account_id, trigger, status, started_at)"
+            " VALUES (1, 1, 'manual', 'success', '2026-01-01')"
+        )
+        conn.execute(
+            "INSERT INTO fees (account_id, fee_key, description, amount_cents, first_seen_run_id, last_seen_run_id)"
+            " VALUES (1, 'f', 'late fee', 150, 1, 1)"
+        )
+
+        assert migrate(conn) == 4
+
+        # The child kept its foreign key — and it is enforced afterwards.
+        assert any(row["table"] == "poll_runs" for row in conn.execute("PRAGMA foreign_key_list(fees)"))
+        assert int(conn.execute("PRAGMA foreign_keys").fetchone()[0]) == 1
+        try:
+            conn.execute(
+                "INSERT INTO fees (account_id, fee_key, description, amount_cents, first_seen_run_id, last_seen_run_id)"
+                " VALUES (1, 'g', 'ghost', 1, 999, 1)"
+            )
+            raise AssertionError("foreign keys stopped being enforced after the migration")
+        except sqlite3.IntegrityError:
+            pass
+        # The observations survived the rebuild.
+        assert conn.execute("SELECT status FROM poll_runs WHERE id = 1").fetchone()["status"] == "success"
+    finally:
+        conn.close()
+
+
+def test_a_migration_is_rejected_when_it_breaks_a_foreign_key(db_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """FK enforcement is off while statements run; the foreign_key_check at
+    the end of each script is what still catches broken references."""
+    conn = connect(db_path)
+    try:
+        conn.executescript(
+            "CREATE TABLE parent (id INTEGER PRIMARY KEY); CREATE TABLE kid (p INTEGER REFERENCES parent(id));"
+        )
+        broken = [(1, "0001_orphan.sql", "INSERT INTO kid VALUES (42);")]
+        monkeypatch.setattr(migrator, "discover", lambda: broken)
+        with pytest.raises(RuntimeError, match="0001_orphan\\.sql failed"):
+            migrate(conn)
+        assert current_version(conn) == 0
+    finally:
+        conn.close()
+
+
 def test_duplicate_versions_are_rejected() -> None:
     dupes = [(1, "0001_a.sql", ""), (1, "0001_b.sql", "")]
     with pytest.raises(RuntimeError, match="Duplicate migration version 1"):
